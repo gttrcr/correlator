@@ -11,7 +11,7 @@
                 "-o",
                 "${fileDirname}/main",
                 "-std=c++17",
-                "-lkissfft-float",
+                "-lkissfft-double",
                 "-Wall"
             ],
             "options": {
