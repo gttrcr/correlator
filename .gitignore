@@ -1,7 +1,4 @@
 .vscode/settings.json
-main
-*exe
-build*
-dev*
-release*
-correlator
+dev/*
+build/*
+release/*

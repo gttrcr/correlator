@@ -1,5 +1,14 @@
-platform=0
+#sudo apt update
+#sudo apt upgrade -y
+#sudo apt autoremove
+git submodule update --init --recursive
+sudo apt install libpng-dev -y
+sudo apt install fftw3 fftw3-dev -y
+sudo apt install mingw-w64 -y
+sudo apt install cmake -y
+sudo apt install pkg-config -y
 
+platform=0
 if [ -z "$1" ]; then
     echo "Platform is empty"
     echo "Launch /.setup.sh platform where platform is w for windows or l for linux"
@@ -15,12 +24,6 @@ else
     exit
 fi
 
-#sudo apt update
-#sudo apt upgrade -y
-#sudo apt autoremove
-git submodule update --init --recursive
-sudo apt install libpng-dev -y
-sudo apt install fftw3 fftw3-dev -y
 cd kissfft
 rm -r build
 mkdir build
@@ -37,4 +40,5 @@ cd ..
 cd ..
 rm -r dev
 cp -r kissfft/build dev/
+rm -r kissfft/build
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/dev
