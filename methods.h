@@ -10,8 +10,9 @@
 #include <cmath>
 #include <vector>
 #include <iomanip>
+#include <fstream>
 
-#define THREASHOLD 0.9
+//#define THREASHOLD 0.9
 
 // template <unsigned int domain_size, unsigned int codomain_size>
 // std::vector<std::vector<T_SPACE>> power(const std::vector<function<domain_size, codomain_size>> &fs, const T_SPACE &p)
@@ -61,6 +62,8 @@
 //
 //     return rets;
 // }
+
+std::ofstream output_file;
 
 void polyfit(const std::vector<double> &t, const std::vector<double> &v, std::vector<double> &coeff, const unsigned int &order)
 {
@@ -116,10 +119,10 @@ void polyfit(const std::vector<function<domain_size, codomain_size>> &fs, const 
         for (unsigned int j = i + 1; j < fs.size(); j++)
         {
             std::vector<double> c = polyfit(fs[i], fs[j], order);
-            std::cout << order << " " << i << " " << j << " ";
+            output_file << order << "," << i << "," << j << ",";
             for (unsigned int o = 0; o <= order; o++)
-                std::cout << c[o] << " ";
-            std::cout << std::endl;
+                output_file << c[o] << ",";
+            output_file << std::endl;
         }
     }
 }
@@ -173,25 +176,23 @@ bool methods(const std::vector<function<domain_size, codomain_size>> &fs)
 {
     try
     {
-        // results results;
-        //  for (T_SPACE p = 1; p < 10; p++)
-        //      results.add("power", power(fs, p));
-        //
-        //  for (T_SPACE p = 1; p < 10; p++)
-        //     results.add("power", power(fs, 1 / p));
-        //
-        //  results.save("power", "method,p,file1,file2,pearson");
-        //
-        //  results.add("log", log(fs));
-        //  results.save("log", "method,file1,file2,pearson");
-
-        for (unsigned int i = 0; i < 10; i++)
+        // compute best polynomial fit until nth degree
+        const unsigned int n = 15;
+        output_file.open("polynomial_fit.csv");
+        output_file << "degree,f1,f2,";
+        for (unsigned int i = 0; i < n; i++)
+            output_file << "b" << i << ",";
+        output_file << std::endl;
+        for (unsigned int i = 0; i < n; i++)
             polyfit(fs, i);
+        output_file.close();
 
         // compute fft of vector of fs and return their peaks
+        output_file.open("fft.csv");
         std::vector<std::vector<std::tuple<t_space, t_space>>> peaks = fft(fs);
         if (peaks.size() > 1)
             migration_of_fft_peaks(peaks);
+        output_file.close();
 
         return true;
     }
