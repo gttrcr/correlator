@@ -63,14 +63,14 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
     if (s_content[0].size() != domain_size + codomain_size)
         return false;
 
-    std::vector<std::vector<T_SPACE>> d_content;
+    std::vector<std::vector<t_space>> d_content;
     for (unsigned int i = 0; i < s_content.size(); i++)
     {
-        std::vector<T_SPACE> d_cont;
+        std::vector<t_space> d_cont;
         for (unsigned int j = 0; j < s_content[i].size(); j++)
         {
-            T_SPACE d = std::stod(s_content[i][j]);
-            if (d == std::numeric_limits<T_SPACE>::infinity())
+            t_space d = std::stod(s_content[i][j]);
+            if (d == std::numeric_limits<t_space>::infinity())
                 throw std::runtime_error("nan or infinity number");
             d_cont.push_back(d);
         }
@@ -114,13 +114,13 @@ int main()
     {
         std::cout << "File: " << file << std::endl;
         std::cout << "\tReading...";
-        
+
         std::vector<std::string> axis;
         std::vector<std::vector<std::string>> s_content;
         if (!read_csv(file, s_content, axis))
             return -1;
         std::cout << "ok" << std::endl;
-        
+
         std::cout << "\tParsing...";
         function<1, 1> f;
         if (!get_function(s_content, f))

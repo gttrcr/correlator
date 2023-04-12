@@ -6,13 +6,13 @@
 #include <math.h>
 #include <functional>
 
-#define T_SPACE double
+#define t_space double
 
 template <unsigned int size>
 class vec
 {
 private:
-    T_SPACE _v[size];
+    t_space _v[size];
 
 public:
     vec()
@@ -27,22 +27,22 @@ public:
             _v[i] = v.get(i);
     }
 
-    vec(const T_SPACE &v)
+    vec(const t_space &v)
     {
         _v[0] = v;
     }
 
-    void set(const unsigned int &pos, const T_SPACE &value)
+    void set(const unsigned int &pos, const t_space &value)
     {
         _v[pos] = value;
     }
 
-    T_SPACE get(const unsigned int &pos) const
+    t_space get(const unsigned int &pos) const
     {
         return _v[pos];
     }
 
-    vec<size> pow(const T_SPACE &d) const
+    vec<size> pow(const t_space &d) const
     {
         vec<size> v;
         for (unsigned int i = 0; i < size; i++)
@@ -58,9 +58,9 @@ public:
         return v;
     }
 
-    vec<1> norm(const T_SPACE p = 1) const
+    vec<1> norm(const t_space p = 1) const
     {
-        T_SPACE sum = 0;
+        t_space sum = 0;
         for (unsigned int i = 0; i < size; i++)
             sum += pow(abs(_v[i]), p);
         return vec<1>(pow(sum, 1 / p));
@@ -102,7 +102,7 @@ public:
         _f.clear();
     }
 
-    T_SPACE get(const unsigned int &pos, const unsigned int &variable_position) const
+    t_space get(const unsigned int &pos, const unsigned int &variable_position) const
     {
         if (variable_position < domain_size)
             return std::get<0>(_f[pos]).get(variable_position);
@@ -115,7 +115,7 @@ public:
         return _f.size();
     }
 
-    function<domain_size, codomain_size> pow(const T_SPACE p) const
+    function<domain_size, codomain_size> pow(const t_space p) const
     {
         function<domain_size, codomain_size> f;
         for (unsigned int i = 0; i < _f.size(); i++)
@@ -133,7 +133,7 @@ public:
         return f;
     }
 
-    function<domain_size, 1> norm(const T_SPACE &p) const
+    function<domain_size, 1> norm(const t_space &p) const
     {
         function<domain_size, 1> f;
         for (unsigned int i = 0; i < _f.size(); i++)

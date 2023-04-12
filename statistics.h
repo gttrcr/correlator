@@ -5,12 +5,12 @@
 #include <algorithm>
 
 template <unsigned int domain_size, unsigned int codomain_size>
-T_SPACE avg(const function<domain_size, codomain_size> &f, const unsigned int &variable_position)
+t_space avg(const function<domain_size, codomain_size> &f, const unsigned int &variable_position)
 {
-    T_SPACE sum = 0;
+    t_space sum = 0;
     for (unsigned int i = 0; i < f.size(); i++)
         sum += f.get(i, variable_position);
-    return sum / (T_SPACE)f.size();
+    return sum / (t_space)f.size();
 }
 
 // T_SPACE pearson(const function<1, 1> &f)
@@ -31,16 +31,16 @@ T_SPACE avg(const function<domain_size, codomain_size> &f, const unsigned int &v
 // }
 
 template <unsigned int domain_size, unsigned int codomain_size>
-T_SPACE pearson(const function<domain_size, codomain_size> &f1, const function<domain_size, codomain_size> &f2)
+t_space pearson(const function<domain_size, codomain_size> &f1, const function<domain_size, codomain_size> &f2)
 {
     if (f1.size() != f2.size())
         throw std::runtime_error("different codomain size");
 
-    T_SPACE x_avg = avg(f1, 1);
-    T_SPACE y_avg = avg(f2, 1);
-    T_SPACE num = 0;
-    T_SPACE x_den = 0;
-    T_SPACE y_den = 0;
+    t_space x_avg = avg(f1, 1);
+    t_space y_avg = avg(f2, 1);
+    t_space num = 0;
+    t_space x_den = 0;
+    t_space y_den = 0;
     for (unsigned int i = 0; i < f1.size(); i++)
     {
         num += (f1.get(i, 1) - x_avg) * (f2.get(i, 1) - y_avg);
