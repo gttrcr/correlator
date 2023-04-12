@@ -2,6 +2,7 @@
 
 #include "space.h"
 #include <math.h>
+#include <algorithm>
 
 template <unsigned int domain_size, unsigned int codomain_size>
 T_SPACE avg(const function<domain_size, codomain_size> &f, const unsigned int &variable_position)
@@ -54,7 +55,7 @@ template <typename T>
 std::vector<std::tuple<T, T>> peaks(const std::vector<std::tuple<T, T>> &vector, const unsigned int &number_of_peaks)
 {
     std::vector<std::tuple<T, T>> cp(vector);
-    
+
     // sort descending
     std::sort(cp.begin(), cp.end(), [](const std::tuple<T, T> &lhs, const std::tuple<T, T> &rhs)
               { return std::get<1>(lhs) > std::get<1>(rhs); });

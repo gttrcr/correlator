@@ -9,10 +9,11 @@
                 "-g",
                 "main.cpp",
                 "-o",
-                "${fileDirname}/main",
+                "${fileDirname}/dev/main",
                 "-std=c++17",
-                "-lkissfft-double",
-                "-Wall"
+                "-Wall",
+                "-Ldev",
+                "-l:libkissfft-double.so",
             ],
             "options": {
                 "cwd": "${fileDirname}"

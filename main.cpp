@@ -104,7 +104,7 @@ int main()
     {
         if (entry.path().extension() == ".csv")
         {
-            csv_files.push_back(entry.path());
+            csv_files.push_back(entry.path().string());
             std::cout << "Found " << entry.path() << std::endl;
         }
     }

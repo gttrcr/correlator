@@ -1,2 +1,7 @@
 .vscode/settings.json
 main
+*exe
+build*
+dev*
+release*
+correlator
