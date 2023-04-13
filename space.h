@@ -4,7 +4,7 @@
 #include <tuple>
 #include <iostream>
 #include <cmath>
-#include <functional>
+#include <algorithm>
 
 #define t_space double
 #define long_t_space long t_space

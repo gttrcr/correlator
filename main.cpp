@@ -109,31 +109,42 @@ int main()
         }
     }
 
-    std::sort(csv_files.begin(), csv_files.end());
-    std::vector<function<1, 1>> fs;
-    for (std::string file : csv_files)
+    try
     {
-        std::cout << "File: " << file << std::endl;
-        std::cout << "\tReading...";
+        std::sort(csv_files.begin(), csv_files.end());
+        std::vector<std::tuple<std::string, function<1, 1>>> fs;
+        for (std::string file : csv_files)
+        {
+            std::cout << "File: " << file << std::endl;
+            std::cout << "\tReading...";
 
-        std::vector<std::string> axis;
-        std::vector<std::vector<std::string>> s_content;
-        if (!read_csv(file, s_content, axis))
-            return -1;
+            std::vector<std::string> axis;
+            std::vector<std::vector<std::string>> s_content;
+            if (!read_csv(file, s_content, axis))
+                throw std::runtime_error("error on reading file " + file);
+            if (axis.size() > 2)
+                throw std::runtime_error("more than 2 axis not implemented");
+            std::cout << "ok" << std::endl;
+
+            std::cout << "\tParsing...";
+            function<1, 1> f;
+            if (!get_function(s_content, f))
+                throw std::runtime_error("error on parsing function on file " + file);
+            std::cout << "ok" << std::endl;
+
+            fs.push_back(std::make_tuple(file, f));
+        }
+
+        std::cout << std::setprecision(16);
+        std::cout << "Correlating...";
+        methods(fs);
         std::cout << "ok" << std::endl;
 
-        std::cout << "\tParsing...";
-        function<1, 1> f;
-        if (!get_function(s_content, f))
-            return -2;
-        std::cout << "ok" << std::endl;
-
-        fs.push_back(f);
+        return 0;
     }
-
-    std::cout << std::setprecision(16);
-    std::cout << "Correlating...";
-    if (!methods(fs))
-        return -3;
-    std::cout << "ok" << std::endl;
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+        return -1;
+    }
 }
