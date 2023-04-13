@@ -9,11 +9,11 @@
                 "-g",
                 "main.cpp",
                 "-o",
-                "${fileDirname}/dev/main",
+                "dev/main",
                 "-std=c++17",
                 "-Wall",
                 "-Ldev",
-                "-l:libkissfft-double.so",
+                "-l:`ls dev/ | grep 'libkissfft-.*so$'`",
             ],
             "options": {
                 "cwd": "${fileDirname}"

@@ -29,10 +29,10 @@ rm -r build
 mkdir build
 cd build
 if [ $platform == 1 ]; then
-    cmake -DKISSFFT_DATATYPE=double ..
+    cmake -DKISSFFT_DATATYPE=float ..
     make kissfft
 elif [ $platform == 2 ]; then
-    cmake -DKISSFFT_DATATYPE=double -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ ..
+    cmake -DKISSFFT_DATATYPE=float -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ ..
     make kissfft
 fi
 
@@ -41,4 +41,7 @@ cd ..
 rm -r dev
 cp -r kissfft/build dev/
 rm -r kissfft/build
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/dev
+
+if [ -z `echo $LD_LIBRARY_PATH | grep $PWD/dev` ]; then
+    echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/dev" >> ~/.bashrc
+fi

@@ -11,10 +11,10 @@
 struct scope
 {
 private:
-    std::vector<std::tuple<std::string, std::vector<t_space>>> _scope;
+    std::vector<std::tuple<std::string, std::vector<long_t_space>>> _scope;
 
 public:
-    void add(const std::string &scope_name, const std::vector<t_space> &scope_value)
+    void add(const std::string &scope_name, const std::vector<long_t_space> &scope_value)
     {
         _scope.push_back(std::make_tuple(scope_name, scope_value));
     }
@@ -24,7 +24,7 @@ public:
         return std::get<0>(_scope[i]);
     }
 
-    std::vector<t_space> get_values(unsigned int i)
+    std::vector<long_t_space> get_values(unsigned int i)
     {
         return std::get<1>(_scope[i]);
     }
@@ -41,7 +41,7 @@ private:
     std::vector<scope> _scopes;
 
 public:
-    void add(const std::string &scope_name, const std::vector<std::vector<t_space>> &scope_value)
+    void add(const std::string &scope_name, const std::vector<std::vector<long_t_space>> &scope_value)
     {
         for (unsigned int i = 0; i < scope_value.size(); i++)
         {
@@ -62,9 +62,9 @@ public:
             for (unsigned int j = 0; j < _scopes[i].size(); j++)
             {
                 res << _scopes[i].get_key(j) << ",";
-                std::vector<t_space> vs = _scopes[i].get_values(j);
+                std::vector<long_t_space> vs = _scopes[i].get_values(j);
                 for (unsigned int v = 0; v < vs.size(); v++)
-                    res << std::setprecision(std::numeric_limits<t_space>::digits10) << vs[v] << ",";
+                    res << std::setprecision(std::numeric_limits<long_t_space>::digits10) << vs[v] << ",";
                 res << std::endl;
             }
         }

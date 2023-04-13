@@ -63,14 +63,14 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
     if (s_content[0].size() != domain_size + codomain_size)
         return false;
 
-    std::vector<std::vector<t_space>> d_content;
+    std::vector<std::vector<long_t_space>> d_content;
     for (unsigned int i = 0; i < s_content.size(); i++)
     {
-        std::vector<t_space> d_cont;
+        std::vector<long_t_space> d_cont;
         for (unsigned int j = 0; j < s_content[i].size(); j++)
         {
-            t_space d = std::stod(s_content[i][j]);
-            if (d == std::numeric_limits<t_space>::infinity())
+            long_t_space d = std::stod(s_content[i][j]);
+            if (d == std::numeric_limits<long_t_space>::infinity())
                 throw std::runtime_error("nan or infinity number");
             d_cont.push_back(d);
         }
@@ -109,6 +109,7 @@ int main()
         }
     }
 
+    std::sort(csv_files.begin(), csv_files.end());
     std::vector<function<1, 1>> fs;
     for (std::string file : csv_files)
     {

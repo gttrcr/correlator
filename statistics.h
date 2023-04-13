@@ -1,16 +1,16 @@
 #pragma once
 
 #include "space.h"
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 
 template <unsigned int domain_size, unsigned int codomain_size>
-t_space avg(const function<domain_size, codomain_size> &f, const unsigned int &variable_position)
+long_t_space avg(const function<domain_size, codomain_size> &f, const unsigned int &variable_position)
 {
-    t_space sum = 0;
+    long_t_space sum = 0;
     for (unsigned int i = 0; i < f.size(); i++)
         sum += f.get(i, variable_position);
-    return sum / (t_space)f.size();
+    return sum / (long_t_space)f.size();
 }
 
 // T_SPACE pearson(const function<1, 1> &f)
@@ -31,16 +31,16 @@ t_space avg(const function<domain_size, codomain_size> &f, const unsigned int &v
 // }
 
 template <unsigned int domain_size, unsigned int codomain_size>
-t_space pearson(const function<domain_size, codomain_size> &f1, const function<domain_size, codomain_size> &f2)
+long_t_space pearson(const function<domain_size, codomain_size> &f1, const function<domain_size, codomain_size> &f2)
 {
     if (f1.size() != f2.size())
         throw std::runtime_error("different codomain size");
 
-    t_space x_avg = avg(f1, 1);
-    t_space y_avg = avg(f2, 1);
-    t_space num = 0;
-    t_space x_den = 0;
-    t_space y_den = 0;
+    long_t_space x_avg = avg(f1, 1);
+    long_t_space y_avg = avg(f2, 1);
+    long_t_space num = 0;
+    long_t_space x_den = 0;
+    long_t_space y_den = 0;
     for (unsigned int i = 0; i < f1.size(); i++)
     {
         num += (f1.get(i, 1) - x_avg) * (f2.get(i, 1) - y_avg);
@@ -51,14 +51,10 @@ t_space pearson(const function<domain_size, codomain_size> &f1, const function<d
     return num / sqrt(x_den * y_den);
 }
 
-template <typename T>
-std::vector<std::tuple<T, T>> peaks(const std::vector<std::tuple<T, T>> &vector, const unsigned int &number_of_peaks)
+// TODO extend for arbitrary codomain_size in return function
+template <unsigned int domain_size, unsigned int codomain_size>
+function<domain_size, 1> peaks(const function<domain_size, codomain_size> &f, const unsigned int &number_of_peaks)
 {
-    std::vector<std::tuple<T, T>> cp(vector);
-
-    // sort descending
-    std::sort(cp.begin(), cp.end(), [](const std::tuple<T, T> &lhs, const std::tuple<T, T> &rhs)
-              { return std::get<1>(lhs) > std::get<1>(rhs); });
-
-    return std::vector<std::tuple<T, T>>(cp.begin(), cp.begin() + number_of_peaks);
+    function<domain_size, 1> normf = f.norm(2);
+    return normf.maximas(number_of_peaks);
 }
