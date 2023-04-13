@@ -5,6 +5,7 @@
 #include "../eigen/Eigen/Dense"
 #include "../eigen/Eigen/QR"
 
+// TODO improve multifft transform on domain_size
 template <unsigned int domain_size, unsigned int codomain_size>
 std::vector<std::tuple<std::string, function<1, 1>>> fft(const std::vector<std::tuple<std::string, function<domain_size, codomain_size>>> &fs)
 {
@@ -30,7 +31,7 @@ std::vector<std::tuple<std::string, function<1, 1>>> fft(const std::vector<std::
             free(cfg);
             const bool full = false;
             if (sampling_time == 0)
-                std::cout << "Warning! sampling time is 0: time is not linear or interfals are not regular" << std::endl;
+                std::cout << "Warning! sampling time is 0: time is not linear or intervals are not regular" << std::endl;
             function<1, 1> spectrum;
             for (unsigned int j = 0; j < (full ? f.size() : (f.size() / 2 + 1)); j++)
             {
@@ -43,7 +44,7 @@ std::vector<std::tuple<std::string, function<1, 1>>> fft(const std::vector<std::
             spectra.push_back(std::make_tuple(name, spectrum));
         }
         else
-            throw std::runtime_error("error on allocating fft");
+            throw std::runtime_error("error allocating fft " + name);
     }
 
     return spectra;
