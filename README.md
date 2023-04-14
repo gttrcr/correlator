@@ -1,19 +1,9 @@
 # correlator
 
-## setup
-Launch ```./setup.sh platform``` where ```platform``` is:
-* ```w``` for windows
-* ```l```for linux
+## Releases
+* Latest [https://github.com/gttrcr/correlator/releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)
 
-It sets up the system, update and init all submodules, configure the platform and the compiler.
-
-## build
-Launch  ```./build.sh```. It builds for every supported platform
-
-## release
-Launch ```./release.sh```. It releases every supported platform
-
-## features
+## Features
 Every execution of ```correlator``` do the following:
 1. Look for every ```*.csv``` file in the execution folder.
 2. Compute the best polynomial fit for every pair of input (on the y axis) and for every file (x with respect to y).
@@ -26,3 +16,17 @@ Every execution of ```correlator``` do the following:
 2. multidimensional fft
 3. Compute the best polynomial fit for the distribution of peaks at point 4.
 4. ```correlator``` will listen to new data (by socket, by pipe, by stream, by api, ...) and compute real time statistics.
+
+## Dev section
+### setup
+Launch ```./setup.sh platform``` where ```platform``` is:
+* ```w``` for windows
+* ```l```for linux
+
+It sets up the system, update and init all submodules, configure the platform and the compiler.
+
+### build
+Launch  ```./build.sh```. It builds for every supported platform
+
+### release
+Launch ```./release.sh```. It releases every supported platform
