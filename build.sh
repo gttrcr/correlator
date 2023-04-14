@@ -5,7 +5,7 @@ mkdir -p build/win
 ./setup.sh w > build/win/log 2>&1
 x86_64-w64-mingw32-g++ -g main.cpp -o build/win/correlator.exe -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> build/win/log 2>&1
 cp dev/libkissfft-float.so build/win/
-mv libkissfft-float.so libkissfft-float.so.131.1.0
+mv build/win/libkissfft-float.so build/win/libkissfft-float.so.131.1.0
 if [ -z `ls build/win | grep correlator` ]; then
     echo "error on build for win"
 else

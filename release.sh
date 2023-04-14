@@ -5,7 +5,7 @@ mkdir -p release/win
 ./setup.sh w > release/win/log 2>&1
 x86_64-w64-mingw32-g++ -O3 main.cpp -o release/win/correlator.exe -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/win/log 2>&1
 cp dev/libkissfft-float.so release/win/
-mv libkissfft-float.so libkissfft-float.so.131.1.0
+mv release/win/libkissfft-float.so release/win/libkissfft-float.so.131.1.0
 if [ -z `ls release/win | grep correlator` ]; then
     echo "error on release for win"
 else
