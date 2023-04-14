@@ -14,7 +14,7 @@ void methods(const std::vector<std::tuple<std::string, function<default_type, do
 
     // compute best polynomial fit
     std::cout << "polyfit..." << std::endl;
-    polyfit::pf(fs, polyfit_max_degree);
+    polyfit::pf(fs, polyfit_max_degree, "polyfit");
 
     // compute fft of vector of fs and return their peaks
     std::cout << "fft" << std::endl;

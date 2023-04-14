@@ -33,7 +33,7 @@ private:
 
 public:
     template <unsigned int domain_size, unsigned int codomain_size>
-    static void pf(const function<default_type, domain_size, codomain_size> &f, const unsigned int &order)
+    static void pf(const function<default_type, domain_size, codomain_size> &f, const unsigned int &order, const std::string &output_name)
     {
         std::vector<default_type> x;
         std::vector<default_type> y;
@@ -43,7 +43,7 @@ public:
             y.push_back(std::log(f.get_codomain(i).val()));
         }
 
-        std::ofstream output_file("output/peaks_migration.csv");
+        std::ofstream output_file("output/" + output_name + ".csv");
         output_file << "degree,";
         for (unsigned int i = 0; i < order; i++)
             output_file << "b" << i << ",";
@@ -63,9 +63,9 @@ public:
     }
 
     template <unsigned int domain_size, unsigned int codomain_size>
-    static void pf(const std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> &fs, const unsigned int &order)
+    static void pf(const std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> &fs, const unsigned int &order, const std::string &output_name)
     {
-        std::ofstream output_file("output/polynomial_fit.csv");
+        std::ofstream output_file("output/" + output_name + ".csv");
         output_file << "degree,f1,f2,";
         for (unsigned int i = 0; i < order; i++)
             output_file << "b" << i << ",";

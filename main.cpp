@@ -102,17 +102,20 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
 
 int main()
 {
-    std::vector<std::string> csv_files;
     std::string path = ".";
+    std::vector<std::string> csv_files;
     for (const auto &entry : std::filesystem::directory_iterator(path))
     {
         if (entry.path().extension() == ".csv")
         {
-            std::string filename = std::filesystem::path(entry.path()).filename();
+            std::string filename = std::filesystem::path(entry.path()).filename().string();
             csv_files.push_back(filename);
             std::cout << "Found " << filename << std::endl;
         }
     }
+
+    if (csv_files.size() == 0)
+        throw std::runtime_error("no csv file found");
 
     try
     {
@@ -121,7 +124,7 @@ int main()
         for (std::string file : csv_files)
         {
             std::cout << "File: " << file << std::endl;
-            std::cout << "\tReading...";
+            std::cout << "\tReading..." << std::endl;
 
             std::vector<std::string> axis;
             std::vector<std::vector<std::string>> s_content;
@@ -129,13 +132,11 @@ int main()
                 throw std::runtime_error("error on reading file " + file);
             if (axis.size() > 2)
                 throw std::runtime_error("more than 2 axis not implemented");
-            std::cout << "ok" << std::endl;
 
-            std::cout << "\tParsing...";
+            std::cout << "\tParsing..." << std::endl;
             function<default_type, 1, 1> f;
             if (!get_function(s_content, f))
                 throw std::runtime_error("error on parsing function on file " + file);
-            std::cout << "ok" << std::endl;
 
             fs.push_back(std::make_tuple(file, f));
         }

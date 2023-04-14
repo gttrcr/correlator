@@ -2,3 +2,4 @@
 dev/*
 build/*
 release/*
+output/*

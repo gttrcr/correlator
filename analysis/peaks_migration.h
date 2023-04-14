@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 template <unsigned int domain_size, unsigned int codomain_size>
 std::vector<function<default_type, 1, domain_size>> rotate_fs(const std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> &fs)
 {
@@ -18,5 +20,5 @@ void peaks_migration(const std::vector<std::tuple<std::string, function<default_
 {
     std::vector<function<default_type, 1, domain_size>> rfs = rotate_fs(fs); // rotate the input
     for (unsigned int i = 0; i < rfs.size(); i++)
-        polyfit::pf(rfs[i], rfs[0].size());
+        polyfit::pf(rfs[i], rfs[0].size(), std::to_string(i + 1) + "_peak_migration");
 }
