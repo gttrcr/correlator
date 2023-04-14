@@ -13,7 +13,7 @@
                 "-std=c++17",
                 "-Wall",
                 "-Ldev",
-                "-l:`ls dev/ | grep 'libkissfft-.*so$'`",
+                "-l:libkissfft-float.so",
             ],
             "options": {
                 "cwd": "${fileDirname}"
