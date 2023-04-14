@@ -43,43 +43,46 @@ public:
         return _v[pos];
     }
 
-    vec<size> pow(const long_t_space &d) const
-    {
-        vec<size> v;
-        for (unsigned int i = 0; i < size; i++)
-            v.set(i, std::pow(_v[i], d));
-        return v;
-    }
+    // vec<size> pow(const long_t_space &d) const
+    //{
+    //     vec<size> v;
+    //     for (unsigned int i = 0; i < size; i++)
+    //         v.set(i, std::pow(_v[i], d));
+    //     return v;
+    // }
 
-    vec<size> log() const
-    {
-        vec<size> v;
-        for (unsigned int i = 0; i < size; i++)
-            v.set(i, std::log(_v[i]));
-        return v;
-    }
+    // vec<size> log() const
+    //{
+    //     vec<size> v;
+    //     for (unsigned int i = 0; i < size; i++)
+    //         v.set(i, std::log(_v[i]));
+    //     return v;
+    // }
 
-    vec<1> norm(const long_t_space p = 1) const
+    long_t_space norm(const long_t_space p = 2) const
     {
         long_t_space sum = 0;
         for (unsigned int i = 0; i < size; i++)
             sum += std::pow(std::fabs(_v[i]), p);
-        return vec<1>(std::pow(sum, 1 / p));
+        return std::pow(sum, 1 / p);
     }
 
-    inline bool operator<(const vec<1> &rhs)
+    vec<size> operator-(const vec<size> &v) const
     {
-        return _v[0] < rhs._v[0];
+        vec<size> ret_v;
+        for (unsigned int i = 0; i < size; i++)
+            ret_v.set(i, _v[i] - v._v[i]);
+
+        return ret_v;
+    }
+
+    long_t_space val() const
+    {
+        if (size == 1)
+            return _v[0];
+        throw std::runtime_error("non scalar type");
     }
 };
-
-// template <unsigned int size_1, unsigned int size_2>
-
-// template <unsigned int size_1, unsigned int size_2>
-// inline bool operator>(const vec<size_1> &lhs, const vec<size_2> &rhs)
-//{
-//     return rhs < lhs;
-// }
 
 template <unsigned int size>
 class domain : public vec<size>
@@ -116,12 +119,14 @@ public:
         _f.clear();
     }
 
-    long_t_space get(const unsigned int &pos, const unsigned int &variable_position) const
+    domain<domain_size> get_domain(const unsigned int &pos) const
     {
-        if (variable_position < domain_size)
-            return std::get<0>(_f[pos]).get(variable_position);
-        else
-            return std::get<1>(_f[pos]).get(variable_position - domain_size);
+        return std::get<0>(_f[pos]);
+    }
+
+    codomain<codomain_size> get_codomain(const unsigned int &pos) const
+    {
+        return std::get<1>(_f[pos]);
     }
 
     unsigned int size() const
@@ -162,7 +167,7 @@ public:
 
         // sort descending
         std::sort(cp.begin(), cp.end(), [](const std::tuple<domain<domain_size>, codomain<codomain_size>> &lhs, const std::tuple<domain<domain_size>, codomain<codomain_size>> &rhs)
-                  { return std::get<1>(rhs).norm(2) < std::get<1>(lhs).norm(2); });
+                  { return std::get<1>(rhs).norm() < std::get<1>(lhs).norm(); });
 
         function<domain_size, codomain_size> ret;
         for (unsigned int i = 0; i < number_of_peaks; i++)

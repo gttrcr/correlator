@@ -2,7 +2,7 @@
 
 #include "analysis/polyfit.h"
 #include "analysis/fft.h"
-#include "analysis/peak_migration.h"
+#include "analysis/peaks_migration.h"
 
 #include <fstream>
 #include <filesystem>
@@ -18,6 +18,7 @@ void methods(const std::vector<std::tuple<std::string, function<domain_size, cod
     // compute fft of vector of fs and return their peaks
     std::vector<std::tuple<std::string, function<1, 1>>> spectra = fft(fs);
     std::vector<std::tuple<std::string, function<1, 1>>> peaks = get_norm_peaks(spectra, 5);
+    peaks_migration(peaks);
 
     // ret_peaks.push_back(std::make_tuple(name, peaks(power_spectrum, 5)));
     //  for (unsigned int i = 0; i < peaks.size(); i++)

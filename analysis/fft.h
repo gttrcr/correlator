@@ -16,11 +16,11 @@ std::vector<std::tuple<std::string, function<1, 1>>> fft(const std::vector<std::
         function<domain_size, codomain_size> f = std::get<1>(fs[i]);
         kiss_fft_cpx in[f.size()];
         kiss_fft_cpx out[f.size()];
-        long_t_space sampling_time = f.get(1, 0) - f.get(0, 0);
+        long_t_space sampling_time = (f.get_domain(1) - f.get_domain(0)).val();
         for (unsigned int j = 0; j < f.size(); j++)
         {
-            in[j] = {(kiss_fft_scalar)f.get(j, domain_size), 0};
-            if (sampling_time != 0 && j > 0 && std::fabs(sampling_time - (f.get(j, 0) - f.get(j - 1, 0))) > 100 * std::numeric_limits<t_space>::epsilon())
+            in[j] = {(kiss_fft_scalar)f.get_codomain(j).val(), 0};
+            if (sampling_time != 0 && j > 0 && std::fabs(sampling_time - (f.get_domain(j) - f.get_domain(j - 1)).val()) > 100 * std::numeric_limits<t_space>::epsilon())
                 sampling_time = 0;
         }
 
@@ -58,7 +58,7 @@ std::vector<std::tuple<std::string, function<domain_size, 1>>> get_norm_peaks(co
     {
         std::string name = std::get<0>(fs[i]);
         function<domain_size, codomain_size> f = std::get<1>(fs[i]);
-        norm_peaks.push_back(std::make_tuple(name, f.norm(2).maximas(number_of_peaks)));
+        norm_peaks.push_back(std::make_tuple(name, f.maximas(number_of_peaks)));
     }
 
     return norm_peaks;

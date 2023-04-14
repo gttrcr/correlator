@@ -15,7 +15,7 @@ void polyfit(const std::vector<t_space> &t, const std::vector<t_space> &v, std::
     // check to make sure inputs are correct
     assert(t.size() == v.size());
     assert(t.size() >= order + 1);
-    
+
     // Populate the matrix
     for (size_t i = 0; i < t.size(); ++i)
         for (size_t j = 0; j < order + 1; ++j)
@@ -33,11 +33,11 @@ std::vector<long_t_space> polyfit(const function<domain_size, codomain_size> &f1
 {
     std::vector<t_space> x;
     for (unsigned int i = 0; i < f1.size(); i++)
-        x.push_back(f1.get(i, 1));
+        x.push_back(f1.get_codomain(i).val());
 
     std::vector<t_space> y;
     for (unsigned int i = 0; i < f2.size(); i++)
-        y.push_back(f2.get(i, 1));
+        y.push_back(f2.get_codomain(i).val());
 
     std::vector<long_t_space> c;
     polyfit(x, y, c, order);
