@@ -7,6 +7,8 @@ x86_64-w64-mingw32-g++ -O3 main.cpp -o release/w/correlator.exe -std=c++17 -Wall
 cp dev/`ls dev/ | grep 'libkissfft-.*so$'` release/w/
 if [ -z `ls release/w | grep correlator` ]; then
     echo "error on release for win"
+else
+    rm release/w/log
 fi
 
 echo "building for linux platform..."
@@ -16,4 +18,6 @@ g++ -O3 main.cpp -o release/l/correlator -std=c++17 -Wall -Ldev -l:`ls dev/ | gr
 cp dev/`ls dev/ | grep 'libkissfft-.*so$'` release/l/
 if [ -z `ls release/l | grep correlator` ]; then
     echo "error on release for linux"
+else
+    rm release/l/log
 fi
