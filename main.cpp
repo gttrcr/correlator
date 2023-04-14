@@ -153,4 +153,9 @@ int main()
         std::cerr << e.what() << '\n';
         return -1;
     }
+    catch (...)
+    {
+        std::cout << "generic error" << std::endl;
+        return -1;
+    }
 }

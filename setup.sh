@@ -7,6 +7,7 @@ sudo apt install fftw3 fftw3-dev -y
 sudo apt install mingw-w64 -y
 sudo apt install cmake -y
 sudo apt install pkg-config -y
+sudo apt install zip -y
 
 platform=0
 if [ -z "$1" ]; then
