@@ -23,5 +23,6 @@ Every execution of ```correlator``` do the following:
 
 ## upcoming features
 1. fft of peaks at point 4.
-2. Compute the best polynomial fit for the distribution of peaks at point 4.
-3. ```correlator``` will listen to new data (by socket, by pipe, by stream, by api, ...) and compute real time statistics.
+2. multidimensional fft
+3. Compute the best polynomial fit for the distribution of peaks at point 4.
+4. ```correlator``` will listen to new data (by socket, by pipe, by stream, by api, ...) and compute real time statistics.

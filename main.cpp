@@ -1,3 +1,7 @@
+#define default_type double
+#define polyfit_max_degree 15
+#define fft_peaks_number 5
+
 #include "space.h"
 #include "statistics.h"
 #include "methods.h"
@@ -55,7 +59,7 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
 }
 
 template <unsigned int domain_size, unsigned int codomain_size>
-bool get_function(const std::vector<std::vector<std::string>> &s_content, function<domain_size, codomain_size> &f)
+bool get_function(const std::vector<std::vector<std::string>> &s_content, function<default_type, domain_size, codomain_size> &f)
 {
     if (s_content.size() == 0)
         return false;
@@ -63,14 +67,14 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
     if (s_content[0].size() != domain_size + codomain_size)
         return false;
 
-    std::vector<std::vector<long_t_space>> d_content;
+    std::vector<std::vector<default_type>> d_content;
     for (unsigned int i = 0; i < s_content.size(); i++)
     {
-        std::vector<long_t_space> d_cont;
+        std::vector<default_type> d_cont;
         for (unsigned int j = 0; j < s_content[i].size(); j++)
         {
-            long_t_space d = std::stod(s_content[i][j]);
-            if (d == std::numeric_limits<long_t_space>::infinity())
+            default_type d = std::stod(s_content[i][j]);
+            if (d == std::numeric_limits<default_type>::infinity())
                 throw std::runtime_error("nan or infinity number");
             d_cont.push_back(d);
         }
@@ -80,8 +84,8 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
     f.clear();
     for (unsigned int i = 0; i < d_content.size(); i++)
     {
-        domain<domain_size> d;
-        codomain<codomain_size> c;
+        domain<default_type, domain_size> d;
+        codomain<default_type, codomain_size> c;
         for (unsigned int j = 0; j < d_content[i].size(); j++)
         {
             if (j < domain_size)
@@ -104,15 +108,16 @@ int main()
     {
         if (entry.path().extension() == ".csv")
         {
-            csv_files.push_back(entry.path().string());
-            std::cout << "Found " << entry.path() << std::endl;
+            std::string filename = std::filesystem::path(entry.path()).filename();
+            csv_files.push_back(filename);
+            std::cout << "Found " << filename << std::endl;
         }
     }
 
     try
     {
         std::sort(csv_files.begin(), csv_files.end());
-        std::vector<std::tuple<std::string, function<1, 1>>> fs;
+        std::vector<std::tuple<std::string, function<default_type, 1, 1>>> fs;
         for (std::string file : csv_files)
         {
             std::cout << "File: " << file << std::endl;
@@ -127,7 +132,7 @@ int main()
             std::cout << "ok" << std::endl;
 
             std::cout << "\tParsing...";
-            function<1, 1> f;
+            function<default_type, 1, 1> f;
             if (!get_function(s_content, f))
                 throw std::runtime_error("error on parsing function on file " + file);
             std::cout << "ok" << std::endl;
@@ -136,9 +141,9 @@ int main()
         }
 
         std::cout << std::setprecision(16);
-        std::cout << "Correlating...";
+        std::cout << "Correlating..." << std::endl;
         methods(fs);
-        std::cout << "ok" << std::endl;
+        std::cout << "Done" << std::endl;
 
         return 0;
     }

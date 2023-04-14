@@ -8,26 +8,25 @@
 #include <filesystem>
 
 template <unsigned int domain_size, unsigned int codomain_size>
-void methods(const std::vector<std::tuple<std::string, function<domain_size, codomain_size>>> &fs)
+void methods(const std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> &fs)
 {
     std::filesystem::create_directory("output");
 
     // compute best polynomial fit
-    polyfit(fs, 15);
+    std::cout << "polyfit..." << std::endl;
+    polyfit::pf(fs, polyfit_max_degree);
 
     // compute fft of vector of fs and return their peaks
-    std::vector<std::tuple<std::string, function<1, 1>>> spectra = fft(fs);
-    std::vector<std::tuple<std::string, function<1, 1>>> peaks = get_norm_peaks(spectra, 5);
+    std::cout << "fft" << std::endl;
+    std::vector<std::tuple<std::string, function<default_type, 1, 1>>> spectra = fft(fs);
+
+    // get peaks
+    std::cout << "peaks..." << std::endl;
+    std::vector<std::tuple<std::string, function<default_type, 1, 1>>> peaks = get_norm_peaks(spectra, fft_peaks_number);
+
+    std::cout << "peaks polyfit..." << std::endl;
     peaks_migration(peaks);
 
-    // ret_peaks.push_back(std::make_tuple(name, peaks(power_spectrum, 5)));
-    //  for (unsigned int i = 0; i < peaks.size(); i++)
-    //{
-    //      // std::ofstream output_file("output/fft_peak_" + std::get<0>(fs[0]) + ".csv");
-    //      // output_file << "frequency,power" << std::endl;
-    //      // for (unsigned int j = 0; j < peaks[i].size(); j++)
-    //      //     output_file << peaks[i][j] << ",";
-    //      // output_file << std::endl;
-    //      // output_file.close();
-    //  }
+    // std::cout << "peaks fft..." << std::endl;
+    // peaks_fft();
 }
