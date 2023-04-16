@@ -14,6 +14,20 @@
 #include <string>
 #include <filesystem>
 
+std::vector<std::string> get_csv_files(const std::string &path)
+{
+    std::vector<std::string> csv_files;
+    for (const auto &entry : std::filesystem::directory_iterator(path))
+    {
+        if (entry.path().extension() == ".csv")
+        {
+            std::string filename = std::filesystem::path(entry.path()).filename().string();
+            csv_files.push_back(filename);
+            std::cout << "Found " << filename << std::endl;
+        }
+    }
+}
+
 bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s_content, std::vector<std::string> &axis)
 {
     s_content.clear();
@@ -100,47 +114,44 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
     return true;
 }
 
-int main()
+template <unsigned int domain_size, unsigned int codomain_size>
+std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> get_functions(std::vector<std::string> &csv_files)
 {
-    std::string path = ".";
-    std::vector<std::string> csv_files;
-    for (const auto &entry : std::filesystem::directory_iterator(path))
+    std::sort(csv_files.begin(), csv_files.end());
+    std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> fs;
+    for (std::string file : csv_files)
     {
-        if (entry.path().extension() == ".csv")
-        {
-            std::string filename = std::filesystem::path(entry.path()).filename().string();
-            csv_files.push_back(filename);
-            std::cout << "Found " << filename << std::endl;
-        }
+        std::cout << "File: " << file << std::endl;
+        std::cout << "\tReading..." << std::endl;
+
+        std::vector<std::string> axis;
+        std::vector<std::vector<std::string>> s_content;
+        if (!read_csv(file, s_content, axis))
+            throw std::runtime_error("error on reading");
+        if (axis.size() > domain_size + codomain_size)
+            throw std::runtime_error("function a number of dimensions (" + std::to_string(domain_size + codomain_size) + ") not implemented");
+
+        std::cout << "\tParsing..." << std::endl;
+        function<default_type, domain_size, codomain_size> f;
+        if (!get_function(s_content, f))
+            throw std::runtime_error("error on parsing function");
+
+        fs.push_back(std::make_tuple(file, f));
     }
 
+    return fs;
+}
+
+int main(int argc, char *argv[])
+{
+    std::string path = ".";
+    std::vector<std::string> csv_files = get_csv_files(path);
     if (csv_files.size() == 0)
         throw std::runtime_error("no csv file found");
 
     try
     {
-        std::sort(csv_files.begin(), csv_files.end());
-        std::vector<std::tuple<std::string, function<default_type, 1, 1>>> fs;
-        for (std::string file : csv_files)
-        {
-            std::cout << "File: " << file << std::endl;
-            std::cout << "\tReading..." << std::endl;
-
-            std::vector<std::string> axis;
-            std::vector<std::vector<std::string>> s_content;
-            if (!read_csv(file, s_content, axis))
-                throw std::runtime_error("error on reading file " + file);
-            if (axis.size() > 2)
-                throw std::runtime_error("more than 2 axis not implemented");
-
-            std::cout << "\tParsing..." << std::endl;
-            function<default_type, 1, 1> f;
-            if (!get_function(s_content, f))
-                throw std::runtime_error("error on parsing function on file " + file);
-
-            fs.push_back(std::make_tuple(file, f));
-        }
-
+        std::vector<std::tuple<std::string, function<default_type, 1, 1>>> fs = get_functions<1, 1>(csv_files);
         std::cout << std::setprecision(16);
         std::cout << "Correlating..." << std::endl;
         methods(fs);

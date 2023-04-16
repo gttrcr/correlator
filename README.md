@@ -20,13 +20,11 @@ Every execution of ```correlator``` do the following:
 ## Dev section
 ### setup
 Launch ```./setup.sh platform``` where ```platform``` is:
-* ```w``` for windows
-* ```l```for linux
+* ```win32``` for windows 32 bits
+* ```win64``` for windows 64 bits
+* ```linux```for linux
 
 It sets up the system, update and init all submodules, configure the platform and the compiler.
-
-### build
-Launch  ```./build.sh```. It builds for every supported platform
 
 ### release
 Launch ```./release.sh```. It releases every supported platform
