@@ -1,26 +1,44 @@
+OPT_LEVEL="-g"
+
 rm -r release
 
-echo "building for win platform..."
-mkdir -p release/win
-./setup.sh w > release/win/log 2>&1
-x86_64-w64-mingw32-g++ -O3 main.cpp -o release/win/correlator.exe -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/win/log 2>&1
-cp dev/libkissfft-float.so release/win/
-mv release/win/libkissfft-float.so release/win/libkissfft-float.so.131.1.0
-if [ -z `ls release/win | grep correlator` ]; then
-    echo "error on release for win"
-else
-    rm release/win/log
-    zip -r release/win.zip release/win
-fi
+execute ()
+{
+    echo "building for $PLATFORM platform..."
+    mkdir -p release/$PLATFORM
+    ./setup.sh $PLATFORM > release/$PLATFORM/log 2>&1
 
-echo "building for linux platform..."
-mkdir -p release/linux
-./setup.sh l > release/linux/log 2>&1
-g++ -O3 main.cpp -o release/linux/correlator -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/linux/log 2>&1
-cp dev/libkissfft-float.so release/linux/
-if [ -z `ls release/linux | grep correlator` ]; then
-    echo "error on release for linux"
-else
-    rm release/linux/log
-    zip -r release/linux.zip release/linux
-fi
+    if [ "$PLATFORM" == "win32" ]; then
+        i686-w64-mingw32-g++ $OPT_LEVEL main.cpp -o release/$PLATFORM/correlator.exe -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/$PLATFORM/log 2>&1
+    elif [ "$PLATFORM" == "win64" ]; then
+        x86_64-w64-mingw32-g++ $OPT_LEVEL main.cpp -m64 -DBITS=64 -o release/$PLATFORM/correlator.exe -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/$PLATFORM/log 2>&1
+    elif [ "$PLATFORM" == "linux" ]; then
+        g++ $OPT_LEVEL main.cpp -o release/$PLATFORM/correlator -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/$PLATFORM/log 2>&1
+    else
+        echo "Unknown platform $PLATFORM"
+        exit
+    fi
+
+    cp dev/libkissfft-float.so release/$PLATFORM/
+    
+    if [ "$PLATFORM" == *"win"* ]; then
+        mv release/$PLATFORM/libkissfft-float.so release/$PLATFORM/libkissfft-float.so.131.1.0
+    fi
+    
+    if [ -z `ls release/$PLATFORM | grep correlator` ]; then
+        echo "Error on release for $PLATFORM"
+        exit
+    else
+        rm release/$PLATFORM/log
+        zip -r release/$PLATFORM.zip release/$PLATFORM
+    fi
+}
+
+PLATFORM="win32"
+execute
+
+PLATFORM="win64"
+execute
+
+PLATFORM="linux"
+execute
