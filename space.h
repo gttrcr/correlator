@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include <vector>
@@ -6,25 +7,22 @@
 #include <cmath>
 #include <algorithm>
 
-// #define default_type double
-// #define default_type long default_type
-
-template <typename T, unsigned int size>
+template <unsigned int dim = 1, typename T = default_type>
 class vec
 {
 private:
-    T _v[size];
+    T _v[dim];
 
 public:
     vec()
     {
-        for (unsigned int i = 0; i < size; i++)
+        for (unsigned int i = 0; i < dim; i++)
             _v[i] = 0;
     }
 
-    vec(const vec<T, size> &v)
+    vec(const vec<dim, T> &v)
     {
-        for (unsigned int i = 0; i < size; i++)
+        for (unsigned int i = 0; i < dim; i++)
             _v[i] = v.get(i);
     }
 
@@ -43,58 +41,55 @@ public:
         return _v[pos];
     }
 
+    unsigned int size() const
+    {
+        return dim;
+    }
+
     T norm(const double p = 2) const
     {
         T sum = 0;
-        for (unsigned int i = 0; i < size; i++)
+        for (unsigned int i = 0; i < dim; i++)
             sum += std::pow(std::fabs(_v[i]), p);
         return std::pow(sum, 1 / p);
     }
 
-    vec<T, size> operator-(const vec<T, size> &v) const
+    vec<dim, T> operator-(const vec<dim, T> &v) const
     {
-        vec<T, size> ret_v;
-        for (unsigned int i = 0; i < size; i++)
+        vec<dim, T> ret_v;
+        for (unsigned int i = 0; i < dim; i++)
             ret_v.set(i, _v[i] - v._v[i]);
 
         return ret_v;
     }
-
-    // TODO remove this function and use the multidimensional analysis
-    T val() const
-    {
-        if (size == 1)
-            return _v[0];
-        throw std::runtime_error("non scalar type");
-    }
 };
 
-template <typename T, unsigned int size>
-class domain : public vec<T, size>
+template <unsigned int dim = 1, typename T = default_type>
+class domain : public vec<dim, T>
 {
 public:
     domain() = default;
 
-    domain(const vec<T, size> &v) : vec<T, size>(v) {}
+    domain(const vec<dim, T> &v) : vec<dim, T>(v) {}
 };
 
-template <typename T, unsigned int size>
-class codomain : public vec<T, size>
+template <unsigned int dim = 1, typename T = default_type>
+class codomain : public vec<dim, T>
 {
 public:
     codomain() = default;
 
-    codomain(const vec<T, size> &v) : vec<T, size>(v) {}
+    codomain(const vec<dim, T> &v) : vec<dim, T>(v) {}
 };
 
-template <typename T, unsigned int domain_size, unsigned int codomain_size>
+template <unsigned int domain_dim = 1, unsigned int codomain_dim = 1, typename T = default_type>
 class function
 {
 private:
-    std::vector<std::tuple<domain<T, domain_size>, codomain<T, codomain_size>>> _f;
+    std::vector<std::tuple<domain<domain_dim, T>, codomain<codomain_dim, T>>> _f;
 
 public:
-    void set(const domain<T, domain_size> &d, const codomain<T, codomain_size> &c)
+    void set(const domain<domain_dim, T> &d, const codomain<codomain_dim, T> &c)
     {
         _f.push_back(std::make_tuple(d, c));
     }
@@ -104,12 +99,12 @@ public:
         _f.clear();
     }
 
-    domain<T, domain_size> get_domain(const unsigned int &pos) const
+    domain<domain_dim, T> get_domain(const unsigned int &pos) const
     {
         return std::get<0>(_f[pos]);
     }
 
-    codomain<T, codomain_size> get_codomain(const unsigned int &pos) const
+    codomain<codomain_dim, T> get_codomain(const unsigned int &pos) const
     {
         return std::get<1>(_f[pos]);
     }
@@ -119,27 +114,28 @@ public:
         return _f.size();
     }
 
-    function<T, domain_size, 1> norm(const double &p) const
+    function<domain_dim, 1, T> norm(const double &p) const
     {
-        function<default_type, domain_size, 1> f;
-        for (unsigned int i = 0; i < _f.size(); i++)
-            f.set(std::get<0>(_f[i]), std::get<1>(_f[i]).norm(p));
+        function<domain_dim, 1> f;
+        for (unsigned int i = 0; i < _f.dim(); i++)
+            f.set(std::get<0>(_f[i]), std::get(_f[i]).norm(p));
 
         return f;
     }
 
-    function<T, domain_size, codomain_size> maximas(const unsigned int &number_of_peaks)
+    function<domain_dim, codomain_dim, T> maximas(const unsigned int &number_of_peaks)
     {
-        std::vector<std::tuple<domain<T, domain_size>, codomain<T, codomain_size>>> cp(_f);
+        std::vector<std::tuple<domain<domain_dim, T>, codomain<codomain_dim, T>>> cp(_f);
 
         // sort descending
-        std::sort(cp.begin(), cp.end(), [](const std::tuple<domain<T, domain_size>, codomain<T, codomain_size>> &lhs, const std::tuple<domain<default_type, domain_size>, codomain<default_type, codomain_size>> &rhs)
-                  { return std::get<1>(rhs).norm() < std::get<1>(lhs).norm(); });
+        std::sort(cp.begin(), cp.end(), [](const std::tuple<domain<domain_dim, T>, codomain<codomain_dim, T>> &lhs, const std::tuple<domain<domain_dim>, codomain<codomain_dim>> &rhs)
+                  { return std::get(rhs).norm() < std::get(lhs).norm(); });
 
-        function<T, domain_size, codomain_size> ret;
+        function<domain_dim, codomain_dim, T> ret;
         for (unsigned int i = 0; i < number_of_peaks; i++)
-            ret.set(std::get<0>(cp[i]), std::get<1>(cp[i]));
+            ret.set(std::get<0>(cp[i]), std::get(cp[i]));
 
         return ret;
     }
 };
+*/

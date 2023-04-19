@@ -1,9 +1,4 @@
-#define default_type double
-#define polyfit_max_degree 15
-#define fft_peaks_number 5
-
-#include "space.h"
-#include "statistics.h"
+#include "function.h"
 #include "methods.h"
 
 #include <iostream>
@@ -13,6 +8,7 @@
 #include <algorithm>
 #include <string>
 #include <filesystem>
+#include <map>
 
 std::vector<std::string> get_csv_files(const std::string &path)
 {
@@ -26,6 +22,8 @@ std::vector<std::string> get_csv_files(const std::string &path)
             std::cout << "Found " << filename << std::endl;
         }
     }
+
+    return csv_files;
 }
 
 bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s_content, std::vector<std::string> &axis)
@@ -72,13 +70,12 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
     return false;
 }
 
-template <unsigned int domain_size, unsigned int codomain_size>
-bool get_function(const std::vector<std::vector<std::string>> &s_content, function<default_type, domain_size, codomain_size> &f)
+bool get_function(const std::vector<std::vector<std::string>> &s_content, function &f)
 {
     if (s_content.size() == 0)
         return false;
 
-    if (s_content[0].size() != domain_size + codomain_size)
+    if (s_content[0].size() != DOM_CODOM_DIM)
         return false;
 
     std::vector<std::vector<default_type>> d_content;
@@ -97,28 +94,15 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
 
     f.clear();
     for (unsigned int i = 0; i < d_content.size(); i++)
-    {
-        domain<default_type, domain_size> d;
-        codomain<default_type, codomain_size> c;
-        for (unsigned int j = 0; j < d_content[i].size(); j++)
-        {
-            if (j < domain_size)
-                d.set(j, d_content[i][j]);
-            if (j >= domain_size)
-                c.set(j - domain_size, d_content[i][j]);
-        }
-
-        f.set(d, c);
-    }
+        f.push_back(std::pair(d_content[i][0], d_content[i][1]));
 
     return true;
 }
 
-template <unsigned int domain_size, unsigned int codomain_size>
-std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> get_functions(std::vector<std::string> &csv_files)
+std::map<std::string, function> get_functions(std::vector<std::string> &csv_files)
 {
     std::sort(csv_files.begin(), csv_files.end());
-    std::vector<std::tuple<std::string, function<default_type, domain_size, codomain_size>>> fs;
+    std::map<std::string, function> fs;
     for (std::string file : csv_files)
     {
         std::cout << "File: " << file << std::endl;
@@ -128,15 +112,15 @@ std::vector<std::tuple<std::string, function<default_type, domain_size, codomain
         std::vector<std::vector<std::string>> s_content;
         if (!read_csv(file, s_content, axis))
             throw std::runtime_error("error on reading");
-        if (axis.size() > domain_size + codomain_size)
-            throw std::runtime_error("function a number of dimensions (" + std::to_string(domain_size + codomain_size) + ") not implemented");
+        if (axis.size() > DOM_CODOM_DIM)
+            throw std::runtime_error("function a number of dimensions " + std::to_string(DOM_CODOM_DIM) + " not implemented");
 
         std::cout << "\tParsing..." << std::endl;
-        function<default_type, domain_size, codomain_size> f;
+        function f;
         if (!get_function(s_content, f))
             throw std::runtime_error("error on parsing function");
 
-        fs.push_back(std::make_tuple(file, f));
+        fs[file] = f;
     }
 
     return fs;
@@ -151,7 +135,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        std::vector<std::tuple<std::string, function<default_type, 1, 1>>> fs = get_functions<1, 1>(csv_files);
+        std::map<std::string, function> fs = get_functions(csv_files);
         std::cout << std::setprecision(16);
         std::cout << "Correlating..." << std::endl;
         methods(fs);
