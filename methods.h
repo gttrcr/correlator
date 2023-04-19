@@ -28,10 +28,10 @@ void methods(const std::map<std::string, function> &fs)
     // get peaks
     std::cout << "peaks..." << std::endl;
     std::map<std::string, function> peaks = get_peaks(spectra, fft_peaks_number);
-    //
+
     // std::cout << "peaks polyfit..." << std::endl;
     // peaks_migration(peaks);
-
+    //
     // std::cout << "peaks fft..." << std::endl;
     // peaks_fft();
 }
