@@ -2,23 +2,17 @@
 
 #include "../function.h"
 
-// template <unsigned int domain_dim, unsigned int codomain_dim>
-// std::vector<function<1, domain_dim>> rotate_fs(const std::vector<std::tuple<std::string, function<domain_dim, codomain_dim>>> &fs)
-//{
-//     std::vector<function<1, domain_dim>> rotated(std::get(fs[0]).size());
-//     for (unsigned int i = 0; i < rotated.size(); i++)
-//     {
-//         for (unsigned int j = 0; j < fs.size(); j++)
-//             rotated[i].set(domain(j), std::get(fs[j]).get_domain(i));
-//     }
-//
-//     return rotated;
-// }
-//
-// template <unsigned int domain_dim, unsigned int codomain_dim>
-// void peaks_migration(const std::vector<std::tuple<std::string, function<domain_dim, codomain_dim>>> &fs)
-//{
-//     std::vector<function<1, domain_dim>> rfs = rotate_fs(fs); // rotate the input
-//     for (unsigned int i = 0; i < rfs.size(); i++)
-//         polyfit::pf(rfs[i], rfs[0].size(), std::to_string(i + 1) + "_peak_migration");
-// }
+#include <iostream>
+
+std::map<std::string, function> rotate(const std::map<std::string, function> &fs)
+{
+    std::map<std::string, function> rotated;
+    for (unsigned int i = 0; i < fs.begin()->second.size(); i++)
+    {
+        ddt j = 0;
+        for (const std::pair<std::string, function> p : fs)
+            rotated[std::to_string(i)].push_back(pair(j++, p.second[i].first));
+    }
+
+    return rotated;
+}

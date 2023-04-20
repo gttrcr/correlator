@@ -12,10 +12,21 @@
 class polyfit
 {
 private:
-    static void _polyfit(const std::vector<default_type> &x, const std::vector<default_type> &y, std::vector<default_type> &coeff, const unsigned int &order)
+    template <typename T>
+    static std::vector<double> to_double(const std::vector<T> &v)
     {
+        std::vector<double> ret;
+        for (unsigned int i = 0; i < v.size(); i++)
+            ret.push_back((double)v[i]);
+
+        return ret;
+    }
+
+    static void _polyfit(const std::vector<ddt> &x, const std::vector<cdt> &y, std::vector<cdt> &coeff, const unsigned int &order)
+    {
+        std::vector<double> y_double = to_double(y);
         Eigen::MatrixXd T(x.size(), order + 1);
-        Eigen::VectorXd V = Eigen::VectorXd::Map(&y.front(), y.size());
+        Eigen::VectorXd V = Eigen::VectorXd::Map(&y_double.front(), y_double.size());
         Eigen::VectorXd result;
 
         assert(x.size() == y.size());
@@ -32,7 +43,7 @@ private:
     }
 
 public:
-    static void pf(const function &f, const unsigned int &order, const std::string &output_name)
+    static void compute(const function &f, const unsigned int &order, const std::string &output_name)
     {
         std::ofstream output_file("output/" + output_name + ".csv");
         output_file << "degree,r^2,";
@@ -42,11 +53,11 @@ public:
 
         for (unsigned int ord = 0; ord < order; ord++)
         {
-            std::vector<default_type> x = get_domain(f);
-            std::vector<default_type> y = get_codomain(f);
-            std::vector<default_type> c;
+            std::vector<ddt> x = get_domain(f);
+            std::vector<cdt> y = get_codomain(f);
+            std::vector<cdt> c;
             _polyfit(x, y, c, ord);
-            default_type r2 = statistics::get_r2(x, y, c);
+            cdt r2 = statistics::get_r2(x, y, c);
             output_file << ord << "," << r2 << ",";
             for (unsigned int o = 0; o < c.size(); o++)
                 output_file << c[o] << ",";
@@ -56,7 +67,7 @@ public:
         output_file.close();
     }
 
-    static void pf(const std::map<std::string, function> &fs, const unsigned int &order, const std::string &output_name)
+    static void compute(const std::map<std::string, function> &fs, const unsigned int &order, const std::string &output_name)
     {
         std::ofstream output_file("output/" + output_name + ".csv");
         output_file << "degree,r^2,f1,f2,";
@@ -73,11 +84,11 @@ public:
                     if (f1.first == f2.first)
                         continue;
 
-                    std::vector<default_type> x = get_domain(f1.second);
-                    std::vector<default_type> y = get_codomain(f2.second);
-                    std::vector<default_type> c;
+                    std::vector<ddt> x = get_domain(f1.second);
+                    std::vector<cdt> y = get_codomain(f2.second);
+                    std::vector<cdt> c;
                     _polyfit(x, y, c, ord);
-                    default_type r2 = statistics::get_r2(x, y, c);
+                    cdt r2 = statistics::get_r2(x, y, c);
                     output_file << ord << "," << r2 << "," << f1.first << "," << f2.first << ",";
                     for (unsigned int o = 0; o < c.size(); o++)
                         output_file << c[o] << ",";

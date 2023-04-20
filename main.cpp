@@ -1,5 +1,9 @@
 #include "function.h"
-#include "methods.h"
+
+#include "analysis/polyfit.h"
+#include "analysis/fft.h"
+#include "analysis/peaks_migration.h"
+#include "analysis/seeker.h"
 
 #include <iostream>
 #include <sstream>
@@ -78,23 +82,23 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
     if (s_content[0].size() != DOM_CODOM_DIM)
         return false;
 
-    std::vector<std::vector<default_type>> d_content;
+    f.clear();
     for (unsigned int i = 0; i < s_content.size(); i++)
     {
-        std::vector<default_type> d_cont;
-        for (unsigned int j = 0; j < s_content[i].size(); j++)
+        if (s_content[i].size() > 1)
         {
-            default_type d = std::stod(s_content[i][j]);
-            if (d == std::numeric_limits<default_type>::infinity())
-                throw std::runtime_error("nan or infinity number");
-            d_cont.push_back(d);
+            for (unsigned int j = 0; j < s_content[i].size(); j++)
+            {
+                cdt d = std::stod(s_content[i][j]);
+                if (d == std::numeric_limits<cdt>::infinity())
+                    throw std::runtime_error("nan or infinity number");
+            }
         }
-        d_content.push_back(d_cont);
-    }
+        else
+            throw std::runtime_error("the function has dimension less than 2");
 
-    f.clear();
-    for (unsigned int i = 0; i < d_content.size(); i++)
-        f.push_back(std::pair(d_content[i][0], d_content[i][1]));
+        f.push_back(pair(std::stod(s_content[i][0]), std::stod(s_content[i][1])));
+    }
 
     return true;
 }
@@ -126,6 +130,36 @@ std::map<std::string, function> get_functions(std::vector<std::string> &csv_file
     return fs;
 }
 
+void methods(const std::map<std::string, function> &fs)
+{
+    std::filesystem::create_directory("output");
+
+    // compute best polynomial fit
+    std::cout << "polyfit..." << std::endl;
+    for (const std::pair<std::string, function> f : fs)
+        polyfit::compute(f.second, polyfit_max_degree, "polyfit_" + std::filesystem::path(f.first).stem().string());
+    if (fs.size() > 1)
+        polyfit::compute(fs, polyfit_max_degree, "polyfit");
+
+    // compute fft of vector of fs and return their peaks
+    std::cout << "fft" << std::endl;
+    std::map<std::string, function> spectra = fft::compute(fs);
+
+    // get peaks
+    std::cout << "peaks..." << std::endl;
+    std::map<std::string, function> peaks = fft::get_peaks(spectra, fft_peaks_number);
+
+    // peaks migration
+    std::cout << "peaks polyfit..." << std::endl;
+    std::map<std::string, function> rotated_peaks = rotate(peaks);
+    for (const std::pair<std::string, function> f : rotated_peaks)
+        polyfit::compute(f.second, f.second.size(), "peak_migr" + std::filesystem::path(f.first).stem().string());
+
+#ifdef INTEGERS
+    seeker::compute();
+#endif
+}
+
 int main(int argc, char *argv[])
 {
     std::string path = ".";
@@ -136,7 +170,6 @@ int main(int argc, char *argv[])
     try
     {
         std::map<std::string, function> fs = get_functions(csv_files);
-        std::cout << std::setprecision(16);
         std::cout << "Correlating..." << std::endl;
         methods(fs);
         std::cout << "Done" << std::endl;
