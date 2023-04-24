@@ -30,6 +30,10 @@ execute ()
         exit
     else
         rm release/$PLATFORM/log
+        cp a_6_28.csv release/$PLATFORM
+        cp b_9_42.csv release/$PLATFORM
+        cp c_14_13.csv release/$PLATFORM
+        cp d_21_20.csv release/$PLATFORM
         cd release
         zip -r $PLATFORM.zip $PLATFORM/
         cd ..
