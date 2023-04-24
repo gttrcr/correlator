@@ -1,4 +1,4 @@
-OPT_LEVEL="-g"
+options="-static-libgcc -static-libstdc++ -std=c++17 -Wall -Ldev -l:libkissfft-float.so"
 
 rm -r release
 
@@ -9,11 +9,11 @@ execute ()
     ./setup.sh $PLATFORM > release/$PLATFORM/log 2>&1
 
     if [ "$PLATFORM" == "win32" ]; then
-        i686-w64-mingw32-g++ $OPT_LEVEL main.cpp -o release/$PLATFORM/correlator.exe -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/$PLATFORM/log 2>&1
+        i686-w64-mingw32-g++ main.cpp -o release/$PLATFORM/correlator.exe -static $options >> release/$PLATFORM/log 2>&1
     elif [ "$PLATFORM" == "win64" ]; then
-        x86_64-w64-mingw32-g++ $OPT_LEVEL main.cpp -m64 -DBITS=64 -o release/$PLATFORM/correlator.exe -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/$PLATFORM/log 2>&1
+        x86_64-w64-mingw32-g++ main.cpp -m64 -DBITS=64 -o release/$PLATFORM/correlator.exe -static $options >> release/$PLATFORM/log 2>&1
     elif [ "$PLATFORM" == "linux" ]; then
-        g++ $OPT_LEVEL main.cpp -o release/$PLATFORM/correlator -std=c++17 -Wall -Ldev -l:libkissfft-float.so >> release/$PLATFORM/log 2>&1
+        g++ main.cpp -o release/$PLATFORM/correlator $options >> release/$PLATFORM/log 2>&1
     else
         echo "Unknown platform $PLATFORM"
         exit
@@ -21,7 +21,7 @@ execute ()
 
     cp dev/libkissfft-float.so release/$PLATFORM/
     
-    if [ "$PLATFORM" == *"win"* ]; then
+    if [[ "$PLATFORM" == *"win"* ]]; then
         mv release/$PLATFORM/libkissfft-float.so release/$PLATFORM/libkissfft-float.so.131.1.0
     fi
     
@@ -30,7 +30,9 @@ execute ()
         exit
     else
         rm release/$PLATFORM/log
-        zip -r release/$PLATFORM.zip release/$PLATFORM
+        cd release
+        zip -r $PLATFORM.zip $PLATFORM/
+        cd ..
     fi
 }
 

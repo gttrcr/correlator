@@ -11,6 +11,8 @@ Every execution of ```correlator``` do the following:
 4. Compute peaks in every fft.
 5. Compute the best polynomial fit for the migration of peaks at point 4.
 
+Many datasets are composed of scalar functions or are amenable to real scalar functions. In the most general case, a real scalar function is a function $\sqrt{2}$
+
 ## upcoming features
 1. fft of peaks at point 4.
 2. multidimensional fft
