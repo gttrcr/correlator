@@ -3,8 +3,8 @@
 ## Release and tag
 |Latest|Release|Tag|Win32|Win64|Linux|Link|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|*|Pre|0.1|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)|
-||||||
+|*|Release|0.1|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2)|
+||Pre|0.1|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)|
 
 ## Introduction and motivation
 Many datasets are composed of real scalar functions (scalar function for short) or are amenable to scalar functions. In the most general case, a scalar function is a function $f\colon\mathbb{R}^n\to\mathbb{R}$. Therefore an input csv file with $n+1$ columns is interpreted as a function $f\colon\mathbb{R}^n\to\mathbb{R}$.
