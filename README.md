@@ -3,7 +3,7 @@
 ## Release and tag
 |Latest|Release|Tag|Win32|Win64|Linux|Link|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|*|Pre|0.1|:x:|:heavy_check_mark:|:heavy_check_mark:|[https://github.com/gttrcr/correlator/releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)|
+|*|Pre|0.1|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)|
 ||||||
 
 ## Introduction and motivation
