@@ -22,7 +22,7 @@ private:
         return ret;
     }
 
-    static void _polyfit(const std::vector<ddt> &x, const std::vector<cdt> &y, std::vector<cdt> &coeff, const unsigned int &order)
+    void _polyfit(const std::vector<ddt> &x, const std::vector<cdt> &y, std::vector<cdt> &coeff, const unsigned int &order)
     {
         std::vector<double> y_double = to_double(y);
         Eigen::MatrixXd T(x.size(), order + 1);
@@ -43,7 +43,7 @@ private:
     }
 
 public:
-    static void compute(const function &f, const unsigned int &order, const std::string &output_name)
+    void compute(const function &f, const unsigned int &order, const std::string &output_name)
     {
         std::ofstream output_file("output/" + output_name + ".csv");
         output_file << "degree,r^2,";
@@ -67,7 +67,7 @@ public:
         output_file.close();
     }
 
-    static void compute(const std::map<std::string, function> &fs, const unsigned int &order, const std::string &output_name)
+    void compute(const std::map<std::string, function> &fs, const unsigned int &order, const std::string &output_name)
     {
         std::ofstream output_file("output/" + output_name + ".csv");
         output_file << "degree,r^2,f1,f2,";

@@ -1,9 +1,6 @@
 #include "function.h"
 
-#include "analysis/polyfit.h"
-#include "analysis/fft.h"
-#include "analysis/peaks_migration.h"
-#include "analysis/seeker.h"
+#include "analysis/methods.h"
 
 #include <iostream>
 #include <sstream>
@@ -22,6 +19,7 @@
 #include <unistd.h>
 #define PORT 8080
 
+// get the list of all csv files inside the folder
 std::vector<std::string> get_csv_files(const std::string &path)
 {
     std::vector<std::string> csv_files;
@@ -38,6 +36,7 @@ std::vector<std::string> get_csv_files(const std::string &path)
     return csv_files;
 }
 
+// read a csv file returning content and the list of axis
 bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s_content, std::vector<std::string> &axis)
 {
     s_content.clear();
@@ -82,6 +81,7 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
     return false;
 }
 
+// return a function from content
 bool get_function(const std::vector<std::vector<std::string>> &s_content, function &f)
 {
     if (s_content.size() == 0)
@@ -111,6 +111,7 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
     return true;
 }
 
+// return all functions from csv filename
 std::map<std::string, function> get_functions(std::vector<std::string> &csv_files)
 {
     std::sort(csv_files.begin(), csv_files.end());
@@ -136,36 +137,6 @@ std::map<std::string, function> get_functions(std::vector<std::string> &csv_file
     }
 
     return fs;
-}
-
-void methods(const std::map<std::string, function> &fs)
-{
-    std::filesystem::create_directory("output");
-
-    // compute best polynomial fit
-    std::cout << "polyfit..." << std::endl;
-    for (const std::pair<std::string, function> f : fs)
-        polyfit::compute(f.second, polyfit_max_degree, "polyfit_" + std::filesystem::path(f.first).stem().string());
-    if (fs.size() > 1)
-        polyfit::compute(fs, polyfit_max_degree, "polyfit");
-
-    // compute fft of vector of fs and return their peaks
-    std::cout << "fft" << std::endl;
-    std::map<std::string, function> spectra = fft::compute(fs);
-
-    // get peaks
-    std::cout << "peaks..." << std::endl;
-    std::map<std::string, function> peaks = fft::get_peaks(spectra, fft_peaks_number);
-
-    // peaks migration
-    std::cout << "peaks polyfit..." << std::endl;
-    std::map<std::string, function> rotated_peaks = rotate(peaks);
-    for (const std::pair<std::string, function> f : rotated_peaks)
-        polyfit::compute(f.second, f.second.size(), "peak_migr" + std::filesystem::path(f.first).stem().string());
-
-#ifdef INTEGERS
-    seeker::compute();
-#endif
 }
 
 void socket_server()
@@ -219,7 +190,7 @@ void socket_server()
 
 int main(int argc, char *argv[])
 {
-    //socket_server();
+    // socket_server();
     std::string path = ".";
     std::vector<std::string> csv_files = get_csv_files(path);
     if (csv_files.size() == 0)
@@ -229,7 +200,7 @@ int main(int argc, char *argv[])
     {
         std::map<std::string, function> fs = get_functions(csv_files);
         std::cout << "Correlating..." << std::endl;
-        methods(fs);
+        analysis::methods(fs);
         std::cout << "Done" << std::endl;
 
         return 0;

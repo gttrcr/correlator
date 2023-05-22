@@ -7,13 +7,17 @@
 
 #include <iostream>
 #include <map>
+#include <fstream>
 
 class fft
 {
+private:
+    std::map<std::string, function> _spectra;
+
 public:
-    static std::map<std::string, function> compute(const std::map<std::string, function> &fs)
+    bool compute(const std::map<std::string, function> &fs)
     {
-        std::map<std::string, function> spectra;
+        _spectra.clear();
         for (const std::pair<std::string, function> f : fs)
         {
             std::string name = f.first;
@@ -49,21 +53,19 @@ public:
                     spectrum.push_back(std::pair(freq, power));
                 }
 
-                spectra[name] = spectrum;
+                _spectra[name] = spectrum;
                 output_file.close();
             }
             else
                 throw std::runtime_error("error allocating fft " + name);
         }
-
-        return spectra;
     }
 
-    static std::map<std::string, function> get_peaks(const std::map<std::string, function> &fs, const unsigned int &number_of_peaks)
+    std::map<std::string, function> get_peaks(const unsigned int &number_of_peaks)
     {
         std::map<std::string, function> peaks;
 
-        for (const std::pair<std::string, function> f : fs)
+        for (const std::pair<std::string, function> f : _spectra)
         {
             std::string name = f.first;
 
