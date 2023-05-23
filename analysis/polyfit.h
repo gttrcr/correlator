@@ -12,6 +12,8 @@
 class polyfit
 {
 private:
+    arguments _args;
+
     template <typename T>
     static std::vector<double> to_double(const std::vector<T> &v)
     {
@@ -43,9 +45,14 @@ private:
     }
 
 public:
+    polyfit(const arguments& args)
+    {
+        _args = args;
+    }
+
     void compute(const function &f, const unsigned int &order, const std::string &output_name)
     {
-        std::ofstream output_file("output/" + output_name + ".csv");
+        std::ofstream output_file(_args.output + "/" + output_name + ".csv");
         output_file << "degree,r^2,";
         for (unsigned int i = 0; i < order; i++)
             output_file << "b" << i << ",";
@@ -62,39 +69,6 @@ public:
             for (unsigned int o = 0; o < c.size(); o++)
                 output_file << c[o] << ",";
             output_file << std::endl;
-        }
-
-        output_file.close();
-    }
-
-    void compute(const std::map<std::string, function> &fs, const unsigned int &order, const std::string &output_name)
-    {
-        std::ofstream output_file("output/" + output_name + ".csv");
-        output_file << "degree,r^2,f1,f2,";
-        for (unsigned int i = 0; i < order; i++)
-            output_file << "b" << i << ",";
-        output_file << std::endl;
-
-        for (unsigned int ord = 0; ord < order; ord++)
-        {
-            for (const std::pair<std::string, function> f1 : fs)
-            {
-                for (const std::pair<std::string, function> f2 : fs)
-                {
-                    if (f1.first == f2.first)
-                        continue;
-
-                    std::vector<ddt> x = get_domain(f1.second);
-                    std::vector<cdt> y = get_codomain(f2.second);
-                    std::vector<cdt> c;
-                    _polyfit(x, y, c, ord);
-                    cdt r2 = statistics::get_r2(x, y, c);
-                    output_file << ord << "," << r2 << "," << f1.first << "," << f2.first << ",";
-                    for (unsigned int o = 0; o < c.size(); o++)
-                        output_file << c[o] << ",";
-                    output_file << std::endl;
-                }
-            }
         }
 
         output_file.close();

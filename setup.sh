@@ -12,8 +12,9 @@ sudo apt install pkg-config -y
 sudo apt install zip -y
 
 cd kissfft
-rm -r build
-mkdir build
+mkdir -p build #create if not exists
+rm -r build #remove in any case
+mkdir build #create
 cd build
 if [ "$1" == "win32" ]; then
     cmake -DKISSFFT_DATATYPE=float -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ ..
@@ -29,7 +30,8 @@ fi
 make kissfft
 cd ..
 cd ..
-rm -r dev
+mkdir -p dev #create if not exists
+rm -r dev #remove in any case
 cp -r kissfft/build dev/
 rm -r kissfft/build
 

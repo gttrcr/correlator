@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #define DECIMAL
 
@@ -12,27 +13,37 @@
 #define cdt unsigned long int
 #endif
 
-#define polyfit_max_degree 10
-#define fft_peaks_number 5
-#define DOM_CODOM_DIM 2
-
 using pair = std::pair<ddt, cdt>;
 using function = std::vector<pair>;
+using domain = std::vector<ddt>;
+using codomain = std::vector<cdt>;
 
-std::vector<ddt> get_domain(const function &f)
+domain get_domain(const function &f)
 {
-    std::vector<ddt> domain;
+    domain domain;
     for (unsigned int i = 0; i < f.size(); i++)
         domain.push_back(f[i].first);
 
     return domain;
 }
 
-std::vector<cdt> get_codomain(const function &f)
+codomain get_codomain(const function &f)
 {
-    std::vector<cdt> domain;
+    codomain codomain;
     for (unsigned int i = 0; i < f.size(); i++)
-        domain.push_back(f[i].second);
+        codomain.push_back(f[i].second);
 
-    return domain;
+    return codomain;
+}
+
+function get_function(const domain &d, const codomain &c)
+{
+    if (d.size() != c.size())
+        throw std::logic_error("domain and codomain have a different number of elements");
+
+    function f;
+    for (unsigned int i = 0; i < d.size(); i++)
+        f.push_back(std::make_pair(d[i], c[i]));
+
+    return f;
 }
