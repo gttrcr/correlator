@@ -15,7 +15,7 @@ private:
     function _spectrum;
 
 public:
-    fft(const arguments& args)
+    fft(const arguments &args)
     {
         _args = args;
     }
@@ -26,13 +26,11 @@ public:
         kiss_fft_cpx out[f.size()];
         std::vector<ddt> x = get_domain(f);
         std::vector<cdt> y = get_codomain(f);
-        ddt sampling_time = x[1] - x[0];
+        ddt sample_size;
+        bool sampling = get_sampling(f, sample_size);
         for (unsigned int i = 0; i < f.size(); i++)
-        {
-            in[i] = {(kiss_fft_scalar)y[i], 0};
-            if (sampling_time != 0 && i > 0 && std::fabs(sampling_time - (x[i] - x[i - 1]) > 100 * std::numeric_limits<ddt>::epsilon()))
-                sampling_time = 0;
-        }
+        in[i] = {(kiss_fft_scalar)y[i], 0};
+
 
         kiss_fft_cfg cfg;
         if ((cfg = kiss_fft_alloc(f.size(), 0, NULL, NULL)) != NULL)
@@ -40,15 +38,15 @@ public:
             kiss_fft(cfg, in, out);
             free(cfg);
             const bool full = false;
-            if (sampling_time == 0)
-                std::cout << "Warning! sampling time is 0: time is not linear or intervals are not regular" << std::endl;
+            if (!sampling)
+                std::cout << "Warning! Time is not linear or intervals are not regular" << std::endl;
 
             _spectrum.clear();
             std::ofstream output_file(_args.output + "/fft_" + name);
             output_file << "freq,power" << std::endl;
             for (unsigned int j = 0; j < (full ? f.size() : (f.size() / 2 + 1)); j++)
             {
-                ddt freq = (sampling_time == 0 ? 1 : sampling_time) * (ddt)(f.size()) / (ddt)j;
+                ddt freq = (sampling ? sample_size : 1) * (ddt)(f.size()) / (ddt)j;
                 cdt power = sqrt(pow(out[j].i, 2) + pow(out[j].r, 2));
                 output_file << freq << "," << power << std::endl;
                 _spectrum.push_back(std::pair(freq, power));

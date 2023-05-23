@@ -5,6 +5,7 @@
 #include "../eigen/Eigen/QR"
 
 #include "../statistics.h"
+#include "../utils.h"
 
 #include <fstream>
 #include <map>
@@ -14,19 +15,9 @@ class polyfit
 private:
     arguments _args;
 
-    template <typename T>
-    static std::vector<double> to_double(const std::vector<T> &v)
-    {
-        std::vector<double> ret;
-        for (unsigned int i = 0; i < v.size(); i++)
-            ret.push_back((double)v[i]);
-
-        return ret;
-    }
-
     void _polyfit(const std::vector<ddt> &x, const std::vector<cdt> &y, std::vector<cdt> &coeff, const unsigned int &order)
     {
-        std::vector<double> y_double = to_double(y);
+        std::vector<double> y_double = utils::to_double(y);
         Eigen::MatrixXd T(x.size(), order + 1);
         Eigen::VectorXd V = Eigen::VectorXd::Map(&y_double.front(), y_double.size());
         Eigen::VectorXd result;
@@ -45,7 +36,7 @@ private:
     }
 
 public:
-    polyfit(const arguments& args)
+    polyfit(const arguments &args)
     {
         _args = args;
     }

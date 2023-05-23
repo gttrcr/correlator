@@ -3,15 +3,15 @@
 #include "fft.h"
 #include "fft_peaks.h"
 #include "polyfit.h"
-#include "peaks_migration.h"
 #include "entropy.h"
+#include "../utils.h"
 
 #include <filesystem>
 
 namespace analysis
 {
     // compute best polynomial fit
-    void polyfit_method(const std::map<std::string, function> &fs, const arguments& args)
+    void polyfit_method(const std::map<std::string, function> &fs, const arguments &args)
     {
         std::cout << "\tpolyfit..." << std::endl;
         polyfit pf(args);
@@ -36,8 +36,8 @@ namespace analysis
             }
     }
 
-    // compute fft of every dataset and compute peaks of every fft
-    std::map<std::string, function> fft_and_fft_peaks(const std::map<std::string, function> &fs, const arguments& args)
+    // compute fft of every dataset and peaks of every fft
+    std::map<std::string, function> fft_and_fft_peaks(const std::map<std::string, function> &fs, const arguments &args)
     {
         // map of peaks of every function in fs
         std::map<std::string, function> peaks;
@@ -56,15 +56,27 @@ namespace analysis
         return peaks;
     }
 
-    void peaks_migration(const std::map<std::string, function> &peaks, const arguments& args)
+    // compute the polynomial fit of migration of peaks
+    void peaks_migration(const std::map<std::string, function> &peaks, const arguments &args)
     {
-        // std::cout << "peaks migration..." << std::endl;
-        // std::map<std::string, function> rotated_peaks = rotate(peaks);
-        // for (const std::pair<std::string, function> &f : rotated_peaks)
-        //     pf.compute(f.second, f.second.size(), "peak_migr" + std::filesystem::path(f.first).stem().string());
+        std::cout << "\tpeaks migration..." << std::endl;
+        polyfit pf(args);
+        std::map<std::string, function> rotated_peaks = utils::rotate(peaks);
+        for (const std::pair<std::string, function> &f : rotated_peaks)
+            pf.compute(f.second, f.second.size(), "peak_migr" + std::filesystem::path(f.first).stem().string());
     }
 
-    void all_methods(const std::map<std::string, function> &fs, const arguments& args)
+    // compute the real time fft and peaks of every fft
+    void rt_fft_and_fft_peaks(const std::map<std::string, function> &fs, const arguments &args)
+    {
+        ddt interval_size = 0.01;
+        for (const std::pair<std::string, function> &f : fs)
+        {
+            function interval_function = get_interval(f.second, 0, interval_size);
+        }
+    }
+
+    void all_methods(const std::map<std::string, function> &fs, const arguments &args)
     {
         std::filesystem::create_directory(args.output);
 
@@ -72,8 +84,6 @@ namespace analysis
         std::map<std::string, function> peaks = fft_and_fft_peaks(fs, args);
         peaks_migration(peaks, args);
 
-#ifdef INTEGERS
-        seeker::compute();
-#endif
+        rt_fft_and_fft_peaks(fs, args);
     }
 }

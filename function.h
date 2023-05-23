@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <iostream>
+#include <cmath>
+#include <limits>
 
 #define DECIMAL
 
@@ -18,6 +20,7 @@ using function = std::vector<pair>;
 using domain = std::vector<ddt>;
 using codomain = std::vector<cdt>;
 
+// get domain vector of function
 domain get_domain(const function &f)
 {
     domain domain;
@@ -27,6 +30,7 @@ domain get_domain(const function &f)
     return domain;
 }
 
+// get codomain vector of function
 codomain get_codomain(const function &f)
 {
     codomain codomain;
@@ -36,6 +40,7 @@ codomain get_codomain(const function &f)
     return codomain;
 }
 
+// get a function from domain and codomain
 function get_function(const domain &d, const codomain &c)
 {
     if (d.size() != c.size())
@@ -46,4 +51,22 @@ function get_function(const domain &d, const codomain &c)
         f.push_back(std::make_pair(d[i], c[i]));
 
     return f;
+}
+
+// compute the sample size
+bool get_sampling(const function &f, ddt &sample_size)
+{
+    domain d = get_domain(f);
+    sample_size = d[1] - d[0];
+    for (unsigned int i = 0; i < d.size(); i++)
+        if (sample_size != 0 && i > 0 && std::fabs(sample_size - (d[i] - d[i - 1]) > 100 * std::numeric_limits<ddt>::epsilon()))
+            return false;
+
+    return true;
+}
+
+// get a subset of a function
+function get_interval(const function &f, const ddt &interval_start, const ddt &interval_size)
+{
+    domain d = get_domain(f);
 }
