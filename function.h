@@ -66,7 +66,11 @@ bool get_sampling(const function &f, ddt &sample_size)
 }
 
 // get a subset of a function
-function get_interval(const function &f, const ddt &interval_start, const ddt &interval_size)
+function get_interval(const function &f, const unsigned int &interval_start, const unsigned int &interval_size)
 {
     domain d = get_domain(f);
+    codomain c = get_codomain(f);
+    domain interval_d = domain(d.begin() + interval_start, d.begin() + interval_start + interval_size);
+    codomain interval_c = codomain(c.begin() + interval_start, c.begin() + interval_start + interval_size);
+    return get_function(interval_d, interval_c);
 }

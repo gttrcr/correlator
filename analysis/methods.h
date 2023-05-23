@@ -69,10 +69,23 @@ namespace analysis
     // compute the real time fft and peaks of every fft
     void rt_fft_and_fft_peaks(const std::map<std::string, function> &fs, const arguments &args)
     {
+        std::cout << "\trt fft..." << std::endl;
         ddt interval_size = 0.01;
         for (const std::pair<std::string, function> &f : fs)
         {
-            function interval_function = get_interval(f.second, 0, interval_size);
+            ddt sample_size;
+            if (!get_sampling(f.second, sample_size))
+                continue;
+
+            fft fft(args);
+            unsigned int number_of_points = 400; // 2 * M_PI * 3 * sample_size;
+            for (unsigned int i = 0; i < f.second.size() / number_of_points; i++)
+            {
+                function interval_function = get_interval(f.second, i * number_of_points, number_of_points);
+                fft.compute(interval_function);
+                function peaks = fft_peaks(fft.get_spectrum(), args).compute(FFT_PEAKS_NUMBER);
+                std::cout << peaks[0].first << std::endl;
+            }
         }
     }
 

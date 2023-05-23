@@ -75,7 +75,7 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
         std::string line;
         while (std::getline(file, line))
         {
-            if (line == "")
+            if (line.empty())
                 continue;
 
             row.clear();
