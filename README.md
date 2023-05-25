@@ -1,8 +1,9 @@
 # correlator
 
-## Release and tag
-|Latest|Release|Tag|Win32|Win64|Linux|Link|
+## Versions, tags and releases
+|Latest stable|Policy|Tag|Win32|Win64|Linux|Link|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+||Release|0.3|:hourglass:|:hourglass:|:hourglass:|:hourglass:|
 |*|Release|0.2|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2)|
 ||Pre release|0.1|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)|
 
