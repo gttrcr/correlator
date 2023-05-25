@@ -6,7 +6,7 @@
 class statistics
 {
 private:
-    static cdt _poly_val(const std::vector<cdt> &c, const ddt &x)
+    static cdt _poly_val(const codomain &c, const ddt &x)
     {
         cdt y = 0;
         for (unsigned int i = 0; i < c.size(); i++)
@@ -14,7 +14,7 @@ private:
         return y;
     }
 
-    static cdt _avg(const std::vector<cdt> &v)
+    static cdt _avg(const codomain &v)
     {
         cdt avg;
         for (unsigned int i = 0; i < v.size(); i++)
@@ -24,7 +24,7 @@ private:
     }
 
 public:
-    static cdt get_r2(const std::vector<ddt> &x, const std::vector<ddt> &y, const std::vector<cdt> &c)
+    static cdt get_r2(const domain &x, const domain &y, const codomain &c)
     {
         cdt sSRes = 0;
         cdt sSTot = 0;
@@ -38,7 +38,7 @@ public:
         return 1.0 - sSRes / sSTot;
     }
 
-    static cdt max(const std::vector<cdt> &y)
+    static cdt max(const codomain &y)
     {
         cdt m = std::numeric_limits<cdt>::min();
         for (unsigned int i = 0; i < y.size(); i++)

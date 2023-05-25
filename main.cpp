@@ -1,5 +1,4 @@
-#define POLYFIT_MAX_DEGREE 10
-#define FFT_PEAKS_NUMBER 5
+#define POLYFIT_MAX_DEGREE 5
 #define DOM_CODOM_DIM 2
 
 #include <iostream>
@@ -7,10 +6,11 @@
 struct arguments
 {
 public:
-    unsigned int port = 0;                                   // port for socket connection (-p)
-    std::string input = ".";                                 // input single file or a folder (-i)
-    std::string output = get_default_output();               // output folder for correlation from input (-o)
-    std::string socket_output = get_default_socket_output(); // output folder for socket correlation (-s)
+    unsigned int port = 0;                                              // port for socket connection (-p)
+    std::string input = ".";                                            // input single file or a folder (-i)
+    std::string output = get_default_output();                          // output folder for correlation from input (-o)
+    std::string socket_output = get_default_socket_output();            // output folder for socket correlation (-s)
+    unsigned int number_of_peaks_to_find = get_default_peaks_to_find(); // number of peaks to compute in fft_peaks (-p)
 
     // default port for socket connection
     unsigned int get_default_port()
@@ -28,6 +28,12 @@ public:
     std::string get_default_socket_output()
     {
         return "socket_out_correlator";
+    }
+
+    // default peaks to find
+    unsigned int get_default_peaks_to_find()
+    {
+        return 5;
     }
 };
 
@@ -159,7 +165,7 @@ std::map<std::string, function> get_functions(const std::vector<std::string> &co
         if (!get_function(s_content, f))
             throw std::runtime_error("error on parsing function");
 
-        fs[std::filesystem::path(file).filename().string()] = f;
+        fs[std::filesystem::path(file).stem().string()] = f;
     }
 
     return fs;
@@ -172,6 +178,12 @@ inline std::vector<std::string> split(const std::string &s, const std::string &s
     std::vector<std::string> tokens{first, last};
 
     return tokens;
+}
+
+inline bool is_integer(const std::string &str)
+{
+    return !str.empty() && std::find_if(str.begin(), str.end(), [](unsigned char c)
+                                        { return !std::isdigit(c); }) == str.end();
 }
 
 // from argc and argv, create arguments struct
@@ -221,8 +233,7 @@ arguments get_arguments(int argc, char *argv[])
         {
             if (pair.second.size() == 1 && pair.second[0].empty())
                 a.port = a.get_default_port();
-            else if (pair.second.size() == 1 && !pair.second[0].empty() && std::find_if(pair.second[0].begin(), pair.second[0].end(), [](unsigned char c)
-                                                                                        { return !std::isdigit(c); }) == pair.second[0].end())
+            else if (pair.second.size() == 1 && is_integer(pair.second[0]))
                 a.port = std::stoi(pair.second[0]);
         }
 
@@ -238,6 +249,9 @@ arguments get_arguments(int argc, char *argv[])
             a.socket_output = pair.second[0];
         else
             a.socket_output = a.get_default_socket_output();
+
+        if (pair.first == "-p" && pair.second.size() == 1 && is_integer(pair.second[0]))
+            a.number_of_peaks_to_find = std::stoi(pair.second[0]);
     }
 
     return a;
@@ -275,8 +289,8 @@ int main(int argc, char *argv[])
     if (csv_files.size() > 0)
         correlate_from_files(csv_files, args);
 
-    if (args.port != 0)
-        correlate_from_socket(args);
+    // if (args.port != 0)
+    //     correlate_from_socket(args);
 }
 
 // #include <netinet/in.h>
