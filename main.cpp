@@ -7,10 +7,10 @@ struct arguments
 {
 public:
     unsigned int port = 0;                                              // port for socket connection (-p)
-    std::string input = ".";                                            // input single file or a folder (-i)
-    std::string output = get_default_output();                          // output folder for correlation from input (-o)
+    std::string input = ".";                                            // input file or folder (-i)
+    std::string output = get_default_output();                          // output folder for -i input (-o)
     std::string socket_output = get_default_socket_output();            // output folder for socket correlation (-s)
-    unsigned int number_of_peaks_to_find = get_default_peaks_to_find(); // number of peaks to compute in fft_peaks (-p)
+    unsigned int number_of_peaks_to_find = get_default_peaks_to_find(); // number of peaks to compute in fft_peaks (-e)
 
     // default port for socket connection
     unsigned int get_default_port()
@@ -250,7 +250,7 @@ arguments get_arguments(int argc, char *argv[])
         else
             a.socket_output = a.get_default_socket_output();
 
-        if (pair.first == "-p" && pair.second.size() == 1 && is_integer(pair.second[0]))
+        if (pair.first == "-e" && pair.second.size() == 1 && is_integer(pair.second[0]))
             a.number_of_peaks_to_find = std::stoi(pair.second[0]);
     }
 
