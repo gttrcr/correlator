@@ -289,8 +289,8 @@ int main(int argc, char *argv[])
     if (csv_files.size() > 0)
         correlate_from_files(csv_files, args);
 
-    // if (args.port != 0)
-    //     correlate_from_socket(args);
+    if (args.port != 0)
+        correlate_from_socket(args);
 }
 
 // #include <netinet/in.h>
