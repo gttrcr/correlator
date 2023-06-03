@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/dev/${workspaceFolderBasename}",
             "args": [
                 // "-i",
-                "-i ../test_csv",
+                "-i ../test_csv/1_to_5",
                 // "-o ../blablabla",
                 //"-p",
                 //"-p 1012",

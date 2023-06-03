@@ -6,11 +6,13 @@
 struct arguments
 {
 public:
-    unsigned int port = 0;                                              // port for socket connection (-p)
-    std::string input = ".";                                            // input file or folder (-i)
-    std::string output = get_default_output();                          // output folder for -i input (-o)
-    std::string socket_output = get_default_socket_output();            // output folder for socket correlation (-s)
-    unsigned int number_of_peaks_to_find = get_default_peaks_to_find(); // number of peaks to compute in fft_peaks (-e)
+    unsigned int port = 0;                                                                      // port for socket connection (-p)
+    std::string input = ".";                                                                    // input file or folder (-i)
+    std::string output = get_default_output();                                                  // output folder for -i input (-o)
+    std::string socket_output = get_default_socket_output();                                    // output folder for socket correlation (-s)
+    unsigned int number_of_fft_peaks_to_compute = get_default_number_of_fft_peaks_to_compute(); // number of peaks to compute in fft_peaks (-e)
+    unsigned int codomain_index = 1;
+    unsigned int domain_size = 1;
 
     // default port for socket connection
     unsigned int get_default_port()
@@ -31,7 +33,7 @@ public:
     }
 
     // default peaks to find
-    unsigned int get_default_peaks_to_find()
+    unsigned int get_default_number_of_fft_peaks_to_compute()
     {
         return 5;
     }
@@ -113,13 +115,13 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
 }
 
 // return a function from content
-bool get_function(const std::vector<std::vector<std::string>> &s_content, function &f)
+bool get_function(const std::vector<std::vector<std::string>> &s_content, function &f, const arguments &args)
 {
     if (s_content.size() == 0)
         return false;
 
-    if (s_content[0].size() != DOM_CODOM_DIM)
-        return false;
+    // if (s_content[0].size() != DOM_CODOM_DIM)
+    //     return false;
 
     f.clear();
     for (unsigned int i = 0; i < s_content.size(); i++)
@@ -127,23 +129,23 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, functi
         if (s_content[i].size() > 1)
         {
             for (unsigned int j = 0; j < s_content[i].size(); j++)
-            {
-                cdt d = std::stod(s_content[i][j]);
-                if (d == std::numeric_limits<cdt>::infinity())
+                // {
+                // cdt d = std::stod(s_content[i][j]);
+                if (std::stod(s_content[i][j]) == std::numeric_limits<cdt>::infinity())
                     throw std::runtime_error("nan or infinity number");
-            }
+            // }
         }
         else
             throw std::runtime_error("the function has dimension less than 2");
 
-        f.push_back(pair(std::stod(s_content[i][0]), std::stod(s_content[i][1])));
+        f.push_back(pair(std::stod(s_content[i][0]), std::stod(s_content[i][args.domain_size + args.codomain_index - 1])));
     }
 
     return true;
 }
 
 // return all functions from csv filename
-std::map<std::string, function> get_functions(const std::vector<std::string> &const_csv_files)
+std::map<std::string, function> get_functions(const std::vector<std::string> &const_csv_files, const arguments &args)
 {
     std::vector<std::string> csv_files(const_csv_files);
     std::sort(csv_files.begin(), csv_files.end());
@@ -157,12 +159,12 @@ std::map<std::string, function> get_functions(const std::vector<std::string> &co
         std::vector<std::vector<std::string>> s_content;
         if (!read_csv(file, s_content, axis))
             throw std::runtime_error("error on reading");
-        if (axis.size() > DOM_CODOM_DIM)
-            throw std::logic_error("function with a number of dimensions " + std::to_string(DOM_CODOM_DIM) + " not implemented");
+        // if (axis.size() > DOM_CODOM_DIM)
+        //     throw std::logic_error("function with a number of dimensions " + std::to_string(DOM_CODOM_DIM) + " not implemented");
 
         std::cout << "\tParsing..." << std::endl;
         function f;
-        if (!get_function(s_content, f))
+        if (!get_function(s_content, f, args))
             throw std::runtime_error("error on parsing function");
 
         fs[std::filesystem::path(file).stem().string()] = f;
@@ -245,13 +247,19 @@ arguments get_arguments(int argc, char *argv[])
         else
             a.output = a.get_default_output();
 
+        if (pair.first == "-e" && pair.second.size() == 1 && is_integer(pair.second[0]))
+            a.number_of_fft_peaks_to_compute = std::stoi(pair.second[0]);
+
+        if (pair.first == "-c" && pair.second.size() == 1 && is_integer(pair.second[0]))
+            a.codomain_index = std::stoi(pair.second[0]);
+
+        if (pair.first == "-d" && pair.second.size() == 1 && is_integer(pair.second[0]))
+            a.domain_size = std::stoi(pair.second[0]);
+
         if (pair.first == "-s" && pair.second.size() == 1 && !pair.second[0].empty())
             a.socket_output = pair.second[0];
         else
             a.socket_output = a.get_default_socket_output();
-
-        if (pair.first == "-e" && pair.second.size() == 1 && is_integer(pair.second[0]))
-            a.number_of_peaks_to_find = std::stoi(pair.second[0]);
     }
 
     return a;
@@ -261,7 +269,7 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
 {
     try
     {
-        std::map<std::string, function> fs = get_functions(csv_files);
+        std::map<std::string, function> fs = get_functions(csv_files, args);
         std::cout << "correlate from files..." << std::endl;
         analysis::all_methods(fs, args);
     }

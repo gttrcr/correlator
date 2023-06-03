@@ -36,7 +36,7 @@ namespace analysis
             std::sort(f_cp.begin(), f_cp.end(), [=](pair &a, pair &b)
                       { return a.second > b.second; });
 
-            unsigned int n_peaks = std::min(_args.number_of_peaks_to_find, (unsigned int)f_cp.size());
+            unsigned int n_peaks = std::min(_args.number_of_fft_peaks_to_compute, (unsigned int)f_cp.size());
             _data.push_back({name, function(f_cp.begin(), f_cp.begin() + n_peaks)});
         }
 

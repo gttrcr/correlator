@@ -54,7 +54,9 @@ Conside the following table for the cli.
 |:-:|:-:|:-:|:-:|:-:|
 |Input file or folder|-i|.|string interpreted as path|:heavy_check_mark:|
 |Output folder for -i input files|-o|./out_correlator|string interpreted as path|:heavy_check_mark:|
-|Number of peaks to compute in peaks|-e|5|unsigned int|:heavy_check_mark:|
+|Number of fft peaks to compute|-e|5|unsigned int|:heavy_check_mark:|
+|Codomain index|-c|1|unsigned int|:hourglass:|
+|Domain size|-d|1|unsigned int|:hourglass:|
 |Port for the socket connection|-p|39785|unsigned int|:hourglass:|
 |Output folder for socket correlation|-s|./socket_out_correlator|string interpreted as path|:hourglass:|
 
