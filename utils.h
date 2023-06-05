@@ -26,14 +26,14 @@ namespace utils
     // 2={{1, 3}, {2, 21}}
     // 3={{1, 5}, {2, 24}}
     // 4={{1, 7}, {2, 25}}
-    std::map<std::string, function> rotate(const std::map<std::string, function> &fs)
+    std::map<std::string, FUNCTION> rotate(const std::map<std::string, FUNCTION> &fs)
     {
-        std::map<std::string, function> rotated;
+        std::map<std::string, FUNCTION> rotated;
         for (unsigned int i = 0; i < fs.begin()->second.size(); i++)
         {
-            ddt j = 0;
-            for (const std::pair<std::string, function> p : fs)
-                rotated[std::to_string(i)].push_back(pair(j++, p.second[i].first));
+            FDST j = 0;
+            for (const std::pair<std::string, FUNCTION> p : fs)
+                rotated[std::to_string(i)].push_back(PAIR(j++, p.second[i].first));
         }
 
         return rotated;

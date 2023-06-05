@@ -11,45 +11,45 @@
 namespace analysis
 {
     // compute best polynomial fit
-    void polyfit_method(const std::map<std::string, function> &fs, const arguments &args)
+    void polyfit_method(const std::map<std::string, FUNCTION> &fs, const arguments &args)
     {
         std::cout << "\tpolyfit..." << std::endl;
         polyfit pf(args);
 
         // compute correlation of every function
         std::cout << "\t\tsingle function..." << std::endl;
-        for (const std::pair<std::string, function> &f : fs)
+        for (const std::pair<std::string, FUNCTION> &f : fs)
             pf.compute(f.second, POLYFIT_MAX_DEGREE, f.first);
         pf.save("polyfit", "single");
 
         // compute cross correlation between every pair
         std::cout << "\t\tcross correlation..." << std::endl;
-        for (const std::pair<std::string, function> &f : fs)
-            for (const std::pair<std::string, function> &g : fs)
+        for (const std::pair<std::string, FUNCTION> &f : fs)
+            for (const std::pair<std::string, FUNCTION> &g : fs)
             {
                 if (f.first == g.first)
                     continue;
 
-                domain d = get_codomain(f.second);
-                codomain c = get_codomain(g.second);
-                function cross_f = get_function(d, c);
+                DOMAIN d = get_codomain(f.second);
+                CODOMAIN c = get_codomain(g.second);
+                FUNCTION cross_f = get_function(d, c);
                 pf.compute(cross_f, POLYFIT_MAX_DEGREE, f.first + "_+_" + g.first);
             }
         pf.save("polyfit", "cross");
     }
 
     // compute fft of every dataset and peaks of every fft
-    std::map<std::string, function> fft_and_fft_peaks(const std::map<std::string, function> &fs, const arguments &args)
+    std::map<std::string, FUNCTION> fft_and_fft_peaks(const std::map<std::string, FUNCTION> &fs, const arguments &args)
     {
         // map of peaks of every function in fs
-        std::map<std::string, function> peaks;
+        std::map<std::string, FUNCTION> peaks;
 
         std::cout << "\tfft..." << std::endl;
         fft fft(args);
-        for (const std::pair<std::string, function> &f : fs)
+        for (const std::pair<std::string, FUNCTION> &f : fs)
         {
             fft.compute(f.second, f.first);
-            function spectrum = fft.get_last_spectrum();
+            FUNCTION spectrum = fft.get_last_spectrum();
             fft.save("fft");
             std::cout << "\t\tpeaks..." << std::endl;
             fft_peaks fft_peaks(spectrum, args);
@@ -61,7 +61,7 @@ namespace analysis
     }
 
     // compute the polynomial fit of migration of peaks
-    void peaks_migration(const std::map<std::string, function> &peaks, const arguments &args)
+    void peaks_migration(const std::map<std::string, FUNCTION> &peaks, const arguments &args)
     {
         // std::cout << "\tpeaks migration..." << std::endl;
         // polyfit pf(args);
@@ -71,7 +71,7 @@ namespace analysis
     }
 
     // compute the real time fft and peaks of every fft
-    void rt_fft_and_fft_peaks(const std::map<std::string, function> &fs, const arguments &args)
+    void rt_fft_and_fft_peaks(const std::map<std::string, FUNCTION> &fs, const arguments &args)
     {
         // std::cout << "\trt fft..." << std::endl;
         // ddt interval_size = 0.01;
@@ -93,12 +93,12 @@ namespace analysis
         // }
     }
 
-    void all_methods(const std::map<std::string, function> &fs, const arguments &args)
+    void all_methods(const std::map<std::string, FUNCTION> &fs, const arguments &args)
     {
         std::filesystem::create_directory(args.output);
 
         polyfit_method(fs, args);                                            // OK: tested!
-        std::map<std::string, function> peaks = fft_and_fft_peaks(fs, args); // OK: tested!
+        std::map<std::string, FUNCTION> peaks = fft_and_fft_peaks(fs, args); // OK: tested!
         peaks_migration(peaks, args);
 
         rt_fft_and_fft_peaks(fs, args);

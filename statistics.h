@@ -6,29 +6,29 @@
 class statistics
 {
 private:
-    static cdt _poly_val(const codomain &c, const ddt &x)
+    static FDST _poly_val(const CODOMAIN &c, const FDST &x)
     {
-        cdt y = 0;
+        FDST y = 0;
         for (unsigned int i = 0; i < c.size(); i++)
             y += c[i] * std::pow(x, i);
         return y;
     }
 
-    static cdt _avg(const codomain &v)
+    static FDST _avg(const CODOMAIN &v)
     {
-        cdt avg;
+        FDST avg;
         for (unsigned int i = 0; i < v.size(); i++)
             avg += v[i];
 
-        return avg / ((cdt)v.size());
+        return avg / ((FDST)v.size());
     }
 
 public:
-    static cdt get_r2(const domain &x, const domain &y, const codomain &c)
+    static FDST get_r2(const DOMAIN &x, const DOMAIN &y, const CODOMAIN &c)
     {
-        cdt sSRes = 0;
-        cdt sSTot = 0;
-        cdt avg_y = _avg(y);
+        FDST sSRes = 0;
+        FDST sSTot = 0;
+        FDST avg_y = _avg(y);
         for (unsigned int i = 0; i < x.size(); i++)
         {
             sSRes += std::pow(y[i] - _poly_val(c, x[i]), 2);
@@ -38,9 +38,9 @@ public:
         return 1.0 - sSRes / sSTot;
     }
 
-    static cdt max(const codomain &y)
+    static FDST max(const CODOMAIN &y)
     {
-        cdt m = std::numeric_limits<cdt>::min();
+        FDST m = std::numeric_limits<FDST>::min();
         for (unsigned int i = 0; i < y.size(); i++)
             if (y[i] > m)
                 m = y[i];

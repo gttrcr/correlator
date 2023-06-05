@@ -19,15 +19,15 @@ private:
     {
     public:
         unsigned int degree;
-        cdt r2;
+        FDST r2;
         std::string name;
-        codomain coeff;
+        CODOMAIN coeff;
     };
 
     arguments _args;
     std::vector<data> _data;
 
-    void _polyfit(const domain &x, const codomain &y, codomain &coeff, const unsigned int &degree)
+    void _polyfit(const DOMAIN &x, const CODOMAIN &y, CODOMAIN &coeff, const unsigned int &degree)
     {
         std::vector<double> y_double = utils::to_double(y);
         Eigen::MatrixXd T(x.size(), degree + 1);
@@ -53,15 +53,15 @@ public:
         _args = args;
     }
 
-    void compute(const function &f, const unsigned int &degree, const std::string &name)
+    void compute(const FUNCTION &f, const unsigned int &degree, const std::string &name)
     {
         for (unsigned int deg = 0; deg < degree; deg++)
         {
-            domain x = get_domain(f);
-            codomain y = get_codomain(f);
-            codomain c;
+            DOMAIN x = get_domain(f);
+            CODOMAIN y = get_codomain(f);
+            CODOMAIN c;
             _polyfit(x, y, c, deg);
-            cdt r2 = statistics::get_r2(x, y, c);
+            FDST r2 = statistics::get_r2(x, y, c);
             _data.push_back({deg, r2, name, c});
         }
     }

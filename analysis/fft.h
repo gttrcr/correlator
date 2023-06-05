@@ -16,7 +16,7 @@ private:
     {
     public:
         std::string name;
-        function spectrum;
+        FUNCTION spectrum;
     };
 
     arguments _args;
@@ -28,13 +28,13 @@ public:
         _args = args;
     }
 
-    void compute(const function &f, const std::string &name)
+    void compute(const FUNCTION &f, const std::string &name)
     {
         kiss_fft_cpx in[f.size()];
         kiss_fft_cpx out[f.size()];
-        domain x = get_domain(f);
-        codomain y = get_codomain(f);
-        ddt sample_size;
+        DOMAIN x = get_domain(f);
+        CODOMAIN y = get_codomain(f);
+        FDST sample_size;
         bool sampling = get_sampling(f, sample_size);
         for (unsigned int i = 0; i < f.size(); i++)
             in[i] = {(kiss_fft_scalar)y[i], 0};
@@ -48,11 +48,11 @@ public:
             if (!sampling)
                 std::cout << "Warning! Time is not linear or intervals are not regular" << std::endl;
 
-            function spectrum;
+            FUNCTION spectrum;
             for (unsigned int j = 0; j < (full ? f.size() : (f.size() / 2 + 1)); j++)
             {
-                ddt freq = (sampling ? sample_size : 1) * (ddt)(f.size()) / (ddt)j;
-                cdt power = sqrt(pow(out[j].i, 2) + pow(out[j].r, 2));
+                FDST freq = (sampling ? sample_size : 1) * (FDST)(f.size()) / (FDST)j;
+                FDST power = sqrt(pow(out[j].i, 2) + pow(out[j].r, 2));
                 spectrum.push_back(std::pair(freq, power));
             }
 
@@ -68,8 +68,8 @@ public:
         {
             std::ofstream of(_args.output + "/" + output_folder + "/" + _data[i].name + ".csv");
             of << "freq,power" << std::endl;
-            domain d = get_domain(_data[i].spectrum);     // frequency
-            codomain c = get_codomain(_data[i].spectrum); // power
+            DOMAIN d = get_domain(_data[i].spectrum);     // frequency
+            CODOMAIN c = get_codomain(_data[i].spectrum); // power
             for (unsigned int j = 0; j < d.size(); j++)
                 of << d[j] << "," << c[j] << std::endl;
             of.close();
@@ -78,7 +78,7 @@ public:
         _data.clear();
     }
 
-    function get_last_spectrum()
+    FUNCTION get_last_spectrum()
     {
         return _data[_data.size() - 1].spectrum;
     }

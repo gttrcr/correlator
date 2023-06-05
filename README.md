@@ -1,11 +1,11 @@
 # correlator
 
 ## Versions, tags and releases
-|Latest stable|Policy|Tag|Win32|Win64|Linux|Link|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-||Release|0.3|:hourglass:|:hourglass:|:hourglass:|:hourglass:|
-|*|Release|0.2|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2)|
-||Pre release|0.1|:x:|:heavy_check_mark:|:heavy_check_mark:|[releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)|
+| Latest stable |   Policy    |  Tag  |    Win32    |       Win64        |       Linux        |                                   Link                                    |
+| :-----------: | :---------: | :---: | :---------: | :----------------: | :----------------: | :-----------------------------------------------------------------------: |
+|               |   Release   |  0.3  | :hourglass: |    :hourglass:     |    :hourglass:     |                                :hourglass:                                |
+|       *       |   Release   |  0.2  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2) |
+|               | Pre release |  0.1  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1) |
 
 Each release folder also contains 4 example datasets so you can immediately test the correct functioning of the program on real data: in case of errors, any [issue](https://github.com/gttrcr/correlator/issues) is welcome :wink:.
 
@@ -50,15 +50,15 @@ In the case of the ```polyfit``` I decided to merge all the files so as to avoid
 
 ## CLI
 Conside the following table for the cli.
-|Option name|Option command|Default value|Accepted type|Status|
-|:-:|:-:|:-:|:-:|:-:|
-|Input file or folder|-i|.|string interpreted as path|:heavy_check_mark:|
-|Output folder for -i input files|-o|./out_correlator|string interpreted as path|:heavy_check_mark:|
-|Number of fft peaks to compute|-e|5|unsigned int|:heavy_check_mark:|
-|Codomain index|-c|1|unsigned int|:hourglass:|
-|Domain size|-d|1|unsigned int|:hourglass:|
-|Port for the socket connection|-p|39785|unsigned int|:hourglass:|
-|Output folder for socket correlation|-s|./socket_out_correlator|string interpreted as path|:hourglass:|
+|             Option name              | Option command |      Default value      |       Accepted type        |       Status       |
+| :----------------------------------: | :------------: | :---------------------: | :------------------------: | :----------------: |
+|         Input file or folder         |       -i       |            .            | string interpreted as path | :heavy_check_mark: |
+|   Output folder for -i input files   |       -o       |    ./out_correlator     | string interpreted as path | :heavy_check_mark: |
+|    Number of fft peaks to compute    |       -e       |            5            |        unsigned int        | :heavy_check_mark: |
+|        Codomain column index         |       -c       |            1            |        unsigned int        | :heavy_check_mark: |
+|             Domain size              |       -d       |            1            |        unsigned int        | :heavy_check_mark: |
+|    Port for the socket connection    |       -p       |          39785          |        unsigned int        |    :hourglass:     |
+| Output folder for socket correlation |       -s       | ./socket_out_correlator | string interpreted as path |    :hourglass:     |
 
 ## upcoming features
 1. complete fft peaks migration.
