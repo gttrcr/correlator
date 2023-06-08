@@ -7,7 +7,7 @@
 |       *       |   Release   |  0.2  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2) |
 |               | Pre release |  0.1  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1) |
 
-Each release folder also contains 4 example datasets so you can immediately test the correct functioning of the program on real data: in case of errors, any [issue](https://github.com/gttrcr/correlator/issues) is welcome :wink:.
+Each release folder also contains some example datasets [test_csv](https://github.com/gttrcr/correlator/tree/main/test_csv) so you can immediately test the correct functioning of the program on real data: in case of errors, any [issue](https://github.com/gttrcr/correlator/issues) is welcome :wink:.
 
 ## Introduction and motivation
 Many datasets are composed of real scalar functions (scalar function for short) or are amenable to scalar functions. In the most general case, a scalar function is a function $f\colon\mathbb{R}^n\to\mathbb{R}$. Therefore an input csv file with $n+1$ columns is interpreted as a function $f\colon\mathbb{R}^n\to\mathbb{R}$.
