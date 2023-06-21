@@ -60,7 +60,7 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
             std::string word;
 
             // cycle on every word of every line
-            while (std::getline(str, word, ','))
+            while (std::getline(str, word, delimiter))
             {
                 word.erase(std::remove(word.begin(), word.end(), '\r'), word.end());
                 word.erase(std::remove(word.begin(), word.end(), '\n'), word.end());
@@ -110,11 +110,11 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, FUNCTI
 }
 
 // return all functions from csv filename
-std::map<std::string, FUNCTION> get_functions(const std::vector<std::string> &const_csv_files, const arguments &args)
+FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const arguments &args)
 {
     std::vector<std::string> csv_files(const_csv_files);
     std::sort(csv_files.begin(), csv_files.end());
-    std::map<std::string, FUNCTION> fs;
+    FUNCTIONS fs;
     for (std::string file : csv_files)
     {
         std::cout << "File: " << file << std::endl;
@@ -130,7 +130,7 @@ std::map<std::string, FUNCTION> get_functions(const std::vector<std::string> &co
         if (!get_function(s_content, f, args))
             throw std::runtime_error("error on get_function");
 
-        fs[std::filesystem::path(file).stem().string()] = f;
+        fs.push_back(std::pair(std::filesystem::path(file).stem().string(), f));
     }
 
     return fs;
@@ -232,7 +232,7 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
     try
     {
         std::cout << "correlate from files..." << std::endl;
-        std::map<std::string, FUNCTION> fs = get_functions(csv_files, args);
+        FUNCTIONS fs = get_functions(csv_files, args);
         analysis::all_methods(fs, args);
     }
     catch (const std::exception &e)

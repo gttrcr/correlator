@@ -8,17 +8,17 @@
 #define DECIMAL
 
 #ifdef DECIMAL
-#define FDST double // FDST (function default scalar type)
+#define FDST double // FDST (Function Default Scalar Type)
 #else
 #define FDST unsigned long int
 #endif
 
-using DT = FDST;                    // DT (domain type) is a FDST. In the future, DT will be a vector of FDST (std::vector<FDST>)
-using CT = FDST;                    // CT (codomain type) is a FDST
+using DT = FDST;                    // DT (Domain Type) is a FDST. In the future, DT will be a vector of FDST (std::vector<FDST>)
+using CT = FDST;                    // CT (Codomain Type) is a FDST
 using PAIR = std::pair<DT, CT>;     // PAIR is a pair of DT and CT
 using FUNCTION = std::vector<PAIR>; // FUNTION is a vector of pair
 using DOMAIN = std::vector<DT>;     // DOMAIN is the set of starting values of function
-using CODOMAIN = std::vector<CT>;   // CODOMAIN is the image set of starting values
+using CODOMAIN = std::vector<CT>;   // CODOMAIN is the image set of DOMAIN
 
 /*
 Example of a function
@@ -65,18 +65,6 @@ FUNCTION get_function(const DOMAIN &d, const CODOMAIN &c)
     return f;
 }
 
-// compute the sample size
-bool get_sampling(const FUNCTION &f, FDST &sample_size)
-{
-    DOMAIN d = get_domain(f);
-    sample_size = d[1] - d[0];
-    for (unsigned int i = 0; i < d.size(); i++)
-        if (sample_size != 0 && i > 0 && std::fabs(sample_size - (d[i] - d[i - 1]) > 100 * std::numeric_limits<FDST>::epsilon()))
-            return false;
-
-    return true;
-}
-
 // get a subset of a function
 FUNCTION get_interval(const FUNCTION &f, const unsigned int &interval_start, const unsigned int &interval_size)
 {
@@ -85,4 +73,27 @@ FUNCTION get_interval(const FUNCTION &f, const unsigned int &interval_start, con
     DOMAIN interval_d = DOMAIN(d.begin() + interval_start, d.begin() + interval_start + interval_size);
     CODOMAIN interval_c = CODOMAIN(c.begin() + interval_start, c.begin() + interval_start + interval_size);
     return get_function(interval_d, interval_c);
+}
+
+unsigned int get_decimal_places(const FDST &s)
+{
+    std::string s_str = std::to_string(s);
+    unsigned int index = s_str.find('.');
+    if (index < s_str.length())
+        return s_str.length() - index - 1;
+    else
+        return 0;
+}
+
+// compute the sample size
+bool get_sampling(const FUNCTION &f, FDST &sample_size)
+{
+    DOMAIN d = get_domain(f);
+    unsigned int decimal_places = get_decimal_places(d.at(0));
+    sample_size = d[1] - d[0];
+    for (unsigned int i = 0; i < d.size(); i++)
+        if (sample_size != 0 && i > 0 && std::fabs(sample_size - (d[i] - d[i - 1]) > pow(10, -decimal_places)))
+            return false;
+
+    return true;
 }

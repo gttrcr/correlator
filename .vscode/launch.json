@@ -9,7 +9,7 @@
             "args": [
                 // "-i",
                 "-i ../test_csv/1_to_5",
-                // "-o ../blablabla",
+                "-o blablabla",
                 //"-p",
                 //"-p 1012",
                 //"-s socket_folder",

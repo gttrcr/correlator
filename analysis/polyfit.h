@@ -68,7 +68,7 @@ public:
 
     void compute(const FUNCTION &f, const unsigned int &degree, const std::string &name)
     {
-        for (unsigned int deg = 0; deg < degree; deg++)
+        for (unsigned int deg = 0; deg <= degree; deg++)
         {
             DOMAIN x = get_domain(f);
             CODOMAIN y = get_codomain(f);

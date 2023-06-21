@@ -30,8 +30,8 @@ public:
 
     void compute(const FUNCTION &f, const std::string &name)
     {
-        kiss_fft_cpx in[f.size()];
-        kiss_fft_cpx out[f.size()];
+        kiss_fft_cpx *in = new kiss_fft_cpx[f.size()];
+        kiss_fft_cpx *out = new kiss_fft_cpx[f.size()];
         DOMAIN x = get_domain(f);
         CODOMAIN y = get_codomain(f);
         FDST sample_size;
@@ -46,7 +46,7 @@ public:
             free(cfg);
             const bool full = false;
             if (!sampling)
-                std::cout << "Warning! Time is not linear or intervals are not regular" << std::endl;
+                std::cout << "Warning! Domain is not linear or discretization is not regular" << std::endl;
 
             FUNCTION spectrum;
             for (unsigned int j = 0; j < (full ? f.size() : (f.size() / 2 + 1)); j++)
@@ -58,6 +58,9 @@ public:
 
             _data.push_back({name, spectrum});
         }
+
+        delete[] in;
+        delete[] out;
     }
 
     // save all computed spectra and clear all _data

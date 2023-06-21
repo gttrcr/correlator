@@ -16,7 +16,7 @@ private:
 
     static FDST _avg(const CODOMAIN &v)
     {
-        FDST avg;
+        FDST avg = 0;
         for (unsigned int i = 0; i < v.size(); i++)
             avg += v[i];
 
