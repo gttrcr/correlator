@@ -3,8 +3,8 @@
 ## Versions, tags and releases
 | Latest stable |   Policy    |  Tag  |    Win32    |       Win64        |       Linux        |                                   Link                                    |
 | :-----------: | :---------: | :---: | :---------: | :----------------: | :----------------: | :-----------------------------------------------------------------------: |
-|               |   Release   |  0.3  | :hourglass: |    :hourglass:     |    :hourglass:     |                                :hourglass:                                |
-|       *       |   Release   |  0.2  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2) |
+|        *       |   Release   |  0.3  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/0.3](https://github.com/gttrcr/correlator/releases/tag/0.3)     |                                                                
+|              |   Release   |  0.2  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2) |
 |               | Pre release |  0.1  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1) |
 
 Each release folder also contains some example datasets [test_csv](https://github.com/gttrcr/correlator/tree/main/test_csv) so you can immediately test the correct functioning of the program on real data: in case of errors, any [issue](https://github.com/gttrcr/correlator/issues) is welcome :wink:.
@@ -49,6 +49,7 @@ The results are placed inside the ```out_correlator``` default folder (or the ou
 In the case of the ```polyfit``` I decided to merge all the files so as to avoid having a large amount of generated files to check. polyfit files are sorted by decreasing $r^2$ and increasing degree.
 
 ## Features
+Consider the following table where :heavy_check_mark: means _done_, :hourglass: means _it will come_, :thinking: means _I am thinking how to do it_.
 |                        Feature                         |       Status       |
 | :----------------------------------------------------: | :----------------: |
 |                   Support csv files                    | :heavy_check_mark: |
