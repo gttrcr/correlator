@@ -27,6 +27,19 @@ private:
     arguments _args;
     std::vector<data> _data;
 
+    // // std::vector<FDST> a = {0, 2, 0, 3, 5};
+    // // std::vector<FDST> b = {7, 11, 0};
+    // // std::vector<FDST> p = compute::poly_product(a, b);
+    // static std::vector<FDST> _poly_product(const std::vector<FDST> &a, const std::vector<FDST> &b)
+    // {
+    //     std::vector<FDST> coeff(std::max(a.size(), b.size()) + 1);
+    //     for (unsigned int i = 0; i < a.size(); i++)
+    //         for (unsigned int j = 0; j < b.size(); j++)
+    //             coeff[i + j] += a[i] * b[j];
+
+    //     return coeff;
+    // }
+
     void _polyfit(const DOMAIN &x, const CODOMAIN &y, CODOMAIN &coeff, const unsigned int &degree)
     {
         std::vector<double> y_double = utils::to_double(y);
@@ -87,7 +100,7 @@ public:
                                                { return d1.degree < d2.degree; })
                                   ->degree;
         for (unsigned int i = 0; i <= degree; i++)
-            of << "b" << i << ",";
+            of << "d" << i << ",";
         of << std::endl;
 
         for (unsigned int i = 0; i < _data.size(); i++)

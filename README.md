@@ -48,6 +48,22 @@ The results are placed inside the ```out_correlator``` default folder (or the ou
 
 In the case of the ```polyfit``` I decided to merge all the files so as to avoid having a large amount of generated files to check. polyfit files are sorted by decreasing $r^2$ and increasing degree.
 
+## Features
+|                        Feature                         |       Status       |
+| :----------------------------------------------------: | :----------------: |
+|                   Support csv files                    | :heavy_check_mark: |
+|            Support csv files separated by ;            | :heavy_check_mark: |
+|            Support multi columns csv files             | :heavy_check_mark: |
+|                          Fft                           | :heavy_check_mark: |
+|                       Fft peaks                        | :heavy_check_mark: |
+|                        Polyfit                         | :heavy_check_mark: |
+|                 Basic peaks migration                  | :heavy_check_mark: |
+|              Complete fft peaks migration              |    :hourglass:     |
+|               Multidimensional analysis                |    :hourglass:     |
+|         polyfix for the distribution of peaks          |     :thinking:     |
+| listen to data coming from socket, pipe, stream or api |     :thinking:     |
+|                  Realtime statistics                   |     :thinking:     |
+
 ## CLI
 Conside the following table for the cli.
 |             Option name              | Option command |      Default value      |       Accepted type        |       Status       |
@@ -59,12 +75,6 @@ Conside the following table for the cli.
 |             Domain size              |       -d       |            1            |        unsigned int        | :heavy_check_mark: |
 |    Port for the socket connection    |       -p       |          39785          |        unsigned int        |    :hourglass:     |
 | Output folder for socket correlation |       -s       | ./socket_out_correlator | string interpreted as path |    :hourglass:     |
-
-## upcoming features
-1. complete fft peaks migration.
-2. multidimensional fft.
-3. Compute the best polynomial fit for the distribution of peaks (I'm considering whether it can have any meaning :thinking:)
-4. ```correlator``` will listen to new data (by socket, by pipe, by stream, by api, ...) and compute real time statistics.
 
 ## Dev section (linux only)
 Since it's easier to compile for windows on linux than to compile on windows for linux I unquestionably established that all development will take place on linux so the scripts placed here and there in the repo are all ```.sh``` (that's not true: if you have proposals to implement a development process directly for windows leave feedback via [issue](https://github.com/gttrcr/correlator/issues) :face_in_clouds:).

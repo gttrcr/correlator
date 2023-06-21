@@ -18,14 +18,14 @@ namespace analysis
 
         // compute correlation of every function
         std::cout << "\t\tsingle function..." << std::endl;
-        for (const std::pair<std::string, FUNCTION> &f : fs)
-            pf.compute(f.second, POLYFIT_MAX_DEGREE, f.first);
+        for (const std::pair<std::string, FUNCTION> f : fs)
+            pf.compute(f.second, args.polyfit_max_degree, f.first);
         pf.save("polyfit", "single");
 
         // compute cross correlation between every pair
         std::cout << "\t\tcross correlation..." << std::endl;
-        for (const std::pair<std::string, FUNCTION> &f : fs)
-            for (const std::pair<std::string, FUNCTION> &g : fs)
+        for (const std::pair<std::string, FUNCTION> f : fs)
+            for (const std::pair<std::string, FUNCTION> g : fs)
             {
                 if (f.first == g.first)
                     continue;
@@ -33,7 +33,7 @@ namespace analysis
                 DOMAIN d = get_codomain(f.second);
                 CODOMAIN c = get_codomain(g.second);
                 FUNCTION cross_f = get_function(d, c);
-                pf.compute(cross_f, POLYFIT_MAX_DEGREE, f.first + "_+_" + g.first);
+                pf.compute(cross_f, args.polyfit_max_degree, f.first + "_+_" + g.first);
             }
         pf.save("polyfit", "cross");
     }
@@ -46,7 +46,7 @@ namespace analysis
 
         std::cout << "\tfft..." << std::endl;
         fft fft(args);
-        for (const std::pair<std::string, FUNCTION> &f : fs)
+        for (const std::pair<std::string, FUNCTION> f : fs)
         {
             fft.compute(f.second, f.first);
             FUNCTION spectrum = fft.get_last_spectrum();

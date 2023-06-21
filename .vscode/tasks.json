@@ -12,6 +12,7 @@
                 "dev/${workspaceFolderBasename}",
                 "-std=c++17",
                 "-Wall",
+                "-Wpedantic",
                 "-Ldev",
                 "-l:libkissfft-float.so",
             ],

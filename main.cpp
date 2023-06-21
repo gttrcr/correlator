@@ -1,33 +1,5 @@
-#define POLYFIT_MAX_DEGREE 5
-
-#include <iostream>
-
-struct arguments
-{
-public:
-    unsigned int port = 0;                                                                      // port for socket connection (-p)
-    std::string input = ".";                                                                    // input file or folder (-i)
-    std::string output = get_default_output();                                                  // output folder for -i input (-o)
-    std::string socket_output = get_default_socket_output();                                    // output folder for socket correlation (-s)
-    unsigned int number_of_fft_peaks_to_compute = get_default_number_of_fft_peaks_to_compute(); // number of peaks to compute in fft_peaks (-e)
-    unsigned int codomain_column_index = get_default_codomain_column_index();                   // index of the column in the codomain scope to use in correlator (-c)
-    unsigned int domain_size = get_default_domain_size();                                       // domain size (-d)
-
-    unsigned int get_default_port() { return 39785; }
-
-    std::string get_default_output() { return "out_correlator"; }
-
-    std::string get_default_socket_output() { return "socket_out_correlator"; }
-
-    unsigned int get_default_number_of_fft_peaks_to_compute() { return 5; }
-
-    unsigned int get_default_codomain_column_index() { return 1; }
-
-    unsigned int get_default_domain_size() { return 1; }
-};
-
+#include "arguments.h"
 #include "function.h"
-
 #include "analysis/methods.h"
 
 #include <sstream>
@@ -74,6 +46,14 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
         {
             if (line.empty())
                 continue;
+
+            char delimiter = 0;
+            if (line.find(',') < line.size())
+                delimiter = ',';
+            else if (line.find(';') < line.size())
+                delimiter = ';';
+            else
+                throw std::runtime_error("Cannot find a valid delimiter");
 
             row.clear();
             std::stringstream str(line);
@@ -217,7 +197,7 @@ arguments get_arguments(int argc, char *argv[])
         if (pair.first == "-p")
         {
             if (pair.second.size() == 1 && pair.second[0].empty())
-                a.port = a.get_default_port();
+                a.port = arguments::get_default_port();
             else if (pair.second.size() == 1 && is_integer(pair.second[0]))
                 a.port = std::stoi(pair.second[0]);
         }
@@ -227,8 +207,6 @@ arguments get_arguments(int argc, char *argv[])
 
         if (pair.first == "-o" && pair.second.size() == 1 && !pair.second[0].empty())
             a.output = pair.second[0];
-        else
-            a.output = a.get_default_output();
 
         if (pair.first == "-e" && pair.second.size() == 1 && is_integer(pair.second[0]))
             a.number_of_fft_peaks_to_compute = std::stoi(pair.second[0]);
@@ -241,8 +219,9 @@ arguments get_arguments(int argc, char *argv[])
 
         if (pair.first == "-s" && pair.second.size() == 1 && !pair.second[0].empty())
             a.socket_output = pair.second[0];
-        else
-            a.socket_output = a.get_default_socket_output();
+
+        if (pair.first == "-f" && pair.second.size() == 1 && is_integer(pair.second[0]))
+            a.polyfit_max_degree = std::stoi(pair.second[0]);
     }
 
     return a;
