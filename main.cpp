@@ -1,3 +1,5 @@
+#include "error.h"
+#include "analysis/result.h"
 #include "arguments.h"
 #include "function.h"
 #include "analysis/methods.h"
@@ -53,7 +55,7 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
             else if (line.find(';') < line.size())
                 delimiter = ';';
             else
-                throw std::runtime_error("Cannot find a valid delimiter");
+                throw correlator_exception(error::cannot_find_a_valid_delimiter);
 
             row.clear();
             std::stringstream str(line);
@@ -98,10 +100,10 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, FUNCTI
         {
             for (unsigned int j = 0; j < s_content[i].size(); j++)
                 if (std::stod(s_content[i][j]) == std::numeric_limits<FDST>::infinity())
-                    throw std::runtime_error("nan or infinity number");
+                    throw correlator_exception(error::nan_or_infinity_number);
         }
         else
-            throw std::runtime_error("the function has dimension less than 2");
+            throw correlator_exception(error::the_function_has_dimension_less_than_2);
 
         f.push_back(PAIR(std::stod(s_content[i][0]), std::stod(s_content[i][args.domain_size + args.codomain_column_index - 1])));
     }
@@ -123,12 +125,12 @@ FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const a
         std::vector<std::string> axis;
         std::vector<std::vector<std::string>> s_content;
         if (!read_csv(file, s_content, axis))
-            throw std::runtime_error("error on read_csv");
+            throw correlator_exception(error::error_on_reading_csv);
 
         std::cout << "\tParsing..." << std::endl;
         FUNCTION f;
         if (!get_function(s_content, f, args))
-            throw std::runtime_error("error on get_function");
+            throw correlator_exception(error::error_on_get_function);
 
         fs.push_back(std::pair(std::filesystem::path(file).stem().string(), f));
     }
@@ -253,129 +255,21 @@ void correlate_from_socket(const arguments &args)
 
 int main(int argc, char *argv[])
 {
-    arguments args = get_arguments(argc, argv);
+    try
+    {
+        arguments args = get_arguments(argc, argv);
+        analysis::result::get()->set_arguments(args);
+        analysis::result::get()->save();
 
-    std::vector<std::string> csv_files = get_csv_files(args.input);
-    if (csv_files.size() > 0)
-        correlate_from_files(csv_files, args);
+        std::vector<std::string> csv_files = get_csv_files(args.input);
+        if (csv_files.size() > 0)
+            correlate_from_files(csv_files, args);
 
-    if (args.port != 0)
-        correlate_from_socket(args);
+        if (args.port != 0)
+            correlate_from_socket(args);
+    }
+    catch (correlator_exception &ce)
+    {
+        std::cout << ce.code() << std::endl;
+    }
 }
-
-// #include <netinet/in.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <string.h>
-// #include <sys/socket.h>
-// #include <unistd.h>
-// #define PORT 8080
-
-// void socket_server()
-// {
-//     int server_fd, new_socket, valread;
-//     struct sockaddr_in address;
-//     int opt = 1;
-//     int addrlen = sizeof(address);
-//     char buffer[1024] = {0};
-//     char *hello = "Hello from server";
-
-//     // Creating socket file descriptor
-//     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-//     {
-//         perror("socket failed");
-//         exit(EXIT_FAILURE);
-//     }
-
-//     // Forcefully attaching socket to the port 8080
-//     if (setsockopt(server_fd, SOL_SOCKET,
-//                    SO_REUSEADDR | SO_REUSEPORT, &opt,
-//                    sizeof(opt)))
-//     {
-//         perror("setsockopt");
-//         exit(EXIT_FAILURE);
-//     }
-//     address.sin_family = AF_INET;
-//     address.sin_addr.s_addr = INADDR_ANY;
-//     address.sin_port = htons(PORT);
-
-//     // Forcefully attaching socket to the port 8080
-//     if (bind(server_fd, (struct sockaddr *)&address,
-//              sizeof(address)) < 0)
-//     {
-//         perror("bind failed");
-//         exit(EXIT_FAILURE);
-//     }
-//     if (listen(server_fd, 3) < 0)
-//     {
-//         perror("listen");
-//         exit(EXIT_FAILURE);
-//     }
-//     if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
-//                              (socklen_t *)&addrlen)) < 0)
-//     {
-//         perror("accept");
-//         exit(EXIT_FAILURE);
-//     }
-//     valread = read(new_socket, buffer, 1024);
-// }
-
-/*
-// Server side C/C++ program to demonstrate Socket
-// programming
-int main(int argc, char const* argv[])
-{
-    int server_fd, new_socket, valread;
-    struct sockaddr_in address;
-    int opt = 1;
-    int addrlen = sizeof(address);
-    char buffer[1024] = { 0 };
-    char* hello = "Hello from server";
-
-    // Creating socket file descriptor
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("socket failed");
-        exit(EXIT_FAILURE);
-    }
-
-    // Forcefully attaching socket to the port 8080
-    if (setsockopt(server_fd, SOL_SOCKET,
-                SO_REUSEADDR | SO_REUSEPORT, &opt,
-                sizeof(opt))) {
-        perror("setsockopt");
-        exit(EXIT_FAILURE);
-    }
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
-
-    // Forcefully attaching socket to the port 8080
-    if (bind(server_fd, (struct sockaddr*)&address,
-            sizeof(address))
-        < 0) {
-        perror("bind failed");
-        exit(EXIT_FAILURE);
-    }
-    if (listen(server_fd, 3) < 0) {
-        perror("listen");
-        exit(EXIT_FAILURE);
-    }
-    if ((new_socket
-        = accept(server_fd, (struct sockaddr*)&address,
-                (socklen_t*)&addrlen))
-        < 0) {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    }
-    valread = read(new_socket, buffer, 1024);
-    printf("%s\n", buffer);
-    send(new_socket, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
-
-    // closing the connected socket
-    close(new_socket);
-    // closing the listening socket
-    shutdown(server_fd, SHUT_RDWR);
-    return 0;
-}
-*/

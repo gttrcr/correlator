@@ -93,7 +93,7 @@ namespace analysis
     void all_methods(const FUNCTIONS &fs, const arguments &args)
     {
         if (!std::filesystem::exists(args.output) && !std::filesystem::create_directory(args.output))
-            throw std::runtime_error("Cannot create output directory " + args.output);
+            throw correlator_exception(error::cannot_create_output_directory);
 
         polyfit_method(fs, args);                                            // OK: tested!
         std::map<std::string, FUNCTION> peaks = fft_and_fft_peaks(fs, args); // OK: tested!
