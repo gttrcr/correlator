@@ -27,6 +27,7 @@ std::vector<std::string> get_csv_files(const std::string &path)
         }
     }
 
+    analysis::result::get()->set_csv_files(csv_files);
     return csv_files;
 }
 
@@ -226,6 +227,7 @@ arguments get_arguments(int argc, char *argv[])
             a.polyfit_max_degree = std::stoi(pair.second[0]);
     }
 
+    analysis::result::get()->set_arguments(a);
     return a;
 }
 
@@ -240,10 +242,12 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
     catch (const std::exception &e)
     {
         std::cerr << e.what() << '\n';
+        analysis::result::get()->set_error(e.what());
     }
     catch (...)
     {
         std::cout << "generic error" << std::endl;
+        analysis::result::get()->set_error("generic error");
     }
 }
 
@@ -258,9 +262,6 @@ int main(int argc, char *argv[])
     try
     {
         arguments args = get_arguments(argc, argv);
-        analysis::result::get()->set_arguments(args);
-        analysis::result::get()->save();
-
         std::vector<std::string> csv_files = get_csv_files(args.input);
         if (csv_files.size() > 0)
             correlate_from_files(csv_files, args);

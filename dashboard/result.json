@@ -1,0 +1,34 @@
+{
+    "args": {
+        "codomain_column_index": 1,
+        "domain_size": 1,
+        "input": "../test_csv/1_to_5",
+        "number_of_fft_peaks_to_compute": 5,
+        "output": "blablabla",
+        "polyfit_max_degree": 5,
+        "port": 0,
+        "socket_output": "socket_out_correlator"
+    },
+    "csv_files": [
+        {
+            "filename": "../test_csv/1_to_5/b_9_42_1_to_5.csv",
+            "number_of_rows": 10,
+            "number_fo_columns": 2
+        },
+        {
+            "filename": "../test_csv/1_to_5/a_6_28_1_to_5.csv",
+            "number_of_rows": 10,
+            "number_fo_columns": 2
+        },
+        {
+            "filename": "../test_csv/1_to_5/d_21_20_1_to_5.csv",
+            "number_of_rows": 10,
+            "number_fo_columns": 2
+        },
+        {
+            "filename": "../test_csv/1_to_5/c_14_13_1_to_5.csv",
+            "number_of_rows": 10,
+            "number_fo_columns": 2
+        }
+    ]
+}
