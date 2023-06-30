@@ -1,34 +1,41 @@
 {
+    "version": "2.0.0",
     "tasks": [
         {
-            "type": "cppbuild",
-            "label": "C/C++: g++ build active file",
-            "command": "/usr/bin/g++",
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "main.cpp",
-                "-o",
-                "dev/${workspaceFolderBasename}",
-                //"-O3",
-                "-std=c++17",
-                "-Wall",
-                "-Wpedantic",
-                "-Werror",
-                "-Ldev",
-                "-l:libkissfft-float.so",
+                "build",
+                "${workspaceFolder}/Correlator.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
             ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/Correlator.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/Correlator.csproj"
+            ],
+            "problemMatcher": "$msCompile"
         }
-    ],
-    "version": "2.0.0"
+    ]
 }
