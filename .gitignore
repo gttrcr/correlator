@@ -5,8 +5,8 @@ c++/release/*
 c++/output/*
 c++/kissfft/*
 c++/eigen/*
+c#/.vscode/settings.json
+c#/bin/*
+c#/obj/*
 test_csv/*
-.vscode/settings.json
 out_correlator/*
-bin/*
-obj/*
