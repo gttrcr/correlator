@@ -1,6 +1,6 @@
-[submodule "kissfft"]
-	path = kissfft
+[submodule "c++/kissfft"]
+	path = c++/kissfft
 	url = https://github.com/mborgerding/kissfft
-[submodule "eigen"]
-	path = eigen
+[submodule "c++/eigen"]
+	path = c++/eigen
 	url = https://gitlab.com/libeigen/eigen
