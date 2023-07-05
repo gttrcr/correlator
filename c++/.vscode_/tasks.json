@@ -16,7 +16,7 @@
                 "-Wpedantic",
                 "-Werror",
                 "-Ldev",
-                "-l:libkissfft-float.so",
+                "-l:libkissfft-float.so"
             ],
             "options": {
                 "cwd": "${fileDirname}"
