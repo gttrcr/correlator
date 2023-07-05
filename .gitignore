@@ -10,3 +10,6 @@ c#/bin/*
 c#/obj/*
 test_csv/*
 out_correlator/*
+Gui/.vs/*
+Gui/Gui/bin/*
+Gui/Gui/obj/*
