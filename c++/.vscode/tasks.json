@@ -2,14 +2,21 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe compila il file attivo",
-            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "label": "C/C++: g++ build active file",
+            "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "main.cpp",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "dev/correlator",
+                //"-O3",
+                "-std=c++17",
+                "-Wall",
+                "-Wpedantic",
+                "-Werror",
+                "-Ldev",
+                "-l:libkissfft-float.so"
             ],
             "options": {
                 "cwd": "${fileDirname}"
@@ -20,8 +27,7 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "detail": "Attività generata dal debugger."
+            }
         }
     ],
     "version": "2.0.0"

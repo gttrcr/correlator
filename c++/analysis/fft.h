@@ -16,7 +16,7 @@ private:
     {
     public:
         std::string name;
-        FUNCTION spectrum;
+        corr_function spectrum;
     };
 
     arguments _args;
@@ -28,12 +28,12 @@ public:
         _args = args;
     }
 
-    void compute(const FUNCTION &f, const std::string &name)
+    void compute(const corr_function &f, const std::string &name)
     {
         kiss_fft_cpx *in = new kiss_fft_cpx[f.size()];
         kiss_fft_cpx *out = new kiss_fft_cpx[f.size()];
-        DOMAIN x = get_domain(f);
-        CODOMAIN y = get_codomain(f);
+        DOMAIN x = f.get_domain();
+        CODOMAIN y = f.get_codomain();
         FDST sample_size;
         bool sampling = get_sampling(f, sample_size);
         for (unsigned int i = 0; i < f.size(); i++)
@@ -48,7 +48,7 @@ public:
             if (!sampling)
                 std::cout << "Warning! Domain is not linear or discretization is not regular" << std::endl;
 
-            FUNCTION spectrum;
+            corr_function spectrum;
             for (unsigned int j = 0; j < (full ? f.size() : (f.size() / 2 + 1)); j++)
             {
                 FDST freq = (sampling ? sample_size : 1) * (FDST)(f.size()) / (FDST)j;
@@ -71,8 +71,8 @@ public:
         {
             std::ofstream of(_args.output + "/" + output_folder + "/" + _data[i].name + ".csv");
             of << "freq,power" << std::endl;
-            DOMAIN d = get_domain(_data[i].spectrum);     // frequency
-            CODOMAIN c = get_codomain(_data[i].spectrum); // power
+            DOMAIN d = _data[i].spectrum.get_domain();     // frequency
+            CODOMAIN c = _data[i].spectrum.get_codomain(); // power
             for (unsigned int j = 0; j < d.size(); j++)
                 of << d[j] << "," << c[j] << std::endl;
             of.close();
@@ -81,7 +81,7 @@ public:
         _data.clear();
     }
 
-    FUNCTION get_last_spectrum()
+    corr_function get_last_spectrum()
     {
         return _data[_data.size() - 1].spectrum;
     }

@@ -1,34 +1,41 @@
-#include "error.h"
-#include "analysis/result.h"
-#include "arguments.h"
 #include "function.h"
-#include "analysis/methods.h"
+typedef std::vector<std::pair<std::string, corr_function>> FUNCTIONS;
+
+#include "error.h"
+#include "arguments.h"
+#include "analysis/work.h"
+#include "analysis/result.h"
+#include "cli.h"
 
 #include <sstream>
 #include <vector>
 #include <fstream>
-#include <algorithm>
 #include <string>
 #include <filesystem>
 #include <map>
-#include <regex>
 
-// get the list of all csv files inside the folder
-std::vector<std::string> get_csv_files(const std::string &path)
+// return a function from content
+bool get_function(const std::vector<std::vector<std::string>> &s_content, corr_function &f, const arguments &args)
 {
-    std::vector<std::string> csv_files;
-    for (const auto &entry : std::filesystem::directory_iterator(path))
+    if (s_content.size() == 0)
+        return false;
+
+    f.clear();
+    for (unsigned int i = 0; i < s_content.size(); i++)
     {
-        if (entry.path().extension() == ".csv")
+        if (s_content[i].size() > 1)
         {
-            std::string filename = std::filesystem::path(entry.path()).string();
-            csv_files.push_back(filename);
-            std::cout << "Found " << filename << std::endl;
+            for (unsigned int j = 0; j < s_content[i].size(); j++)
+                if (std::stod(s_content[i][j]) == std::numeric_limits<FDST>::infinity())
+                    throw correlator_exception(error::nan_or_infinity_number);
         }
+        else
+            throw correlator_exception(error::the_function_has_dimension_less_than_2);
+
+        f.push_back(PAIR(std::stod(s_content[i][0]), std::stod(s_content[i][args.domain_size + args.codomain_column_index - 1])));
     }
 
-    analysis::result::get()->set_csv_files(csv_files);
-    return csv_files;
+    return true;
 }
 
 // read a csv file returning content and the list of axis
@@ -88,30 +95,6 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
     return false;
 }
 
-// return a function from content
-bool get_function(const std::vector<std::vector<std::string>> &s_content, FUNCTION &f, const arguments &args)
-{
-    if (s_content.size() == 0)
-        return false;
-
-    f.clear();
-    for (unsigned int i = 0; i < s_content.size(); i++)
-    {
-        if (s_content[i].size() > 1)
-        {
-            for (unsigned int j = 0; j < s_content[i].size(); j++)
-                if (std::stod(s_content[i][j]) == std::numeric_limits<FDST>::infinity())
-                    throw correlator_exception(error::nan_or_infinity_number);
-        }
-        else
-            throw correlator_exception(error::the_function_has_dimension_less_than_2);
-
-        f.push_back(PAIR(std::stod(s_content[i][0]), std::stod(s_content[i][args.domain_size + args.codomain_column_index - 1])));
-    }
-
-    return true;
-}
-
 // return all functions from csv filename
 FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const arguments &args)
 {
@@ -129,7 +112,7 @@ FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const a
             throw correlator_exception(error::error_on_reading_csv);
 
         std::cout << "\tParsing..." << std::endl;
-        FUNCTION f;
+        corr_function f;
         if (!get_function(s_content, f, args))
             throw correlator_exception(error::error_on_get_function);
 
@@ -139,96 +122,12 @@ FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const a
     return fs;
 }
 
-inline std::vector<std::string> split(const std::string &s, const std::string &str_of_delimiters)
+void axis_duplication(FUNCTIONS &fs, const arguments &args)
 {
-    std::regex re(str_of_delimiters);
-    std::sregex_token_iterator first{s.begin(), s.end(), re, -1}, last;
-    std::vector<std::string> tokens{first, last};
-
-    return tokens;
-}
-
-inline bool is_integer(const std::string &str)
-{
-    return !str.empty() && std::find_if(str.begin(), str.end(), [](unsigned char c)
-                                        { return !std::isdigit(c); }) == str.end();
-}
-
-// from argc and argv, create arguments struct
-arguments get_arguments(int argc, char *argv[])
-{
-    std::vector<std::string> args;
-    for (unsigned int i = 0; i < (unsigned int)argc; i++)
-    {
-        std::vector<std::string> line = split(argv[i], " ");
-        args.insert(args.end(), line.begin(), line.end());
-    }
-
-    // remove empty entries
-    args.erase(std::remove_if(args.begin(), args.end(), [](const std::string &s)
-                              { return s.find(' ', 0); }));
-
-    std::map<std::string, std::vector<std::string>> complete_args;
-    for (unsigned int i = 0; i < args.size(); i++)
-    {
-        std::string command;
-        if (args[i].find("-") == 0)
-        {
-            command = args[i++];
-            for (; i < args.size(); i++)
-            {
-                if (args[i].find("-") != 0)
-                    complete_args[command].push_back(args[i]);
-                else
-                {
-                    if (complete_args[command].size() == 0)
-                        complete_args[command].push_back("");
-
-                    i--;
-                    break;
-                }
-            }
-
-            if (complete_args[command].size() == 0)
-                complete_args[command].push_back("");
-        }
-    }
-
-    arguments a;
-    for (const auto &pair : complete_args)
-    {
-        if (pair.first == "-p")
-        {
-            if (pair.second.size() == 1 && pair.second[0].empty())
-                a.port = arguments::get_default_port();
-            else if (pair.second.size() == 1 && is_integer(pair.second[0]))
-                a.port = std::stoi(pair.second[0]);
-        }
-
-        if (pair.first == "-i" && pair.second.size() == 1 && !pair.second[0].empty())
-            a.input = pair.second[0];
-
-        if (pair.first == "-o" && pair.second.size() == 1 && !pair.second[0].empty())
-            a.output = pair.second[0];
-
-        if (pair.first == "-e" && pair.second.size() == 1 && is_integer(pair.second[0]))
-            a.number_of_fft_peaks_to_compute = std::stoi(pair.second[0]);
-
-        if (pair.first == "-c" && pair.second.size() == 1 && is_integer(pair.second[0]))
-            a.codomain_column_index = std::stoi(pair.second[0]);
-
-        if (pair.first == "-d" && pair.second.size() == 1 && is_integer(pair.second[0]))
-            a.domain_size = std::stoi(pair.second[0]);
-
-        if (pair.first == "-s" && pair.second.size() == 1 && !pair.second[0].empty())
-            a.socket_output = pair.second[0];
-
-        if (pair.first == "-f" && pair.second.size() == 1 && is_integer(pair.second[0]))
-            a.polyfit_max_degree = std::stoi(pair.second[0]);
-    }
-
-    analysis::result::get()->set_arguments(a);
-    return a;
+    // for (int i = 0; i < fs.size(); i++)
+    // {
+    //     // corr_function f = get_function(get_domain(fs[i].swap))
+    // }
 }
 
 void correlate_from_files(const std::vector<std::string> &csv_files, const arguments &args)
@@ -237,7 +136,12 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
     {
         std::cout << "correlate from files..." << std::endl;
         FUNCTIONS fs = get_functions(csv_files, args);
-        analysis::all_methods(fs, args);
+
+        std::cout << "axis duplication..." << std::endl;
+        axis_duplication(fs, args);
+
+        std::cout << "working..." << std::endl;
+        analysis::work(fs, args);
     }
     catch (const std::exception &e)
     {
@@ -251,23 +155,33 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
     }
 }
 
-void correlate_from_socket(const arguments &args)
+// get the list of all csv files inside the folder
+std::vector<std::string> get_csv_files(const std::string &path)
 {
-    std::cout << "correlate from socket..." << std::endl;
-    // create_socket();
+    std::vector<std::string> csv_files;
+    for (const auto &entry : std::filesystem::directory_iterator(path))
+    {
+        if (entry.path().extension() == ".csv")
+        {
+            std::string filename = std::filesystem::path(entry.path()).string();
+            csv_files.push_back(filename);
+            std::cout << "Found " << filename << std::endl;
+        }
+    }
+
+    analysis::result::get()->set_csv_files(csv_files);
+    return csv_files;
 }
 
 int main(int argc, char *argv[])
 {
     try
     {
-        arguments args = get_arguments(argc, argv);
+        arguments args = arguments::get_arguments(argc, argv);
+        analysis::result::get()->set_arguments(args);
         std::vector<std::string> csv_files = get_csv_files(args.input);
         if (csv_files.size() > 0)
             correlate_from_files(csv_files, args);
-
-        if (args.port != 0)
-            correlate_from_socket(args);
     }
     catch (correlator_exception &ce)
     {

@@ -86,3 +86,15 @@ There are two ```.sh``` scripts.
   * ```win64``` for windows 64 bits
   * ```linux```for linux
 * ```./release.sh``` releases every supported platform and produces the zip files that will be distributed.
+
+### main.cpp steps
+```
+main
+    get_arguments
+       get_csv_files
+           correlate_from_files
+               get_functions
+                   read_csv
+                       get_function
+                           all_methods
+```

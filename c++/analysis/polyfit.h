@@ -66,12 +66,12 @@ public:
         _args = args;
     }
 
-    void compute(const FUNCTION &f, const unsigned int &degree, const std::string &name)
+    void compute(const corr_function &f, const unsigned int &degree, const std::string &name)
     {
         for (unsigned int deg = 0; deg <= degree; deg++)
         {
-            DOMAIN x = get_domain(f);
-            CODOMAIN y = get_codomain(f);
+            DOMAIN x = f.get_domain();
+            CODOMAIN y = f.get_codomain();
             CODOMAIN c;
             _polyfit(x, y, c, deg);
             FDST r2 = statistics::get_r2(x, y, c);
