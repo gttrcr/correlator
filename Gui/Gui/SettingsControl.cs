@@ -14,43 +14,49 @@ namespace Gui
             splitContainer1.SplitterDistance = splitContainer1.Height - 100;
             splitContainer2.SplitterDistance = splitContainer2.Width / 2;
 
-            AddSetting("Number of lines to show in dataset", new string[] { "10", "100", "1000", "10000", "100000" }, false, Settings.Get().NumberOfLinesToShowInDataset.ToString());
-            AddSetting("Theme", new string[] { "Light", "Dark" }, false, Settings.Get().Theme);
+            AddSetting<DataGridViewComboBoxCell>("Theme", new string[] { "Light", "Dark" }, false, Settings.Get().Theme);
+            AddSetting<DataGridViewComboBoxCell>("Number of lines to show in dataset", new string[] { "10", "100", "1000", "10000", "100000" }, false, Settings.Get().NumberOfLinesToShowInDataset.ToString());
+            AddSetting<DataGridViewCheckBoxCell>("Compute Polynomial fit", null, false, Settings.Get().ComputePolyFit);
+            AddSetting<DataGridViewCheckBoxCell>("Compute FFT", null, false, Settings.Get().ComputeFFT);
+            AddSetting<DataGridViewCheckBoxCell>("Compute FFT peaks", null, false, Settings.Get().ComputeFFTPeaks);
+            AddSetting<DataGridViewCheckBoxCell>("Compute FFT peaks migration", null, false, Settings.Get().ComputeFFTPeaksMigration);
         }
 
-        private void AddSetting(string settingName, string[] settings, bool readOnly, string value)
+        private void AddSetting<T>(string settingName, IEnumerable<object>? settings, bool readOnly, object value) where T : DataGridViewCell, new()
         {
-            if (!settings.Contains(value))
+            if (settings != null && !settings.Contains(value))
                 throw new Exception("Setting " + value + " is not contained in settings {" + string.Join(", ", settings) + "}");
 
-            DataGridViewComboBoxCell comboBoxCell = new();
-            comboBoxCell.DataSource = settings;
-            comboBoxCell.Value = value;
+            DataGridViewCell customCell = new T();
+            if (typeof(T) == typeof(DataGridViewComboBoxCell))
+                ((DataGridViewComboBoxCell)customCell).DataSource = settings;
+            customCell.Value = value;
+            customCell.Style.SelectionBackColor = Color.Transparent;
             DataGridViewCell cell = new DataGridViewTextBoxCell();
             cell.Value = settingName;
             DataGridViewRow row = new();
             row.Cells.Add(cell);
-            row.Cells.Add(comboBoxCell);
+            row.Cells.Add(customCell);
             cell.ReadOnly = true;
-            comboBoxCell.ReadOnly = readOnly;
+            customCell.ReadOnly = readOnly;
             dataGridViewSettings.Rows.Add(row);
         }
 
         private void ButtonSaveSettings_Click(object sender, EventArgs e)
         {
-            List<Control> result = ParentControl.GetSelfAndChildrenRecursive().ToList();
-            List<Color> backColors = result.Select(x => x.BackColor).ToList();
-            backColors.AddRange(result.Where(x => x is DataGridView).Select(x => (DataGridView)x).Select(x => x.BackgroundColor));
-            //TODO add other Controls
-            backColors = backColors.Distinct().ToList();
+            //List<Control> result = ParentControl.GetSelfAndChildrenRecursive().ToList();
+            //List<Color> backColors = result.Select(x => x.BackColor).ToList();
+            //backColors.AddRange(result.Where(x => x is DataGridView).Select(x => (DataGridView)x).Select(x => x.BackgroundColor));
+            ////TODO add other Controls
+            //backColors = backColors.Distinct().ToList();
 
-            List<Color> foreColors = result.Select(x => x.ForeColor).ToList();
-            //TODO add other Controls
-            foreColors = foreColors.Distinct().ToList();
+            //List<Color> foreColors = result.Select(x => x.ForeColor).ToList();
+            ////TODO add other Controls
+            //foreColors = foreColors.Distinct().ToList();
 
-            result.ForEach(x => x.BackColor = Color.AliceBlue);
-            result.ForEach(x => x.ForeColor = Color.Red);
-            ParentControl.Refresh();
+            //result.ForEach(x => x.BackColor = Color.AliceBlue);
+            //result.ForEach(x => x.ForeColor = Color.Red);
+            //ParentControl.Refresh();
         }
 
         private void ButtonRestoreDefault_Click(object sender, EventArgs e)
@@ -65,6 +71,10 @@ namespace Gui
 
         public string Theme { get; private set; }
         public int NumberOfLinesToShowInDataset { get; private set; }
+        public bool ComputePolyFit { get; private set; }
+        public bool ComputeFFT { get; private set; }
+        public bool ComputeFFTPeaks { get; private set; }
+        public bool ComputeFFTPeaksMigration { get; private set; }
 
         private Settings()
         {
@@ -88,6 +98,10 @@ namespace Gui
         {
             Theme = "Light";
             NumberOfLinesToShowInDataset = 100;
+            ComputePolyFit = true;
+            ComputeFFT = true;
+            ComputeFFTPeaks = true;
+            ComputeFFTPeaksMigration = true;
         }
 
         public static Settings Get()

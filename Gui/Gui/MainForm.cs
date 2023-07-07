@@ -52,6 +52,11 @@ namespace Gui
             DynamicCreatedSplitContainers.ForEach(x => x.SplitterDistance = DynamicCreatedDataGridViewColumnClick[0].RowTemplate.Height);
         }
 
+        private void ToolStripButtonStartOneShot_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void ToolStripButtonRTCorrelator_Click(object sender, EventArgs e)
         {
             toolStripButtonRTCorrelator.Image = Properties.Resources.stop_button_icon_19;
@@ -140,7 +145,7 @@ namespace Gui
             Form form = new();
             form.Controls.Add(new SettingsControl(this));
             form.StartPosition = FormStartPosition.CenterScreen;
-            form.Size = new Size(800, 300);
+            form.Size = new Size(800, 500);
             form.ShowDialog();
         }
 

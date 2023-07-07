@@ -58,35 +58,35 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, settingsToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Padding = new Padding(7, 3, 0, 3);
-            menuStrip.Size = new Size(1031, 30);
+            menuStrip.Padding = new Padding(9, 4, 0, 4);
+            menuStrip.Size = new Size(1289, 37);
             menuStrip.TabIndex = 0;
             // 
             // fileToolStripMenuItem
             // 
             fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { importFilesToolStripMenuItem, importFoldersToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(46, 24);
+            fileToolStripMenuItem.Size = new Size(54, 29);
             fileToolStripMenuItem.Text = "File";
             // 
             // importFilesToolStripMenuItem
             // 
             importFilesToolStripMenuItem.Name = "importFilesToolStripMenuItem";
-            importFilesToolStripMenuItem.Size = new Size(187, 26);
+            importFilesToolStripMenuItem.Size = new Size(229, 34);
             importFilesToolStripMenuItem.Text = "Import files";
             importFilesToolStripMenuItem.Click += ImportFilesToolStripMenuItem_Click;
             // 
             // importFoldersToolStripMenuItem
             // 
             importFoldersToolStripMenuItem.Name = "importFoldersToolStripMenuItem";
-            importFoldersToolStripMenuItem.Size = new Size(187, 26);
+            importFoldersToolStripMenuItem.Size = new Size(229, 34);
             importFoldersToolStripMenuItem.Text = "Import folders";
             importFoldersToolStripMenuItem.Click += ImportFoldersToolStripMenuItem_Click;
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(76, 24);
+            settingsToolStripMenuItem.Size = new Size(92, 29);
             settingsToolStripMenuItem.Text = "Settings";
             settingsToolStripMenuItem.Click += SettingsToolStripMenuItem_Click;
             // 
@@ -94,9 +94,9 @@
             // 
             toolStrip.ImageScalingSize = new Size(37, 37);
             toolStrip.Items.AddRange(new ToolStripItem[] { toolStripButtonImportFiles, toolStripButtonImportFolders, toolStripButtonStartOneShot, toolStripButtonRTCorrelator, toolStripButtonSettings });
-            toolStrip.Location = new Point(0, 30);
+            toolStrip.Location = new Point(0, 37);
             toolStrip.Name = "toolStrip";
-            toolStrip.Size = new Size(1031, 44);
+            toolStrip.Size = new Size(1289, 46);
             toolStrip.TabIndex = 1;
             // 
             // toolStripButtonImportFiles
@@ -127,6 +127,7 @@
             toolStripButtonStartOneShot.Name = "toolStripButtonStartOneShot";
             toolStripButtonStartOneShot.Size = new Size(41, 41);
             toolStripButtonStartOneShot.Text = "One shot";
+            toolStripButtonStartOneShot.Click += ToolStripButtonStartOneShot_Click;
             // 
             // toolStripButtonRTCorrelator
             // 
@@ -154,21 +155,21 @@
             tabControlMain.Controls.Add(tabPage2);
             tabControlMain.Controls.Add(tabPage3);
             tabControlMain.Dock = DockStyle.Fill;
-            tabControlMain.Location = new Point(0, 74);
-            tabControlMain.Margin = new Padding(3, 4, 3, 4);
+            tabControlMain.Location = new Point(0, 83);
+            tabControlMain.Margin = new Padding(4, 5, 4, 5);
             tabControlMain.Name = "tabControlMain";
             tabControlMain.SelectedIndex = 0;
-            tabControlMain.Size = new Size(1031, 635);
+            tabControlMain.Size = new Size(1289, 803);
             tabControlMain.TabIndex = 2;
             // 
             // tabPageDataset
             // 
             tabPageDataset.Controls.Add(tabControlDataset);
-            tabPageDataset.Location = new Point(4, 29);
-            tabPageDataset.Margin = new Padding(3, 4, 3, 4);
+            tabPageDataset.Location = new Point(4, 34);
+            tabPageDataset.Margin = new Padding(4, 5, 4, 5);
             tabPageDataset.Name = "tabPageDataset";
-            tabPageDataset.Padding = new Padding(3, 4, 3, 4);
-            tabPageDataset.Size = new Size(1023, 602);
+            tabPageDataset.Padding = new Padding(4, 5, 4, 5);
+            tabPageDataset.Size = new Size(1281, 765);
             tabPageDataset.TabIndex = 0;
             tabPageDataset.Text = "Dataset";
             tabPageDataset.UseVisualStyleBackColor = true;
@@ -176,53 +177,54 @@
             // tabControlDataset
             // 
             tabControlDataset.Dock = DockStyle.Fill;
-            tabControlDataset.Location = new Point(3, 4);
+            tabControlDataset.Location = new Point(4, 5);
+            tabControlDataset.Margin = new Padding(4);
             tabControlDataset.Name = "tabControlDataset";
             tabControlDataset.SelectedIndex = 0;
-            tabControlDataset.Size = new Size(1017, 594);
+            tabControlDataset.Size = new Size(1273, 755);
             tabControlDataset.TabIndex = 0;
             // 
             // tabPage2
             // 
             tabPage2.Controls.Add(dateTimePicker1);
-            tabPage2.Location = new Point(4, 29);
-            tabPage2.Margin = new Padding(3, 4, 3, 4);
+            tabPage2.Location = new Point(4, 34);
+            tabPage2.Margin = new Padding(4, 5, 4, 5);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3, 4, 3, 4);
-            tabPage2.Size = new Size(1023, 602);
+            tabPage2.Padding = new Padding(4, 5, 4, 5);
+            tabPage2.Size = new Size(1281, 765);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // dateTimePicker1
             // 
-            dateTimePicker1.Location = new Point(189, 65);
-            dateTimePicker1.Margin = new Padding(3, 4, 3, 4);
+            dateTimePicker1.Location = new Point(236, 81);
+            dateTimePicker1.Margin = new Padding(4, 5, 4, 5);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(228, 27);
+            dateTimePicker1.Size = new Size(284, 31);
             dateTimePicker1.TabIndex = 0;
             // 
             // tabPage3
             // 
-            tabPage3.Location = new Point(4, 29);
-            tabPage3.Margin = new Padding(3, 4, 3, 4);
+            tabPage3.Location = new Point(4, 34);
+            tabPage3.Margin = new Padding(4, 5, 4, 5);
             tabPage3.Name = "tabPage3";
-            tabPage3.Padding = new Padding(3, 4, 3, 4);
-            tabPage3.Size = new Size(1023, 602);
+            tabPage3.Padding = new Padding(4, 5, 4, 5);
+            tabPage3.Size = new Size(1281, 765);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "tabPage3";
             tabPage3.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1031, 709);
+            ClientSize = new Size(1289, 886);
             Controls.Add(tabControlMain);
             Controls.Add(toolStrip);
             Controls.Add(menuStrip);
             MainMenuStrip = menuStrip;
-            Margin = new Padding(3, 4, 3, 4);
+            Margin = new Padding(4, 5, 4, 5);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "MainForm";
