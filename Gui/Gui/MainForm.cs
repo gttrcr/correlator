@@ -1,7 +1,7 @@
 //icon from https://icon-library.com/
 
 using ScottPlot;
-using System.Diagnostics;
+using System.Globalization;
 using Orientation = System.Windows.Forms.Orientation;
 
 namespace Gui
@@ -10,7 +10,7 @@ namespace Gui
     {
         private readonly List<SplitContainer> DynamicCreatedSplitContainers = new();
         private readonly List<DataGridView> DynamicCreatedDataGridViewColumnClick = new();
-        private List<List<List<double>>> DataSet = new();
+        private readonly List<List<List<double>>> DataSet = new();
 
         public MainForm()
         {
@@ -94,6 +94,7 @@ namespace Gui
 
         private void LoadDataset(string[] files)
         {
+            DataSet.Clear();
             tabControlDataset.Controls.Clear();
             for (int i = 0; i < files.Length; i++)
             {
@@ -129,7 +130,7 @@ namespace Gui
 
                 //create the dataset
                 if (parsable)
-                    DataSet.Add(values.Select(x => x.Select(y => double.Parse(y)).ToList()).ToList());
+                    DataSet.Add(values.Select(x => x.Select(y => double.Parse(y.Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator.ToString()))).ToList()).ToList());
 
                 //create the tab page
                 TabPage tabPage = new();
@@ -143,7 +144,6 @@ namespace Gui
                 splitContainer.Orientation = Orientation.Horizontal;
                 splitContainer.Dock = DockStyle.Fill;
                 splitContainer.IsSplitterFixed = true;
-                splitContainer.SplitterDistance = 25;
 
                 //in the lower panel (Panel2) of the SplitContainer add the datagridview with data
                 DataGridView dataGridViewData = new();
@@ -191,30 +191,29 @@ namespace Gui
                 List<bool> listOfButtonReadonly = Enumerable.Repeat(true, Settings.Get().DomainSize).ToList();
                 listOfButtonReadonly.AddRange(Enumerable.Repeat(false, maxColsNumber - Settings.Get().DomainSize));
                 dataGridViewColumnManager.AddRow<DataGridViewButtonCell>(listOfButtonValues, listOfButtonReadonly);
-                dataGridViewColumnManager.CellContentClick += (object? sender, DataGridViewCellEventArgs e) =>
-                {
-                    if (!parsable)
-                        return;
-
-                    if (sender == null)
-                        return;
-
-                    DataGridView senderGrid = (DataGridView)sender;
-                    int rowIndex = e.RowIndex;
-                    int columnIndex = e.ColumnIndex;
-                    if (senderGrid.Rows[rowIndex].Cells[columnIndex] is DataGridViewButtonCell && columnIndex >= Settings.Get().DomainSize)
+                if (parsable)
+                    dataGridViewColumnManager.CellContentClick += (object? sender, DataGridViewCellEventArgs e) =>
                     {
-                        FormsPlot plot = new FormsPlot() { Dock = DockStyle.Fill };
-                        plot.Plot.AddScatter(DataSet[0].Select(x => x[0]).ToArray(), DataSet[0].Select(x => x[1]).ToArray());
-                        plot.Plot.Title(titles[columnIndex]);
-                        plot.Refresh();
-                        Form form = new Form();
-                        form.Controls.Add(plot);
-                        form.StartPosition = FormStartPosition.CenterScreen;
-                        form.Size = new Size(800, 500);
-                        form.ShowDialog();
-                    }
-                };
+                        if (sender == null)
+                            return;
+
+                        DataGridView senderGrid = (DataGridView)sender;
+                        int rowIndex = e.RowIndex;
+                        int columnIndex = e.ColumnIndex;
+                        if (senderGrid.Rows[rowIndex].Cells[columnIndex] is DataGridViewButtonCell && columnIndex >= Settings.Get().DomainSize)
+                        {
+                            FormsPlot plot = new FormsPlot() { Dock = DockStyle.Fill };
+                            plot.Plot.AddScatter(DataSet[0].Select(x => x[0]).ToArray(), DataSet[0].Select(x => x[1]).ToArray());
+                            plot.Plot.Title(titles[columnIndex]);
+                            plot.Refresh();
+                            Form form = new Form();
+                            form.Controls.Add(plot);
+                            form.StartPosition = FormStartPosition.CenterScreen;
+                            form.Size = new Size(800, 500);
+                            form.ShowDialog();
+                        }
+                    };
+
                 splitContainer.SplitterDistance = dataGridViewColumnManager.RowTemplate.Height * dataGridViewColumnManager.Rows.Count;
             }
         }
