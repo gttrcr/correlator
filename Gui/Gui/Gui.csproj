@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="ScottPlot" Version="4.1.64" />
+    <PackageReference Include="ScottPlot.WinForms" Version="4.1.64" />
   </ItemGroup>
 
   <ItemGroup>

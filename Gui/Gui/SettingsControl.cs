@@ -16,6 +16,7 @@ namespace Gui
 
             AddSetting<DataGridViewComboBoxCell>("Theme", new string[] { "Light", "Dark" }, false, Settings.Get().Theme);
             AddSetting<DataGridViewComboBoxCell>("Number of lines to show in dataset", new string[] { "10", "100", "1000", "10000", "100000" }, false, Settings.Get().NumberOfLinesToShowInDataset.ToString());
+            AddSetting<DataGridViewTextBoxCell>("Number of domain columns", null, false, Settings.Get().DomainSize);
             AddSetting<DataGridViewCheckBoxCell>("Compute Polynomial fit", null, false, Settings.Get().ComputePolyFit);
             AddSetting<DataGridViewCheckBoxCell>("Compute FFT", null, false, Settings.Get().ComputeFFT);
             AddSetting<DataGridViewCheckBoxCell>("Compute FFT peaks", null, false, Settings.Get().ComputeFFTPeaks);
@@ -71,6 +72,7 @@ namespace Gui
 
         public string Theme { get; private set; }
         public int NumberOfLinesToShowInDataset { get; private set; }
+        public int DomainSize { get; private set; }
         public bool ComputePolyFit { get; private set; }
         public bool ComputeFFT { get; private set; }
         public bool ComputeFFTPeaks { get; private set; }
@@ -98,6 +100,7 @@ namespace Gui
         {
             Theme = "Light";
             NumberOfLinesToShowInDataset = 100;
+            DomainSize = 1;
             ComputePolyFit = true;
             ComputeFFT = true;
             ComputeFFTPeaks = true;
