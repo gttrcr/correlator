@@ -103,6 +103,16 @@ namespace Gui.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap plot_icon_7 {
+            get {
+                object obj = ResourceManager.GetObject("plot_icon_7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap stop_button_icon_19 {
             get {
                 object obj = ResourceManager.GetObject("stop_button_icon_19", resourceCulture);

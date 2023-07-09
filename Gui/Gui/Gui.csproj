@@ -13,6 +13,7 @@
     <None Remove="add-file-icon-6.jpg" />
     <None Remove="compare-xxl.png" />
     <None Remove="icon-start-2.jpg" />
+    <None Remove="SampleCSVFile_53000kb.csv" />
     <None Remove="stop-button-icon-19.jpg" />
     <None Remove="windows-settings-icon-20.jpg" />
   </ItemGroup>
@@ -35,10 +36,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

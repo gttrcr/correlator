@@ -2,6 +2,7 @@
 
 using ScottPlot;
 using System.Globalization;
+using System.Reflection;
 using Orientation = System.Windows.Forms.Orientation;
 
 namespace Gui
@@ -15,8 +16,6 @@ namespace Gui
         public MainForm()
         {
             InitializeComponent();
-            //tabPage3.Controls.Clear();
-            //tabPage3.Controls.Add(new SettingsControl(this));
             SizeChanged += MainForm_SizeChanged;
         }
 
@@ -185,6 +184,23 @@ namespace Gui
                 listOfCheckboxes.AddRange(Enumerable.Repeat(false, maxColsNumber - Settings.Get().DomainSize).Cast<object>());
                 dataGridViewColumnManager.AddRow<DataGridViewCheckBoxCell>(listOfCheckboxes, false);
 
+                dataGridViewColumnManager.CellPainting += (object? sender, DataGridViewCellPaintingEventArgs e) =>
+                {
+                    if (e.RowIndex == 1)
+                        if (e.ColumnIndex >= Settings.Get().DomainSize)
+                        {
+                            e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+
+                            int w = (int)(dataGridViewColumnManager.RowTemplate.Height * 0.8); // Properties.Resources.stop_button_icon_19.Width;
+                            int h = (int)(dataGridViewColumnManager.RowTemplate.Height * 0.8); // Properties.Resources.stop_button_icon_19.Height;
+                            int x = e.CellBounds.Left + (e.CellBounds.Width - w) / 2;
+                            int y = e.CellBounds.Top + (e.CellBounds.Height - h) / 2;
+
+                            e.Graphics.DrawImage(Properties.Resources.plot_icon_7, new Rectangle(x, y, w, h));
+                            e.Handled = true;
+                        }
+                };
+
                 //add row with buttons
                 List<object> listOfButtonValues = Enumerable.Repeat(string.Empty, Settings.Get().DomainSize).Cast<object>().ToList();
                 listOfButtonValues.AddRange(Enumerable.Range(0, maxColsNumber - Settings.Get().DomainSize).Cast<object>());
@@ -216,6 +232,11 @@ namespace Gui
 
                 splitContainer.SplitterDistance = dataGridViewColumnManager.RowTemplate.Height * dataGridViewColumnManager.Rows.Count;
             }
+        }
+
+        private void DataGridViewColumnManager_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void ShowSettingsForm()
