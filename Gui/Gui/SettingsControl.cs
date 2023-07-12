@@ -4,113 +4,141 @@ namespace Gui
 {
     public partial class SettingsControl : UserControl
     {
-        private Control ParentControl { get; set; }
+        public delegate void CloseDelegate();
+        public CloseDelegate CloseCallback { get; set; }
+        
+        //private Control ParentControl { get; set; }
+        private static Settings? Settings { get; set; }
+
+        private static Settings LoadSettings()
+        {
+            Settings settings;
+            if (File.Exists("settings.corr"))
+                settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText("settings.corr")) ?? Default();
+            else
+                settings = Default();
+
+            return settings;
+        }
 
         public SettingsControl(Control parentControl)
         {
             InitializeComponent();
-            ParentControl = parentControl;
+            //ParentControl = parentControl;
             Dock = DockStyle.Fill;
             splitContainer1.SplitterDistance = splitContainer1.Height - 100;
             splitContainer2.SplitterDistance = splitContainer2.Width / 2;
 
-            AddSetting<DataGridViewComboBoxCell>("Theme", new string[] { "Light", "Dark" }, false, Settings.Get().Theme);
-            AddSetting<DataGridViewComboBoxCell>("Number of lines to show in dataset", new string[] { "10", "100", "1000", "10000", "100000" }, false, Settings.Get().NumberOfLinesToShowInDataset.ToString());
-            AddSetting<DataGridViewTextBoxCell>("Number of domain columns", null, false, Settings.Get().DomainSize);
-            AddSetting<DataGridViewCheckBoxCell>("Compute Polynomial fit", null, false, Settings.Get().ComputePolyFit);
-            AddSetting<DataGridViewCheckBoxCell>("Compute FFT", null, false, Settings.Get().ComputeFFT);
-            AddSetting<DataGridViewCheckBoxCell>("Compute FFT peaks", null, false, Settings.Get().ComputeFFTPeaks);
-            AddSetting<DataGridViewCheckBoxCell>("Compute FFT peaks migration", null, false, Settings.Get().ComputeFFTPeaksMigration);
+            LoadSettingsTable();
         }
 
-        private void AddSetting<T>(string settingName, IEnumerable<object>? settings, bool readOnly, object value) where T : DataGridViewCell, new()
+        public static Settings Get()
         {
-            if (settings != null && !settings.Contains(value))
-                throw new Exception("Setting " + value + " is not contained in settings {" + string.Join(", ", settings) + "}");
+            Settings ??= LoadSettings();
 
+            return Settings;
+        }
+
+        private void InsertOrUpdateSetting<T>(string settingName, object? settings) where T : DataGridViewCell, new()
+        {
+            if (settings == null)
+                return;
+
+            object? cellValue = null;
             DataGridViewCell customCell = new T();
-            if (typeof(T) == typeof(DataGridViewComboBoxCell))
-                ((DataGridViewComboBoxCell)customCell).DataSource = settings;
-            customCell.Value = value;
-            customCell.Style.SelectionBackColor = Color.Transparent;
-            DataGridViewCell cell = new DataGridViewTextBoxCell();
-            cell.Value = settingName;
-            DataGridViewRow row = new();
-            row.Cells.Add(cell);
-            row.Cells.Add(customCell);
-            cell.ReadOnly = true;
-            customCell.ReadOnly = readOnly;
-            dataGridViewSettings.Rows.Add(row);
+            if (settings is Tuple<string, List<string>> tupleSetting)
+            {
+                if (tupleSetting != null && !tupleSetting.Item2.Contains(tupleSetting.Item1))
+                    throw new Exception("Setting " + tupleSetting.Item1 + " is not contained in settings {" + string.Join(", ", tupleSetting.Item2) + "}");
+
+                if (typeof(T) == typeof(DataGridViewComboBoxCell))
+                    ((DataGridViewComboBoxCell)customCell).DataSource = tupleSetting?.Item2;
+                cellValue = tupleSetting?.Item1;
+            }
+            else if (settings is bool boolSetting)
+                cellValue = boolSetting;
+            else if (settings is int intSetting)
+                cellValue = intSetting;
+
+            DataGridViewRow? row = dataGridViewSettings.Rows.Cast<DataGridViewRow>().FirstOrDefault(x => x.Cells[0].Value.Equals(settingName));
+            DataGridViewCell? cell = row?.Cells[1];
+            if (cell != null)
+                cell.Value = cellValue;
+            else
+            {
+                customCell.Value = cellValue;
+                customCell.Style.SelectionBackColor = Color.Transparent;
+                DataGridViewTextBoxCell settingNameCell = new();
+                settingNameCell.Value = settingName;
+                DataGridViewRow newRow = new();
+                newRow.Cells.Add(settingNameCell);
+                newRow.Cells.Add(customCell);
+                settingNameCell.ReadOnly = true;
+                //customCell.ReadOnly = readOnly;
+                dataGridViewSettings.Rows.Add(newRow);
+            }
+        }
+
+        private void LoadSettingsTable()
+        {
+            InsertOrUpdateSetting<DataGridViewComboBoxCell>("Theme", Get().Theme);
+            InsertOrUpdateSetting<DataGridViewComboBoxCell>("Number of lines to show in dataset", Get().NumberOfLinesToShowInDataset);
+            InsertOrUpdateSetting<DataGridViewTextBoxCell>("Number of domain columns", Get().DomainSize);
+            InsertOrUpdateSetting<DataGridViewCheckBoxCell>("Compute Polynomial fit", Get().ComputePolyFit);
+            InsertOrUpdateSetting<DataGridViewCheckBoxCell>("Compute FFT", Get().ComputeFFT);
+            InsertOrUpdateSetting<DataGridViewCheckBoxCell>("Compute FFT peaks", Get().ComputeFFTPeaks);
+            InsertOrUpdateSetting<DataGridViewCheckBoxCell>("Compute FFT peaks migration", Get().ComputeFFTPeaksMigration);
+            InsertOrUpdateSetting<DataGridViewCheckBoxCell>("Compute FFT peaks migration", Get().ComputeFFTPeaksMigration);
+            InsertOrUpdateSetting<DataGridViewTextBoxCell>("Polyfit max degree", Get().PolyfitMaxDegree);
         }
 
         private void ButtonSaveSettings_Click(object sender, EventArgs e)
         {
-            //List<Control> result = ParentControl.GetSelfAndChildrenRecursive().ToList();
-            //List<Color> backColors = result.Select(x => x.BackColor).ToList();
-            //backColors.AddRange(result.Where(x => x is DataGridView).Select(x => (DataGridView)x).Select(x => x.BackgroundColor));
-            ////TODO add other Controls
-            //backColors = backColors.Distinct().ToList();
+            int rowIndex = 0;
+            Get().Theme = new Tuple<string, List<string>>(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value.ToString() ?? string.Empty, Get().Theme.Item2);
+            Get().NumberOfLinesToShowInDataset = new Tuple<string, List<string>>(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value.ToString() ?? string.Empty, Get().NumberOfLinesToShowInDataset.Item2);
+            Get().DomainSize = Convert.ToInt32(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value.ToString());
+            Get().ComputePolyFit = (bool)(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value);
+            Get().ComputeFFT = (bool)(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value);
+            Get().ComputeFFTPeaks = (bool)(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value);
+            Get().ComputeFFTPeaksMigration = (bool)(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value);
+            Get().PolyfitMaxDegree = Convert.ToInt32(dataGridViewSettings.Rows[rowIndex++].Cells[1].Value);
 
-            //List<Color> foreColors = result.Select(x => x.ForeColor).ToList();
-            ////TODO add other Controls
-            //foreColors = foreColors.Distinct().ToList();
-
-            //result.ForEach(x => x.BackColor = Color.AliceBlue);
-            //result.ForEach(x => x.ForeColor = Color.Red);
-            //ParentControl.Refresh();
+            File.WriteAllText("settings.corr", JsonSerializer.Serialize(Settings));
+            CloseCallback?.Invoke();
         }
 
         private void ButtonRestoreDefault_Click(object sender, EventArgs e)
         {
+            Default();
+            LoadSettingsTable();
+        }
 
+        private static Settings Default()
+        {
+            return new()
+            {
+                Theme = new Tuple<string, List<string>>("Light", new List<string>() { "Light", "Dark" }),
+                NumberOfLinesToShowInDataset = new Tuple<string, List<string>>("100", new List<string>() { "10", "100", "1000", "10000" }),
+                DomainSize = 1,
+                ComputePolyFit = true,
+                ComputeFFT = true,
+                ComputeFFTPeaks = true,
+                ComputeFFTPeaksMigration = true,
+                PolyfitMaxDegree = 10
+            };
         }
     }
 
     public class Settings
     {
-        private static Settings? _instance = null;
-
-        public string Theme { get; private set; }
-        public int NumberOfLinesToShowInDataset { get; private set; }
-        public int DomainSize { get; private set; }
-        public bool ComputePolyFit { get; private set; }
-        public bool ComputeFFT { get; private set; }
-        public bool ComputeFFTPeaks { get; private set; }
-        public bool ComputeFFTPeaksMigration { get; private set; }
-
-        private Settings()
-        {
-            if (File.Exists("settings.corr"))
-            {
-                string settings = File.ReadAllText("settings.corr");
-                Settings? setts = JsonSerializer.Deserialize<Settings>(File.ReadAllText(settings));
-                if (setts != null)
-                {
-                    Theme = setts.Theme;
-                    NumberOfLinesToShowInDataset = setts.NumberOfLinesToShowInDataset;
-                }
-                else
-                    Default();
-            }
-            else
-                Default();
-        }
-
-        private void Default()
-        {
-            Theme = "Light";
-            NumberOfLinesToShowInDataset = 100;
-            DomainSize = 1;
-            ComputePolyFit = true;
-            ComputeFFT = true;
-            ComputeFFTPeaks = true;
-            ComputeFFTPeaksMigration = true;
-        }
-
-        public static Settings Get()
-        {
-            _instance ??= new Settings();
-            return _instance;
-        }
+        public Tuple<string, List<string>>? Theme { get; set; }
+        public Tuple<string, List<string>>? NumberOfLinesToShowInDataset { get; set; }
+        public int DomainSize { get; set; }
+        public bool ComputePolyFit { get; set; }
+        public bool ComputeFFT { get; set; }
+        public bool ComputeFFTPeaks { get; set; }
+        public bool ComputeFFTPeaksMigration { get; set; }
+        public int PolyfitMaxDegree { get; set; }
     }
 }

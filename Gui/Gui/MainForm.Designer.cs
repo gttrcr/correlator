@@ -30,26 +30,20 @@
         {
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
-            importFilesToolStripMenuItem = new ToolStripMenuItem();
-            importFoldersToolStripMenuItem = new ToolStripMenuItem();
+            loadFilesToolStripMenuItem = new ToolStripMenuItem();
+            loadFoldersToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             toolStrip = new ToolStrip();
-            toolStripButtonImportFiles = new ToolStripButton();
-            toolStripButtonImportFolders = new ToolStripButton();
+            toolStripButtonLoadFiles = new ToolStripButton();
+            toolStripButtonLoadFolders = new ToolStripButton();
             toolStripButtonStartOneShot = new ToolStripButton();
-            toolStripButtonRTCorrelator = new ToolStripButton();
+            toolStripButtonRTCorrelation = new ToolStripButton();
             toolStripButtonSettings = new ToolStripButton();
+            toolStripButtonInfo = new ToolStripButton();
+            toolStripLabelWhatToDo = new ToolStripLabel();
             tabControlMain = new TabControl();
-            tabPageDataset = new TabPage();
-            tabControlDataset = new TabControl();
-            tabPage2 = new TabPage();
-            dateTimePicker1 = new DateTimePicker();
-            tabPage3 = new TabPage();
             menuStrip.SuspendLayout();
             toolStrip.SuspendLayout();
-            tabControlMain.SuspendLayout();
-            tabPageDataset.SuspendLayout();
-            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
@@ -58,66 +52,65 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, settingsToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Padding = new Padding(9, 4, 0, 4);
-            menuStrip.Size = new Size(1289, 37);
+            menuStrip.Size = new Size(902, 24);
             menuStrip.TabIndex = 0;
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { importFilesToolStripMenuItem, importFoldersToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadFilesToolStripMenuItem, loadFoldersToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(54, 29);
+            fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
             // 
-            // importFilesToolStripMenuItem
+            // loadFilesToolStripMenuItem
             // 
-            importFilesToolStripMenuItem.Name = "importFilesToolStripMenuItem";
-            importFilesToolStripMenuItem.Size = new Size(229, 34);
-            importFilesToolStripMenuItem.Text = "Import files";
-            importFilesToolStripMenuItem.Click += ImportFilesToolStripMenuItem_Click;
+            loadFilesToolStripMenuItem.Name = "loadFilesToolStripMenuItem";
+            loadFilesToolStripMenuItem.Size = new Size(180, 22);
+            loadFilesToolStripMenuItem.Text = "Load files";
+            loadFilesToolStripMenuItem.Click += LoadFilesToolStripMenuItem_Click;
             // 
-            // importFoldersToolStripMenuItem
+            // loadFoldersToolStripMenuItem
             // 
-            importFoldersToolStripMenuItem.Name = "importFoldersToolStripMenuItem";
-            importFoldersToolStripMenuItem.Size = new Size(229, 34);
-            importFoldersToolStripMenuItem.Text = "Import folders";
-            importFoldersToolStripMenuItem.Click += ImportFoldersToolStripMenuItem_Click;
+            loadFoldersToolStripMenuItem.Name = "loadFoldersToolStripMenuItem";
+            loadFoldersToolStripMenuItem.Size = new Size(180, 22);
+            loadFoldersToolStripMenuItem.Text = "Load folder";
+            loadFoldersToolStripMenuItem.Click += LoadFoldersToolStripMenuItem_Click;
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(92, 29);
+            settingsToolStripMenuItem.Size = new Size(61, 20);
             settingsToolStripMenuItem.Text = "Settings";
             settingsToolStripMenuItem.Click += SettingsToolStripMenuItem_Click;
             // 
             // toolStrip
             // 
             toolStrip.ImageScalingSize = new Size(37, 37);
-            toolStrip.Items.AddRange(new ToolStripItem[] { toolStripButtonImportFiles, toolStripButtonImportFolders, toolStripButtonStartOneShot, toolStripButtonRTCorrelator, toolStripButtonSettings });
-            toolStrip.Location = new Point(0, 37);
+            toolStrip.Items.AddRange(new ToolStripItem[] { toolStripButtonLoadFiles, toolStripButtonLoadFolders, toolStripButtonStartOneShot, toolStripButtonRTCorrelation, toolStripButtonSettings, toolStripButtonInfo, toolStripLabelWhatToDo });
+            toolStrip.Location = new Point(0, 24);
             toolStrip.Name = "toolStrip";
-            toolStrip.Size = new Size(1289, 46);
+            toolStrip.Size = new Size(902, 44);
             toolStrip.TabIndex = 1;
             // 
-            // toolStripButtonImportFiles
+            // toolStripButtonLoadFiles
             // 
-            toolStripButtonImportFiles.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButtonImportFiles.Image = Properties.Resources.add_file_icon_6;
-            toolStripButtonImportFiles.ImageTransparentColor = Color.Magenta;
-            toolStripButtonImportFiles.Name = "toolStripButtonImportFiles";
-            toolStripButtonImportFiles.Size = new Size(41, 41);
-            toolStripButtonImportFiles.Text = "Import files";
-            toolStripButtonImportFiles.Click += ToolStripButtonImportFiles_Click;
+            toolStripButtonLoadFiles.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonLoadFiles.Image = Properties.Resources.add_file_icon_6;
+            toolStripButtonLoadFiles.ImageTransparentColor = Color.Magenta;
+            toolStripButtonLoadFiles.Name = "toolStripButtonLoadFiles";
+            toolStripButtonLoadFiles.Size = new Size(41, 41);
+            toolStripButtonLoadFiles.Text = "Load files";
+            toolStripButtonLoadFiles.Click += ToolStripButtonLoadFiles_Click;
             // 
-            // toolStripButtonImportFolders
+            // toolStripButtonLoadFolders
             // 
-            toolStripButtonImportFolders.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButtonImportFolders.Image = Properties.Resources.add_file_icon_10;
-            toolStripButtonImportFolders.ImageTransparentColor = Color.Magenta;
-            toolStripButtonImportFolders.Name = "toolStripButtonImportFolders";
-            toolStripButtonImportFolders.Size = new Size(41, 41);
-            toolStripButtonImportFolders.Text = "Import folders";
-            toolStripButtonImportFolders.Click += ToolStripButtonImportFolders_Click;
+            toolStripButtonLoadFolders.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonLoadFolders.Image = Properties.Resources.add_file_icon_10;
+            toolStripButtonLoadFolders.ImageTransparentColor = Color.Magenta;
+            toolStripButtonLoadFolders.Name = "toolStripButtonLoadFolders";
+            toolStripButtonLoadFolders.Size = new Size(41, 41);
+            toolStripButtonLoadFolders.Text = "Load folders";
+            toolStripButtonLoadFolders.Click += ToolStripButtonLoadFolders_Click;
             // 
             // toolStripButtonStartOneShot
             // 
@@ -129,15 +122,16 @@
             toolStripButtonStartOneShot.Text = "One shot";
             toolStripButtonStartOneShot.Click += ToolStripButtonStartOneShot_Click;
             // 
-            // toolStripButtonRTCorrelator
+            // toolStripButtonRTCorrelation
             // 
-            toolStripButtonRTCorrelator.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButtonRTCorrelator.Image = Properties.Resources.icon_start_2;
-            toolStripButtonRTCorrelator.ImageTransparentColor = Color.Magenta;
-            toolStripButtonRTCorrelator.Name = "toolStripButtonRTCorrelator";
-            toolStripButtonRTCorrelator.Size = new Size(41, 41);
-            toolStripButtonRTCorrelator.Text = "Realtime correlation";
-            toolStripButtonRTCorrelator.Click += ToolStripButtonRTCorrelator_Click;
+            toolStripButtonRTCorrelation.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonRTCorrelation.Image = Properties.Resources.icon_start_2;
+            toolStripButtonRTCorrelation.ImageTransparentColor = Color.Magenta;
+            toolStripButtonRTCorrelation.Name = "toolStripButtonRTCorrelation";
+            toolStripButtonRTCorrelation.Size = new Size(41, 41);
+            toolStripButtonRTCorrelation.Tag = "";
+            toolStripButtonRTCorrelation.Text = "Real time correlation";
+            toolStripButtonRTCorrelation.Click += ToolStripButtonRTCorrelation_Click;
             // 
             // toolStripButtonSettings
             // 
@@ -149,82 +143,40 @@
             toolStripButtonSettings.Text = "Settings";
             toolStripButtonSettings.Click += ToolStripButtonSettings_Click;
             // 
+            // toolStripButtonInfo
+            // 
+            toolStripButtonInfo.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonInfo.Image = Properties.Resources.info_icon_svg_5;
+            toolStripButtonInfo.ImageTransparentColor = Color.Magenta;
+            toolStripButtonInfo.Name = "toolStripButtonInfo";
+            toolStripButtonInfo.Size = new Size(41, 41);
+            toolStripButtonInfo.Text = "Info";
+            // 
+            // toolStripLabelWhatToDo
+            // 
+            toolStripLabelWhatToDo.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripLabelWhatToDo.Name = "toolStripLabelWhatToDo";
+            toolStripLabelWhatToDo.Size = new Size(71, 41);
+            toolStripLabelWhatToDo.Text = "What to do?";
+            // 
             // tabControlMain
             // 
-            tabControlMain.Controls.Add(tabPageDataset);
-            tabControlMain.Controls.Add(tabPage2);
-            tabControlMain.Controls.Add(tabPage3);
             tabControlMain.Dock = DockStyle.Fill;
-            tabControlMain.Location = new Point(0, 83);
-            tabControlMain.Margin = new Padding(4, 5, 4, 5);
+            tabControlMain.Location = new Point(0, 68);
             tabControlMain.Name = "tabControlMain";
             tabControlMain.SelectedIndex = 0;
-            tabControlMain.Size = new Size(1289, 803);
+            tabControlMain.Size = new Size(902, 464);
             tabControlMain.TabIndex = 2;
-            // 
-            // tabPageDataset
-            // 
-            tabPageDataset.Controls.Add(tabControlDataset);
-            tabPageDataset.Location = new Point(4, 34);
-            tabPageDataset.Margin = new Padding(4, 5, 4, 5);
-            tabPageDataset.Name = "tabPageDataset";
-            tabPageDataset.Padding = new Padding(4, 5, 4, 5);
-            tabPageDataset.Size = new Size(1281, 765);
-            tabPageDataset.TabIndex = 0;
-            tabPageDataset.Text = "Dataset";
-            tabPageDataset.UseVisualStyleBackColor = true;
-            // 
-            // tabControlDataset
-            // 
-            tabControlDataset.Dock = DockStyle.Fill;
-            tabControlDataset.Location = new Point(4, 5);
-            tabControlDataset.Margin = new Padding(4);
-            tabControlDataset.Name = "tabControlDataset";
-            tabControlDataset.SelectedIndex = 0;
-            tabControlDataset.Size = new Size(1273, 755);
-            tabControlDataset.TabIndex = 0;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(dateTimePicker1);
-            tabPage2.Location = new Point(4, 34);
-            tabPage2.Margin = new Padding(4, 5, 4, 5);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(4, 5, 4, 5);
-            tabPage2.Size = new Size(1281, 765);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "tabPage2";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // dateTimePicker1
-            // 
-            dateTimePicker1.Location = new Point(236, 81);
-            dateTimePicker1.Margin = new Padding(4, 5, 4, 5);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(284, 31);
-            dateTimePicker1.TabIndex = 0;
-            // 
-            // tabPage3
-            // 
-            tabPage3.Location = new Point(4, 34);
-            tabPage3.Margin = new Padding(4, 5, 4, 5);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Padding = new Padding(4, 5, 4, 5);
-            tabPage3.Size = new Size(1281, 765);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "tabPage3";
-            tabPage3.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1289, 886);
+            ClientSize = new Size(902, 532);
             Controls.Add(tabControlMain);
             Controls.Add(toolStrip);
             Controls.Add(menuStrip);
             MainMenuStrip = menuStrip;
-            Margin = new Padding(4, 5, 4, 5);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "MainForm";
@@ -232,9 +184,6 @@
             menuStrip.PerformLayout();
             toolStrip.ResumeLayout(false);
             toolStrip.PerformLayout();
-            tabControlMain.ResumeLayout(false);
-            tabPageDataset.ResumeLayout(false);
-            tabPage2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -244,19 +193,16 @@
         private MenuStrip menuStrip;
         private ToolStrip toolStrip;
         private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem importFilesToolStripMenuItem;
-        private ToolStripMenuItem importFoldersToolStripMenuItem;
-        private ToolStripButton toolStripButtonImportFiles;
-        private ToolStripButton toolStripButtonImportFolders;
+        private ToolStripMenuItem loadFilesToolStripMenuItem;
+        private ToolStripMenuItem loadFoldersToolStripMenuItem;
+        private ToolStripButton toolStripButtonLoadFiles;
+        private ToolStripButton toolStripButtonLoadFolders;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private TabControl tabControlMain;
-        private TabPage tabPageDataset;
-        private TabPage tabPage2;
-        private DateTimePicker dateTimePicker1;
-        private TabPage tabPage3;
         private ToolStripButton toolStripButtonStartOneShot;
-        private TabControl tabControlDataset;
         private ToolStripButton toolStripButtonSettings;
-        private ToolStripButton toolStripButtonRTCorrelator;
+        private ToolStripButton toolStripButtonRTCorrelation;
+        private ToolStripButton toolStripButtonInfo;
+        private ToolStripLabel toolStripLabelWhatToDo;
     }
 }

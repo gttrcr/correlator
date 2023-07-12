@@ -1,44 +1,59 @@
 //icon from https://icon-library.com/
 
 using ScottPlot;
+using ScottPlot.Plottable;
 using System.Globalization;
-using System.Reflection;
 using Orientation = System.Windows.Forms.Orientation;
 
 namespace Gui
 {
     public partial class MainForm : Form
     {
-        private readonly List<SplitContainer> DynamicCreatedSplitContainers = new();
-        private readonly List<DataGridView> DynamicCreatedDataGridViewColumnClick = new();
-        private readonly List<List<List<double>>> DataSet = new();
+        private readonly List<SplitContainer> ProgrammaticCreatedSplitContainers = new();
+        private readonly List<DataGridView> ProgrammaticCreatedDataGridViewColumnClick = new();
+        private readonly List<List<List<double>>> Dataset = new();
+        private TabControl ProgrammaticCreatedTabControlDataset = new();
+        private Form? PlotForm = null;
 
         public MainForm()
         {
             InitializeComponent();
             SizeChanged += MainForm_SizeChanged;
+            toolStripButtonRTCorrelation.Tag = false;
+            toolStripLabelWhatToDo.Text = "Load a dataset or start real time correlation";
+            toolStripButtonStartOneShot.Enabled = false;
+
+            new Thread(new ThreadStart(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    GC.Collect();
+                }
+            }))
+            { IsBackground = true }.Start();
         }
 
         #region PRIVATE HANDLERS
 
-        private void ImportFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ImportFiles();
+            LoadFiles();
         }
 
-        private void ImportFoldersToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadFoldersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ImportFolders();
+            LoadFolders();
         }
 
-        private void ToolStripButtonImportFiles_Click(object sender, EventArgs e)
+        private void ToolStripButtonLoadFiles_Click(object sender, EventArgs e)
         {
-            ImportFiles();
+            LoadFiles();
         }
 
-        private void ToolStripButtonImportFolders_Click(object sender, EventArgs e)
+        private void ToolStripButtonLoadFolders_Click(object sender, EventArgs e)
         {
-            ImportFolders();
+            LoadFolders();
         }
 
         private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -53,24 +68,131 @@ namespace Gui
 
         private void MainForm_SizeChanged(object? sender, EventArgs e)
         {
-            DynamicCreatedSplitContainers.ForEach(x => x.SplitterDistance = DynamicCreatedDataGridViewColumnClick[0].RowTemplate.Height * DynamicCreatedDataGridViewColumnClick[0].Rows.Count);
+            ProgrammaticCreatedSplitContainers.ForEach(x => x.SplitterDistance = ProgrammaticCreatedDataGridViewColumnClick[0].RowTemplate.Height * ProgrammaticCreatedDataGridViewColumnClick[0].Rows.Count);
+            Refresh();
         }
 
         private void ToolStripButtonStartOneShot_Click(object sender, EventArgs e)
         {
+            if (SettingsControl.Get().ComputePolyFit)
+            {
+                TabPage tabPage = new();
+                TabControl tabControl = new();
+                tabControlMain.AddTabPageAndTabControl(ref tabPage, "Polyfit", ref tabControl);
+                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+            }
 
+            if (SettingsControl.Get().ComputeFFT)
+            {
+                TabPage tabPage = new();
+                TabControl tabControl = new();
+                tabControlMain.AddTabPageAndTabControl(ref tabPage, "FFT", ref tabControl);
+                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+            }
+
+            if (SettingsControl.Get().ComputeFFTPeaks)
+            {
+                TabPage tabPage = new();
+                TabControl tabControl = new();
+                tabControlMain.AddTabPageAndTabControl(ref tabPage, "FFT peaks", ref tabControl);
+                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+            }
+
+            if (SettingsControl.Get().ComputeFFTPeaksMigration)
+            {
+                TabPage tabPage = new();
+                TabControl tabControl = new();
+                tabControlMain.AddTabPageAndTabControl(ref tabPage, "FFT peaks migration", ref tabControl);
+                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+            }
         }
 
-        private void ToolStripButtonRTCorrelator_Click(object sender, EventArgs e)
+        private void ToolStripButtonRTCorrelation_Click(object sender, EventArgs e)
         {
-            toolStripButtonRTCorrelator.Image = Properties.Resources.stop_button_icon_19;
+            bool correlate = !(bool)(((ToolStripButton)sender).Tag);
+            ((ToolStripButton)sender).Tag = correlate;
+            if (correlate)
+                toolStripButtonRTCorrelation.Image = Properties.Resources.stop_button_icon_19;
+            else
+                toolStripButtonRTCorrelation.Image = Properties.Resources.icon_start_2;
+        }
+
+        private void DataGridViewColumnManager_CellContentClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (sender == null)
+                return;
+
+            int rowIndex = e.RowIndex;
+            int columnIndex = e.ColumnIndex;
+            if (((DataGridView)sender).Rows[rowIndex].Cells[columnIndex] is DataGridViewButtonCell button && columnIndex >= SettingsControl.Get().DomainSize)
+            {
+                int selectedTab = ProgrammaticCreatedTabControlDataset.SelectedIndex;
+                if (PlotForm == null || PlotForm.Controls == null || PlotForm.Controls.Count == 0)
+                {
+                    FormsPlot plot = new() { Dock = DockStyle.Fill };
+                    plot.Plot.AddScatter(Dataset[selectedTab].Select(x => x[0]).ToArray(), Dataset[selectedTab].Select(x => x[columnIndex]).ToArray(), MainFormStatic.GiveAGoodColor());
+                    //plot.Plot.Title(titles[columnIndex]);
+                    button.Value = "Remove";
+                    plot.Refresh();
+
+                    PlotForm = new();
+                    PlotForm.Controls.Add(plot);
+                    PlotForm.StartPosition = FormStartPosition.CenterScreen;
+                    PlotForm.Size = new Size(800, 500);
+                    PlotForm.Show();
+                    PlotForm.FormClosed += (object? s, FormClosedEventArgs ev) =>
+                    {
+                        List<SplitContainer> allDataGridViews = ProgrammaticCreatedTabControlDataset.TabPages.Cast<TabPage>().ToList()  //get all tab control dataset
+                            .Select(x => x.Controls.Cast<Control>()).SelectMany(x => x) //get all controls
+                            .Where(x => x is SplitContainer).Cast<SplitContainer>().ToList(); //get all SplitContainer
+                        List<DataGridView> allPanel1DataGridView = allDataGridViews.Select(x => x.Panel1.Controls.Cast<Control>()).SelectMany(x => x) //get all controls in Panel1
+                            .Where(x => x is DataGridView).Cast<DataGridView>().ToList(); //get all DataGridView in Panel1
+                        allPanel1DataGridView.ForEach(x => x.Rows[1].Cells.Cast<DataGridViewButtonCell>().Where(x => x.Value.Equals("Remove")).ToList().ForEach(x => x.Value = "Add"));
+                        MainFormStatic.ReleaseAGoodColor();
+                    };
+                }
+                else
+                {
+                    FormsPlot plot = (FormsPlot)PlotForm.Controls.Cast<Control>().Last();
+                    int plottablesIndex = 0;
+                    bool found = false;
+                    while (plottablesIndex < plot.Plot.GetPlottables().Length)
+                    {
+                        found = ((ScatterPlot)(plot.Plot.GetPlottables()[plottablesIndex])).Ys.SequenceEqual(Dataset[selectedTab].Select(x => x[columnIndex]));
+                        if (found)
+                            break;
+                        plottablesIndex++;
+                    }
+
+                    if (found)
+                    {
+                        MainFormStatic.ReleaseAGoodColor(((ScatterPlot)(plot.Plot.GetPlottables()[plottablesIndex])).Color);
+                        plot.Plot.RemoveAt(plottablesIndex);
+                        button.Value = "Add";
+                    }
+                    else
+                    {
+                        plot.Plot.AddScatter(Dataset[selectedTab].Select(x => x[0]).ToArray(), Dataset[selectedTab].Select(x => x[columnIndex]).ToArray(), MainFormStatic.GiveAGoodColor());
+                        button.Value = "Remove";
+                    }
+
+                    if (plot.Plot.GetPlottables().Length == 0)
+                    {
+                        PlotForm.Close();
+                        PlotForm.Dispose();
+                        PlotForm = null;
+                    }
+                    else
+                        plot.Refresh();
+                }
+            }
         }
 
         #endregion PRIVATE HANDLER
 
         #region PRIVATE METHODS
 
-        private void ImportFiles()
+        private void LoadFiles()
         {
             OpenFileDialog ofd = new();
             ofd.Multiselect = true;
@@ -81,7 +203,7 @@ namespace Gui
                 LoadDataset(ofd.FileNames);
         }
 
-        private void ImportFolders()
+        private void LoadFolders()
         {
             FolderBrowserDialog fbd = new();
             fbd.ShowHiddenFiles = true;
@@ -93,18 +215,23 @@ namespace Gui
 
         private void LoadDataset(string[] files)
         {
-            DataSet.Clear();
-            tabControlDataset.Controls.Clear();
+            Dataset.Clear();
+            tabControlMain.Controls.Clear();
+
+            TabPage tabPageDataset = new();
+            ProgrammaticCreatedTabControlDataset = new();
+            tabControlMain.AddTabPageAndTabControl(ref tabPageDataset, "Dataset", ref ProgrammaticCreatedTabControlDataset);
+
             for (int i = 0; i < files.Length; i++)
             {
                 //read csv file
-                List<List<string>> values = ReadCSV(files[i]);
+                List<List<string>> values = MainFormStatic.ReadCSV(files[i]);
                 int maxColsNumber = values.Select(x => x.Count).Max();
 
                 //check if there are some parsable values
                 bool parsable = true;
                 bool maybeTitle = false;
-                for (int row = 0; row < Settings.Get().NumberOfLinesToShowInDataset && (parsable || maybeTitle); row++)
+                for (int row = 0; row < Convert.ToInt32(SettingsControl.Get().NumberOfLinesToShowInDataset?.Item1) && (parsable || maybeTitle); row++)
                 {
                     parsable &= values[row].TrueForAll(x => double.TryParse(x, out double tmp));
                     if (!parsable)
@@ -129,16 +256,16 @@ namespace Gui
 
                 //create the dataset
                 if (parsable)
-                    DataSet.Add(values.Select(x => x.Select(y => double.Parse(y.Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator.ToString()))).ToList()).ToList());
+                    Dataset.Add(values.Select(x => x.Select(y => double.Parse(y.Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator.ToString()))).ToList()).ToList());
 
                 //create the tab page
                 TabPage tabPage = new();
-                tabControlDataset.Controls.Add(tabPage);
+                ProgrammaticCreatedTabControlDataset.Controls.Add(tabPage);
                 tabPage.Text = files[i].Last(20, true);
 
                 //add a SplitContainer to the tab page
                 SplitContainer splitContainer = new();
-                DynamicCreatedSplitContainers.Add(splitContainer);
+                ProgrammaticCreatedSplitContainers.Add(splitContainer);
                 tabPage.Controls.Add(splitContainer);
                 splitContainer.Orientation = Orientation.Horizontal;
                 splitContainer.Dock = DockStyle.Fill;
@@ -158,12 +285,12 @@ namespace Gui
                     dataGridViewData.Columns.Add(titles[column], titles[column]);
 
                 //add rows
-                for (int row = 0; row < Settings.Get().NumberOfLinesToShowInDataset; row++)
+                for (int row = 0; row < Convert.ToInt32(SettingsControl.Get().NumberOfLinesToShowInDataset?.Item1); row++)
                     dataGridViewData.AddRow<DataGridViewTextBoxCell>(values[row].Cast<object>().ToList(), true);
 
-                //in the upper panel (Panel1) of the SplitContainer add the datagridview with column manager
+                //in the upper panel (Panel1) of the SplitContainer add the datagridview with plottablesIndex manager
                 DataGridView dataGridViewColumnManager = new();
-                DynamicCreatedDataGridViewColumnClick.Add(dataGridViewColumnManager);
+                ProgrammaticCreatedDataGridViewColumnClick.Add(dataGridViewColumnManager);
                 splitContainer.Panel1.Controls.Add(dataGridViewColumnManager);
                 dataGridViewColumnManager.ColumnHeadersVisible = false;
                 dataGridViewColumnManager.Dock = DockStyle.Fill;
@@ -180,85 +307,33 @@ namespace Gui
                     dataGridViewColumnManager.Columns.Add(new DataGridViewColumn());
 
                 //add row with checkboxes
-                List<object> listOfCheckboxes = Enumerable.Repeat(true, Settings.Get().DomainSize).Cast<object>().ToList();
-                listOfCheckboxes.AddRange(Enumerable.Repeat(false, maxColsNumber - Settings.Get().DomainSize).Cast<object>());
+                List<object> listOfCheckboxes = Enumerable.Repeat(true, SettingsControl.Get().DomainSize).Cast<object>().ToList();
+                listOfCheckboxes.AddRange(Enumerable.Repeat(false, maxColsNumber - SettingsControl.Get().DomainSize).Cast<object>());
                 dataGridViewColumnManager.AddRow<DataGridViewCheckBoxCell>(listOfCheckboxes, false);
 
-                dataGridViewColumnManager.CellPainting += (object? sender, DataGridViewCellPaintingEventArgs e) =>
-                {
-                    if (e.RowIndex == 1)
-                        if (e.ColumnIndex >= Settings.Get().DomainSize)
-                        {
-                            e.Paint(e.CellBounds, DataGridViewPaintParts.All);
-
-                            int w = (int)(dataGridViewColumnManager.RowTemplate.Height * 0.8); // Properties.Resources.stop_button_icon_19.Width;
-                            int h = (int)(dataGridViewColumnManager.RowTemplate.Height * 0.8); // Properties.Resources.stop_button_icon_19.Height;
-                            int x = e.CellBounds.Left + (e.CellBounds.Width - w) / 2;
-                            int y = e.CellBounds.Top + (e.CellBounds.Height - h) / 2;
-
-                            e.Graphics.DrawImage(Properties.Resources.plot_icon_7, new Rectangle(x, y, w, h));
-                            e.Handled = true;
-                        }
-                };
-
                 //add row with buttons
-                List<object> listOfButtonValues = Enumerable.Repeat(string.Empty, Settings.Get().DomainSize).Cast<object>().ToList();
-                listOfButtonValues.AddRange(Enumerable.Range(0, maxColsNumber - Settings.Get().DomainSize).Cast<object>());
-                List<bool> listOfButtonReadonly = Enumerable.Repeat(true, Settings.Get().DomainSize).ToList();
-                listOfButtonReadonly.AddRange(Enumerable.Repeat(false, maxColsNumber - Settings.Get().DomainSize));
+                List<object> listOfButtonValues = Enumerable.Repeat(string.Empty, SettingsControl.Get().DomainSize).Cast<object>().ToList();
+                listOfButtonValues.AddRange(Enumerable.Repeat("Add", maxColsNumber - SettingsControl.Get().DomainSize).Cast<object>());
+                List<bool> listOfButtonReadonly = Enumerable.Repeat(true, SettingsControl.Get().DomainSize).ToList();
+                listOfButtonReadonly.AddRange(Enumerable.Repeat(false, maxColsNumber - SettingsControl.Get().DomainSize));
                 dataGridViewColumnManager.AddRow<DataGridViewButtonCell>(listOfButtonValues, listOfButtonReadonly);
                 if (parsable)
-                    dataGridViewColumnManager.CellContentClick += (object? sender, DataGridViewCellEventArgs e) =>
-                    {
-                        if (sender == null)
-                            return;
-
-                        DataGridView senderGrid = (DataGridView)sender;
-                        int rowIndex = e.RowIndex;
-                        int columnIndex = e.ColumnIndex;
-                        if (senderGrid.Rows[rowIndex].Cells[columnIndex] is DataGridViewButtonCell && columnIndex >= Settings.Get().DomainSize)
-                        {
-                            FormsPlot plot = new FormsPlot() { Dock = DockStyle.Fill };
-                            plot.Plot.AddScatter(DataSet[0].Select(x => x[0]).ToArray(), DataSet[0].Select(x => x[1]).ToArray());
-                            plot.Plot.Title(titles[columnIndex]);
-                            plot.Refresh();
-                            Form form = new Form();
-                            form.Controls.Add(plot);
-                            form.StartPosition = FormStartPosition.CenterScreen;
-                            form.Size = new Size(800, 500);
-                            form.ShowDialog();
-                        }
-                    };
+                    dataGridViewColumnManager.CellContentClick += DataGridViewColumnManager_CellContentClick;
 
                 splitContainer.SplitterDistance = dataGridViewColumnManager.RowTemplate.Height * dataGridViewColumnManager.Rows.Count;
             }
-        }
 
-        private void DataGridViewColumnManager_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
-        {
-            throw new NotImplementedException();
+            toolStripButtonStartOneShot.Enabled = true;
+            toolStripLabelWhatToDo.Text = "Start processing one shot";
         }
 
         private void ShowSettingsForm()
         {
             Form form = new();
-            form.Controls.Add(new SettingsControl(this));
+            form.Controls.Add(new SettingsControl(this) { CloseCallback = form.Close });
             form.StartPosition = FormStartPosition.CenterScreen;
             form.Size = new Size(800, 500);
             form.ShowDialog();
-        }
-
-        private static List<List<string>> ReadCSV(string file)
-        {
-            List<List<string>> ret = new();
-            string[] lines = File.ReadAllLines(file);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                List<string> values = lines[i].Split(new string[] { ",", ";" }, StringSplitOptions.None).ToList();
-                ret.Add(values);
-            }
-
-            return ret;
         }
 
         #endregion PRIVATE METHODS

@@ -13,3 +13,5 @@ out_correlator/*
 Gui/.vs/*
 Gui/Gui/bin/*
 Gui/Gui/obj/*
+Gui/cppcalltest/x64/Debug/*
+Gui/cppcalltest/x64/Release/*

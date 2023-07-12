@@ -36,14 +36,26 @@
             dataGridView.Rows.Add(dataGridViewRow);
         }
 
-        //public static List<Control> GetSelfAndChildrenRecursive(this Control parent)
-        //{
-        //    List<Control> controls = new();
-        //    foreach (Control child in parent.Controls)
-        //        controls.AddRange(GetSelfAndChildrenRecursive(child));
-        //    controls.Add(parent);
+        public static List<Control> GetSelfAndChildrenRecursive(this Control parent)
+        {
+            List<Control> controls = new();
+            foreach (Control child in parent.Controls)
+                controls.AddRange(GetSelfAndChildrenRecursive(child));
+            controls.Add(parent);
 
-        //    return controls;
-        //}
+            return controls;
+        }
+
+        public static void AddTabPageAndTabControl(this TabControl tabControlMain, ref TabPage tabPage, string tabPageText, ref TabControl tabControl)
+        {
+            tabPage = new();
+            tabPage.Text = tabPageText;
+            tabControlMain.Controls.Add(tabPage);
+
+            tabControl = new();
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Controls.Clear();
+            tabPage.Controls.Add(tabControl);
+        }
     }
 }
