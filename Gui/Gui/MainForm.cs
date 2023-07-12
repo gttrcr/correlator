@@ -22,6 +22,7 @@ namespace Gui
             toolStripButtonRTCorrelation.Tag = false;
             toolStripLabelWhatToDo.Text = "Load a dataset or start real time correlation";
             toolStripButtonStartOneShot.Enabled = false;
+            CppCallTestCaller.ping();
 
             new Thread(new ThreadStart(() =>
             {
@@ -79,7 +80,7 @@ namespace Gui
                 TabPage tabPage = new();
                 TabControl tabControl = new();
                 tabControlMain.AddTabPageAndTabControl(ref tabPage, "Polyfit", ref tabControl);
-                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+                int sum = CppCallTestCaller.computePolyFit(SettingsControl.Get().PolyfitMaxDegree);
             }
 
             if (SettingsControl.Get().ComputeFFT)
@@ -87,7 +88,7 @@ namespace Gui
                 TabPage tabPage = new();
                 TabControl tabControl = new();
                 tabControlMain.AddTabPageAndTabControl(ref tabPage, "FFT", ref tabControl);
-                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+                //int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
             }
 
             if (SettingsControl.Get().ComputeFFTPeaks)
@@ -95,7 +96,7 @@ namespace Gui
                 TabPage tabPage = new();
                 TabControl tabControl = new();
                 tabControlMain.AddTabPageAndTabControl(ref tabPage, "FFT peaks", ref tabControl);
-                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+                //int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
             }
 
             if (SettingsControl.Get().ComputeFFTPeaksMigration)
@@ -103,7 +104,7 @@ namespace Gui
                 TabPage tabPage = new();
                 TabControl tabControl = new();
                 tabControlMain.AddTabPageAndTabControl(ref tabPage, "FFT peaks migration", ref tabControl);
-                int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
+                //int sum = CallLayer.ComputePolyFit(SettingsControl.Get().PolyfitMaxDegree);
             }
         }
 

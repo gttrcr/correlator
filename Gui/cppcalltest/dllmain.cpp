@@ -8,12 +8,17 @@
 
 #define STRING char***
 
-SIGNATURE unsigned int __cdecl ComputePolyFit(const unsigned int a)
+SIGNATURE bool __cdecl ping(void)
+{
+	return true;
+}
+
+SIGNATURE unsigned int __cdecl computePolyFit(const unsigned int a)
 {
 	return a + 3;
 }
 
-SIGNATURE unsigned int __cdecl InputString(STRING str)
+SIGNATURE unsigned int __cdecl inputString(STRING str)
 {
 	return 0;
 }

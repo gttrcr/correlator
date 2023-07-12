@@ -15,3 +15,5 @@ Gui/Gui/bin/*
 Gui/Gui/obj/*
 Gui/cppcalltest/x64/Debug/*
 Gui/cppcalltest/x64/Release/*
+Gui/Debug/*
+Gui/Release/*
