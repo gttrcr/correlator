@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>True</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<BaseOutputPath>../</BaseOutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="win64\**" />
+		<EmbeddedResource Remove="win64\**" />
+		<None Remove="win64\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="add-file-icon-10.jpg" />
+		<None Remove="add-file-icon-6.jpg" />
+		<None Remove="compare-xxl.png" />
+		<None Remove="icon-start-2.jpg" />
+		<None Remove="info-icon-svg-5.jpg" />
+		<None Remove="plot-icon-7.jpg" />
+		<None Remove="SampleCSVFile_53000kb.csv" />
+		<None Remove="stop-button-icon-19.jpg" />
+		<None Remove="windows-settings-icon-20.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ScottPlot" Version="4.1.65" />
+		<PackageReference Include="ScottPlot.WinForms" Version="4.1.65" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

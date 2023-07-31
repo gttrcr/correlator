@@ -1,0 +1,13 @@
+lib/dev/*
+lib/release/*
+/Gui/Gui/obj/*
+*.user
+/Gui/Gui/win64/*
+/Gui/cppcalltest/x64/Debug/*
+/Gui/Debug/*
+/Gui/cppcalltest/x64/Release/*
+/Gui/Release/*
+/Gui/.vs/*
+Gui/ArbitraryWaveformGenerator/bin/*
+Gui/ArbitraryWaveformGenerator/obj/*
+lib/.vscode/settings.json
