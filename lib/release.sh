@@ -46,3 +46,18 @@ execute
 
 PLATFORM="linux"
 execute
+
+echo "Relese completed for every supported platform"
+echo "Press ENTER to create a relese on public repo"
+read -s -n 1 key
+if [[ $key = "" ]]; then 
+    echo "Enter TAG name for the RELEASE (TAG and RELEASE will have the same name)"
+    read tagname
+    git clone git@github.com:gttrcr/correlator.git
+    cd correlator
+    gh release create v$tagname --generate-notes ../release/linux.zip ../release/win64.zip ../release/win32.zip
+    cd ..
+    rm -rf correlator
+else
+    echo "You pressed '$key'. Bye bye!"
+fi
