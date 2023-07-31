@@ -55,6 +55,10 @@ if [[ $key = "" ]]; then
     read tagname
     git clone git@github.com:gttrcr/correlator.git
     cd correlator
+    cp ../../README.md .
+    git add .
+    git commit -m 'update README.md for release $tagname'
+    git push
     gh release create v$tagname --generate-notes ../release/linux.zip ../release/win64.zip ../release/win32.zip
     cd ..
     rm -rf correlator
