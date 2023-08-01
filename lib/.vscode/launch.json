@@ -8,7 +8,10 @@
             "program": "${workspaceFolder}/dev/correlator",
             "args": [
                 // "-i",
-                "-i ../../test_csv",
+                "-i /home/iki/gttrcr/dev_correlator/test_csv/1_to_1/a_6_28_1_to_1.csv",
+                "/home/iki/gttrcr/dev_correlator/test_csv/1_to_1/b_9_42_1_to_1.csv",
+                "/home/iki/gttrcr/dev_correlator/test_csv/1_to_1/c_14_13_1_to_1.csv",
+                "/home/iki/gttrcr/dev_correlator/test_csv/1_to_1/d_21_20_1_to_1.csv",
                 "-o blablabla",
                 "--fft",
                 //"-p 1012",

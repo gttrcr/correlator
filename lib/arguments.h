@@ -7,7 +7,7 @@
 struct arguments
 {
 public:
-    std::string input = ".";                                                                    // -i input file or folder
+    std::vector<std::string> input = {"."};                                                     // -i input file or folder
     std::string output = get_default_output();                                                  // -o output folder for -i input
     unsigned int number_of_fft_peaks_to_compute = get_default_number_of_fft_peaks_to_compute(); // -e number of peaks to compute in fft_peaks
     unsigned int domain_size = get_default_domain_size();                                       // -d domain size
@@ -24,8 +24,11 @@ public:
         std::map<std::string, std::vector<std::string>> complete_args = get_cli(argc, argv);
         for (const auto &pair : complete_args)
         {
-            if (pair.first == "-i" && pair.second.size() == 1 && !pair.second[0].empty())
-                args.input = pair.second[0];
+            if (pair.first == "-i" && pair.second.size() > 0 && !pair.second[0].empty())
+            {
+                args.input.clear();
+                args.input.insert(args.input.end(), pair.second.begin(), pair.second.end());
+            }
 
             if (pair.first == "-o" && pair.second.size() == 1 && !pair.second[0].empty())
                 args.output = pair.second[0];

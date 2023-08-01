@@ -156,26 +156,30 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
 }
 
 // get the list of all csv files inside the folder
-void get_csv_files(const std::string &path_str, std::vector<std::string> &csv_files)
+void get_csv_files(const std::vector<std::string> &path_str_vector, std::vector<std::string> &csv_files)
 {
-    const std::filesystem::path path(path_str);
-    std::error_code ec;
-    if (std::filesystem::is_directory(path, ec))
-        for (const auto &entry : std::filesystem::directory_iterator(path))
-            get_csv_files(entry.path().string(), csv_files);
-
-    if (ec)
-        std::cerr << "Error in is_directory: " << ec.message();
-
-    if (std::filesystem::is_regular_file(path, ec) && path.extension() == ".csv")
+    for (unsigned int i = 0; i < path_str_vector.size(); i++)
     {
-        std::string filename = path.string();
-        csv_files.push_back(filename);
-        std::cout << "Found " << filename << std::endl;
-    }
+        std::string path_str = path_str_vector[i];
+        const std::filesystem::path path(path_str);
+        std::error_code ec;
+        if (std::filesystem::is_directory(path, ec))
+            for (const auto &entry : std::filesystem::directory_iterator(path))
+                get_csv_files({entry.path().string()}, csv_files);
 
-    if (ec)
-        std::cerr << "Error in is_regular_file: " << ec.message();
+        if (ec)
+            std::cerr << "Error in is_directory: " << ec.message();
+
+        if (std::filesystem::is_regular_file(path, ec) && path.extension() == ".csv")
+        {
+            std::string filename = path.string();
+            csv_files.push_back(filename);
+            std::cout << "Found " << filename << std::endl;
+        }
+
+        if (ec)
+            std::cerr << "Error in is_regular_file: " << ec.message();
+    }
 }
 
 int main(int argc, char *argv[])
