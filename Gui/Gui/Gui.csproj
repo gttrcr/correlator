@@ -11,11 +11,6 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<Compile Remove="win64\**" />
-		<EmbeddedResource Remove="win64\**" />
-		<None Remove="win64\**" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="add-file-icon-10.jpg" />
@@ -27,6 +22,21 @@
 		<None Remove="SampleCSVFile_53000kb.csv" />
 		<None Remove="stop-button-icon-19.jpg" />
 		<None Remove="windows-settings-icon-20.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\lib\release\linux\correlator" Link="lib\correlator">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Include="..\..\lib\release\linux\libkissfft-float.so" Link="lib\libkissfft-float.so">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Include="..\..\lib\release\win64\correlator.exe" Link="lib\correlator.exe">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Include="..\..\lib\release\win64\libkissfft-float.so.131.1.0" Link="lib\libkissfft-float.so.131.1.0">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,6 +57,10 @@
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="lib\" />
 	</ItemGroup>
 
 </Project>

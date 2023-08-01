@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Common
 {
@@ -7,19 +8,30 @@ namespace Common
         public delegate void ProcessingDelegate(object? obj, EventArgs e);
         public ProcessingDelegate? ProcessingCallback;
 
-        public string ProcessName { get; private set; }
+        public Dictionary<PlatformID, string> ProcessNamePlatform { get; private set; }
         public List<string?> Arguments { get; private set; }
         public Result Res { get; private set; }
+
+        public Processing()
+        {
+            Arguments = new();
+            ProcessNamePlatform = new();
+        }
 
         public Processing(string processName)
         {
             Arguments = new();
-            ProcessName = processName;
+            ProcessNamePlatform = new() { { Environment.OSVersion.Platform, processName } };
         }
 
         public void AddArgument(string? arg = null)
         {
             Arguments.Add(arg);
+        }
+
+        public void AddProcessByPlatform(PlatformID platformID, string processName)
+        {
+            ProcessNamePlatform.Add(platformID, processName);
         }
 
         public void AddArgument(string arg, object? value)
@@ -47,7 +59,7 @@ namespace Common
         public void Invoke(string? args = null)
         {
             Process p = new();
-            p.StartInfo.FileName = ProcessName;
+            p.StartInfo.FileName = ProcessNamePlatform[Environment.OSVersion.Platform];
             p.StartInfo.Arguments = args;
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;

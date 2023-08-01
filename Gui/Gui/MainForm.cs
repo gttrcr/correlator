@@ -75,7 +75,9 @@ namespace Gui
 
         private void ToolStripButtonStartOneShot_Click(object sender, EventArgs e)
         {
-            Common.Processing correlator = new("correlator.exe");
+            Common.Processing correlator = new();
+            correlator.AddProcessByPlatform(PlatformID.Win32NT, "./lib/correlator.exe");
+            correlator.AddProcessByPlatform(PlatformID.Unix, "./lib/correlator");
 
             int selectedIndex = tabControlMain.SelectedIndex;
             tabControlMain.RemoveTabPageAndTabControl("Polyfit");
@@ -114,11 +116,11 @@ namespace Gui
                 tabControlMain.AddTabPageAndTabControl(ref tabPage, "FFT peaks migration", ref tabControl);
                 correlator.AddArgument("--fftpm");
             }
-            
+
             correlator.AddArgument("-f", SettingsControl.Get().PolyfitMaxDegree);
             correlator.AddArgument("-i", SettingsControl.Get().InputFiles);
             correlator.AddArgument("-o", SettingsControl.Get().OutputFolder);
-            
+
             correlator.Invoke();
 
             tabControlMain.SelectedIndex = selectedIndex;
