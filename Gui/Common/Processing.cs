@@ -1,13 +1,9 @@
 ﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Common
 {
-    class Processing
+    public class Processing
     {
-        public delegate void ProcessingDelegate(object? obj, EventArgs e);
-        public ProcessingDelegate? ProcessingCallback;
-
         public Dictionary<PlatformID, string> ProcessNamePlatform { get; private set; }
         public List<string?> Arguments { get; private set; }
         public Result Res { get; private set; }
@@ -51,12 +47,12 @@ namespace Common
 
             public Result(string? output, string? error)
             {
-                Output = output?.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
-                Error = error?.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
+                Output = output?.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                Error = error?.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
             }
         }
 
-        public void Invoke(string? args = null)
+        public bool Invoke(string? args = null)
         {
             Process p = new();
             p.StartInfo.FileName = ProcessNamePlatform[Environment.OSVersion.Platform];
@@ -67,26 +63,15 @@ namespace Common
             p.StartInfo.CreateNoWindow = false;
             p.Start();
 
-            if (ProcessingCallback != null)
-            {
-                p.Exited += (object? obj, EventArgs e) =>
-                {
-                    Process? p = (Process?)obj;
-                    Res = new Result(p?.StandardOutput.ReadToEnd(), p?.StandardError.ReadToEnd());
-                    ProcessingCallback.Invoke(obj, e);
-                };
-                p.WaitForExitAsync();
-            }
-            else
-            {
-                p.WaitForExit();
-                Res = new Result(p.StandardOutput.ReadToEnd(), p.StandardError.ReadToEnd());
-            }
+            p.WaitForExit();
+            Res = new Result(p.StandardOutput.ReadToEnd(), p.StandardError.ReadToEnd());
+
+            return Res.Error?.Count == 0;
         }
 
-        public void Invoke()
+        public bool Invoke()
         {
-            Invoke(string.Join(" ", Arguments));
+            return Invoke(string.Join(" ", Arguments));
         }
     }
 }

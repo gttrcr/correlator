@@ -40,6 +40,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="ScottPlot" Version="4.1.65" />
 		<PackageReference Include="ScottPlot.WinForms" Version="4.1.65" />
 	</ItemGroup>
@@ -61,6 +62,10 @@
 
 	<ItemGroup>
 	  <Folder Include="lib\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Common\Common.csproj" />
 	</ItemGroup>
 
 </Project>

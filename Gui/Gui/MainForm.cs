@@ -1,5 +1,7 @@
 //icon from https://icon-library.com/
 
+using Common;
+using Newtonsoft.Json;
 using ScottPlot;
 using ScottPlot.Plottable;
 using System.Globalization;
@@ -121,7 +123,8 @@ namespace Gui
             correlator.AddArgument("-i", SettingsControl.Get().InputFiles);
             correlator.AddArgument("-o", SettingsControl.Get().OutputFolder);
 
-            correlator.Invoke();
+            if (correlator.Invoke())
+                RetrieveResults();
 
             tabControlMain.SelectedIndex = selectedIndex;
         }
@@ -354,6 +357,23 @@ namespace Gui
             form.StartPosition = FormStartPosition.CenterScreen;
             form.Size = new Size(800, 500);
             form.ShowDialog();
+        }
+
+        private void RetrieveResults()
+        {
+            string resultPath = Path.Combine(SettingsControl.Get().OutputFolder, "result.json");
+            if (!File.Exists(resultPath))
+                return;
+
+            var resultObj = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(resultPath));
+            foreach (var obj in resultObj.analysis)
+            {
+                string work = obj.work;
+                List<string> outputs = obj.outputs.ToObject<List<string>>();
+                outputs = outputs.Select(x => Path.Combine(SettingsControl.Get().OutputFolder, work, x)).ToList();
+                CSVReader<string> csvContent = new CSVReader<string>(outputs[0], true);
+                List<string> degrees = csvContent["degree"];
+            }
         }
 
         #endregion PRIVATE METHODS
