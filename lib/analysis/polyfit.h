@@ -92,7 +92,7 @@ public:
                   });
 
         std::filesystem::create_directory(_args.output + "/" + output_folder);
-        std::ofstream of(_args.output + "/" + output_folder + "/" + output_file + ".csv");
+        std::ofstream of(_args.output + "/" + output_folder + "/" + output_file);
         of << "degree,r^2,file,";
 
         // get the heighest degree in da

@@ -14,26 +14,26 @@ namespace analysis
     // compute best polynomial fit
     void polyfit_work(const FUNCTIONS &fs, const arguments &args)
     {
-        std::cout << "\tpolyfit..." << std::endl;
+        std::cout << "\tPolyfit..." << std::endl;
         polyfit pf(args);
 
         // compute correlation of every function
-        std::cout << "\t\tsingle function..." << std::endl;
+        std::cout << "\t\tSingle function..." << std::endl;
         for (unsigned int i = 0; i < fs.size(); i++)
             pf.compute(fs.at(i).second, args.polyfit_max_degree, fs.at(i).first);
-        pf.save("polyfit", "single");
-        analysis::result::get()->set_analysis("polyfit", "single");
+        pf.save("polyfit", "single.csv");
+        analysis::result::get()->set_analysis("polyfit", "single.csv");
 
         // compute cross correlation between every pair
-        std::cout << "\t\tcross correlation..." << std::endl;
+        std::cout << "\t\tCross correlation..." << std::endl;
         for (unsigned int i = 0; i < fs.size(); i++)
             for (unsigned int j = i + 1; j < fs.size(); j++)
                 pf.compute(corr_function(fs.at(i).second.get_codomain(), fs.at(j).second.get_codomain()),
                            args.polyfit_max_degree,
                            fs.at(i).first + "_+_" + fs.at(j).first);
 
-        pf.save("polyfit", "cross");
-        analysis::result::get()->set_analysis("polyfit", "cross");
+        pf.save("polyfit", "cross.csv");
+        analysis::result::get()->set_analysis("polyfit", "cross.csv");
     }
 
     // // compute fft of every dataset and peaks of every fft
@@ -49,7 +49,7 @@ namespace analysis
     //         fft.compute(fs.at(i).second, fs.at(i).first);
     //         corr_function spectrum = fft.get_last_spectrum();
     //         fft.save("fft");
-    //         std::cout << "\t\tpeaks..." << std::endl;
+    //         std::cout << "\t\tPeaks..." << std::endl;
     //         fft_peaks fft_peaks(spectrum, args);
     //         fft_peaks.compute(fs.at(i).first);
     //         fft_peaks.save("peaks");
@@ -61,7 +61,7 @@ namespace analysis
     // // compute the polynomial fit of migration of peaks
     // void peaks_migration(const std::map<std::string, corr_function> &peaks, const arguments &args)
     // {
-    //     // std::cout << "\tpeaks migration..." << std::endl;
+    //     // std::cout << "\tPeaks migration..." << std::endl;
     //     // polyfit pf(args);
     //     // std::map<std::string, function> rotated_peaks = utils::rotate(peaks);
     //     // for (const std::pair<std::string, function> &f : rotated_peaks)

@@ -10,3 +10,5 @@ lib/dev/*
 Gui/ArbitraryWaveformGenerator/bin/*
 Gui/ArbitraryWaveformGenerator/obj/*
 lib/.vscode/settings.json
+/Gui/Common/bin/Debug/net6.0
+/Gui/Common/obj

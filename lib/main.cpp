@@ -137,10 +137,10 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
 {
     try
     {
-        std::cout << "get functions..." << std::endl;
+        std::cout << "Get functions..." << std::endl;
         FUNCTIONS fs = get_functions(csv_files, args);
 
-        std::cout << "working..." << std::endl;
+        std::cout << "Working..." << std::endl;
         analysis::work(fs, args);
     }
     catch (const std::exception &e)
@@ -150,7 +150,7 @@ void correlate_from_files(const std::vector<std::string> &csv_files, const argum
     }
     catch (...)
     {
-        std::cout << "generic error" << std::endl;
+        std::cerr << "Generic error" << std::endl;
         analysis::result::get()->set_error("generic error");
     }
 }
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
         analysis::result::get()->set_csv_files(csv_files);
         if (csv_files.size() > 0)
         {
-            std::cout << "correlate from files..." << std::endl;
+            std::cout << "Correlate from files..." << std::endl;
             correlate_from_files(csv_files, args);
         }
 
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
     }
     catch (correlator_exception &ce)
     {
-        std::cout << ce.what() << std::endl;
+        std::cerr << ce.what() << std::endl;
         analysis::result::get()->set_error(ce.what());
     }
 }
