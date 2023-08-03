@@ -387,7 +387,7 @@ namespace Gui
 
                         FormForPlot ffp = new();
                         int polynomialDegree = int.Parse(dataGridViewData.Rows[e.RowIndex].Cells[0].Value.ToString());
-                        List<string> list = dataGridViewData.Rows[e.RowIndex].Cells.Cast<DataGridViewCell>().ToList().GetRange(3, polynomialDegree).Select(x => x.Value.ToString()).ToList();
+                        List<string> list = dataGridViewData.Rows[e.RowIndex].Cells.Cast<DataGridViewCell>().ToList().GetRange(3, polynomialDegree + 1).Select(x => x.Value.ToString()).ToList();
                         Polynomial poly = new(list.Select(x => double.Parse(x)).ToArray());
                         ffp.Plot.Plot.AddSignalXY(sourceData.Column(0).ToArray(), sourceData.Column(columnIndex).ToArray());
                         ffp.Plot.Plot.AddSignalXY(sourceData.Column(0).ToArray(), sourceData.Column(0).Select(x => poly.Evaluate(x)).ToArray());
