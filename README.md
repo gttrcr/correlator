@@ -3,7 +3,8 @@
 ## Versions, tags and releases
 | Latest stable |   Policy    |  Tag  |    Win32    |       Win64        |       Linux        |                                   Link                                    |
 | :-----------: | :---------: | :---: | :---------: | :----------------: | :----------------: | :-----------------------------------------------------------------------: |
-|        *       |   Release   |  0.3  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/0.3](https://github.com/gttrcr/correlator/releases/tag/0.3)     |                                                                
+|        *       |   Release   |  23.08  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/23.08](https://github.com/gttrcr/correlator/releases/tag/23.08)|
+|               |   Release   |  0.3  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/0.3](https://github.com/gttrcr/correlator/releases/tag/0.3)|                 
 |              |   Release   |  0.2  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2) |
 |               | Pre release |  0.1  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1) |
 
