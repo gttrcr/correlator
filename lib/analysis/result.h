@@ -49,7 +49,30 @@ namespace analysis
 
         void set_analysis(const std::string &node, const std::string &subnode)
         {
-            _result["analysis"][node].push_back(subnode);
+            if (_result["analysis"].size() == 0)
+            {
+                _result["analysis"][0]["work"] = node;
+                _result["analysis"][0]["output"].push_back(subnode);
+            }
+            else
+            {
+                bool found = false;
+                for (unsigned int i = 0; i < _result["analysis"].size(); i++)
+                {
+                    std::string work = _result["analysis"][i]["work"];
+                    if (node == work)
+                    {
+                        _result["analysis"][i]["output"].push_back(subnode);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    _result["analysis"][_result["analysis"].size()]["work"] = node;
+                    _result["analysis"][_result["analysis"].size()]["output"].push_back(subnode);
+                }
+            }
         }
 
         void save(const arguments &args)

@@ -21,8 +21,8 @@ namespace analysis
         std::cout << "\t\tSingle function..." << std::endl;
         for (unsigned int i = 0; i < fs.size(); i++)
             pf.compute(fs.at(i).second, args.polyfit_max_degree, fs.at(i).first);
-        pf.save("polyfit", "single.csv");
-        analysis::result::get()->set_analysis("polyfit", "single.csv");
+        pf.save("Polyfit", "single.csv");
+        analysis::result::get()->set_analysis("Polyfit", "single.csv");
 
         // compute cross correlation between every pair
         std::cout << "\t\tCross correlation..." << std::endl;
@@ -32,8 +32,8 @@ namespace analysis
                            args.polyfit_max_degree,
                            fs.at(i).first + "_+_" + fs.at(j).first);
 
-        pf.save("polyfit", "cross.csv");
-        analysis::result::get()->set_analysis("polyfit", "cross.csv");
+        pf.save("Polyfit", "cross.csv");
+        analysis::result::get()->set_analysis("Polyfit", "cross.csv");
     }
 
     // // compute fft of every dataset and peaks of every fft

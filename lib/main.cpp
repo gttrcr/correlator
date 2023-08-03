@@ -198,6 +198,7 @@ int main(int argc, char *argv[])
         }
 
         analysis::result::get()->save(args);
+        std::cout << "All done" << std::endl;
     }
     catch (correlator_exception &ce)
     {
