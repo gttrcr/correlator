@@ -33,25 +33,4 @@ namespace utils
 
         return ret;
     }
-
-    // rotate the map string-function to a map where function has domain accross functions
-    // A={{1, 1}, {1.5, 3}, {2, 5}, {2.5, 7}}
-    // B={{1, 14}, {1.5, 21}, {2, 24}, {2.5, 25}}
-    // become
-    // 1={{1, 1}, {2, 1}}
-    // 2={{1, 3}, {2, 21}}
-    // 3={{1, 5}, {2, 24}}
-    // 4={{1, 7}, {2, 25}}
-    std::map<std::string, corr_function> rotate(const std::map<std::string, corr_function> &fs)
-    {
-        std::map<std::string, corr_function> rotated;
-        for (unsigned int i = 0; i < fs.begin()->second.size(); i++)
-        {
-            FDST j = 0;
-            for (const std::pair<std::string, corr_function> p : fs)
-                rotated[std::to_string(i)].push_back(j++, p.second[i].first);
-        }
-
-        return rotated;
-    }
 }

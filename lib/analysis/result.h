@@ -49,29 +49,28 @@ namespace analysis
 
         void set_analysis(const std::string &node, const std::string &subnode)
         {
-            if (_result["analysis"].size() == 0)
+            bool found = false;
+            for (unsigned int i = 0; i < _result["analysis"].size(); i++)
             {
-                _result["analysis"][0]["work"] = node;
-                _result["analysis"][0]["output"].push_back(subnode);
-            }
-            else
-            {
-                bool found = false;
-                for (unsigned int i = 0; i < _result["analysis"].size(); i++)
-                {
-                    std::string work = _result["analysis"][i]["work"];
-                    if (node == work)
-                    {
-                        _result["analysis"][i]["output"].push_back(subnode);
-                        found = true;
-                    }
-                }
+                if (_result["analysis"][i].is_null())
+                    continue;
 
-                if (!found)
+                if (!_result["analysis"][i].contains("work"))
+                    continue;
+
+                std::string work = _result["analysis"][i]["work"];
+                if (node == work)
                 {
-                    _result["analysis"][_result["analysis"].size()]["work"] = node;
-                    _result["analysis"][_result["analysis"].size()]["output"].push_back(subnode);
+                    _result["analysis"][i]["output"].push_back(subnode);
+                    found = true;
                 }
+            }
+
+            if (!found)
+            {
+                unsigned int size = _result["analysis"].size();
+                _result["analysis"][size]["work"] = node;
+                _result["analysis"][size]["output"].push_back(subnode);
             }
         }
 

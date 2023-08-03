@@ -20,7 +20,7 @@ namespace analysis
 
         corr_function _spectrum;
         arguments _args;
-        std::vector<data> _data;
+        data _data;
 
     public:
         fft_peaks(corr_function spectrum, const arguments &args)
@@ -32,7 +32,7 @@ namespace analysis
         void compute(const std::string &name)
         {
             // order descending (greather first)
-            DOMAIN spectrum_domain = _spectrum.get_codomain();
+            DOMAIN spectrum_domain = _spectrum.get_domain();
             CODOMAIN spectrum_codomain = _spectrum.get_codomain();
             std::vector<PAIR> f_cp;
             for (unsigned int i = 0; i < spectrum_domain.size(); i++)
@@ -42,25 +42,26 @@ namespace analysis
 
             unsigned int n_peaks = std::min(_args.number_of_fft_peaks_to_compute, (unsigned int)f_cp.size());
             f_cp = std::vector<PAIR>(f_cp.begin(), f_cp.begin() + n_peaks);
-            _data.push_back({name, corr_function(f_cp)});
+            _data = {name, corr_function(f_cp)};
         }
 
         // save all computed peaks and clear all _data
-        void save(const std::string &output_folder)
+        void save(const std::string &output_folder, const std::string &output_file) const
         {
             std::filesystem::create_directory(_args.output + "/" + output_folder);
-            for (unsigned int i = 0; i < _data.size(); i++)
-            {
-                std::ofstream of(_args.output + "/" + output_folder + "/" + _data[i].name + ".csv");
-                of << "index,freq,power" << std::endl;
-                DOMAIN d = _data[i].peaks.get_domain();     // frequency
-                CODOMAIN c = _data[i].peaks.get_codomain(); // power
-                for (unsigned int j = 0; j < d.size(); j++)
-                    of << j << "," << d[j] << "," << c[j] << std::endl;
-                of.close();
-            }
+            std::ofstream of(_args.output + "/" + output_folder + "/" + _data.name + "_" + output_file);
+            analysis::result::get()->set_analysis(output_folder, _data.name + "_" + output_file);
+            of << "index,freq,power" << std::endl;
+            DOMAIN d = _data.peaks.get_domain();     // frequency
+            CODOMAIN c = _data.peaks.get_codomain(); // power
+            for (unsigned int j = 0; j < d.size(); j++)
+                of << j << "," << d[j] << "," << c[j] << std::endl;
+            of.close();
+        }
 
-            _data.clear();
+        corr_function get_peaks() const
+        {
+            return _data.peaks;
         }
     };
 }

@@ -7,7 +7,7 @@
 #include "../utils.h"
 #include "../error.h"
 
-#include <filesystem>
+// #include <filesystem>
 
 namespace analysis
 {
@@ -36,30 +36,31 @@ namespace analysis
         analysis::result::get()->set_analysis("Polyfit", "cross.csv");
     }
 
-    // // compute fft of every dataset and peaks of every fft
-    // std::map<std::string, corr_function> fft_work(const FUNCTIONS &fs, const arguments &args)
-    // {
-    //     // map of peaks of every function in fs
-    //     std::map<std::string, corr_function> peaks;
+    // compute fft of every dataset and peaks of every fft
+    FUNCTIONS fft_work(const FUNCTIONS &fs, const arguments &args)
+    {
+        // map of peaks of every function in fs
+        FUNCTIONS peaks;
 
-    //     std::cout << "\tfft..." << std::endl;
-    //     fft fft(args);
-    //     for (unsigned int i = 0; i < fs.size(); i++)
-    //     {
-    //         fft.compute(fs.at(i).second, fs.at(i).first);
-    //         corr_function spectrum = fft.get_last_spectrum();
-    //         fft.save("fft");
-    //         std::cout << "\t\tPeaks..." << std::endl;
-    //         fft_peaks fft_peaks(spectrum, args);
-    //         fft_peaks.compute(fs.at(i).first);
-    //         fft_peaks.save("peaks");
-    //     }
+        std::cout << "\tFFT..." << std::endl;
+        fft fft(args);
+        for (unsigned int i = 0; i < fs.size(); i++)
+        {
+            std::cout << "\t\tSpectrum..." << std::endl;
+            fft.compute(fs.at(i).second, fs.at(i).first);
+            fft.save("FFT", "fft.csv");
+            std::cout << "\t\tPeaks..." << std::endl;
+            fft_peaks fft_peaks(fft.get_spectrum(), args);
+            fft_peaks.compute(fs.at(i).first);
+            fft_peaks.save("FFT", "peaks.csv");
+            peaks.push_back({fs.at(i).first, fft_peaks.get_peaks()});
+        }
 
-    //     return peaks;
-    // }
+        return peaks;
+    }
 
     // // compute the polynomial fit of migration of peaks
-    // void peaks_migration(const std::map<std::string, corr_function> &peaks, const arguments &args)
+    // void peaks_migration(const FUNCTIONS &peaks, const arguments &args)
     // {
     //     // std::cout << "\tPeaks migration..." << std::endl;
     //     // polyfit pf(args);
@@ -73,8 +74,8 @@ namespace analysis
         if (!std::filesystem::exists(args.output) && !std::filesystem::create_directory(args.output))
             throw correlator_exception(error::cannot_create_output_directory);
 
-        polyfit_work(fs, args); // OK: tested!
-        // std::map<std::string, corr_function> peaks = fft_work(fs, args);
+        polyfit_work(fs, args);               // tested
+        FUNCTIONS peaks = fft_work(fs, args); // tested
         // peaks_migration(peaks, args); // must be tested
     }
 }
