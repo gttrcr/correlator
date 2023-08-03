@@ -1,11 +1,6 @@
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NCalc;
-using NAudio.Utils;
-using System.Diagnostics.Eventing.Reader;
-using Microsoft.VisualBasic;
-using ScottPlot;
-using System.Threading.Channels;
 
 namespace ArbitraryWaveformGenerator
 {

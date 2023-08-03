@@ -66,14 +66,14 @@
             // loadFilesToolStripMenuItem
             // 
             loadFilesToolStripMenuItem.Name = "loadFilesToolStripMenuItem";
-            loadFilesToolStripMenuItem.Size = new Size(270, 34);
+            loadFilesToolStripMenuItem.Size = new Size(205, 34);
             loadFilesToolStripMenuItem.Text = "Load files";
             loadFilesToolStripMenuItem.Click += LoadFilesToolStripMenuItem_Click;
             // 
             // loadFoldersToolStripMenuItem
             // 
             loadFoldersToolStripMenuItem.Name = "loadFoldersToolStripMenuItem";
-            loadFoldersToolStripMenuItem.Size = new Size(270, 34);
+            loadFoldersToolStripMenuItem.Size = new Size(205, 34);
             loadFoldersToolStripMenuItem.Text = "Load folder";
             loadFoldersToolStripMenuItem.Click += LoadFoldersToolStripMenuItem_Click;
             // 
@@ -127,6 +127,7 @@
             // toolStripButtonRTCorrelation
             // 
             toolStripButtonRTCorrelation.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonRTCorrelation.Enabled = false;
             toolStripButtonRTCorrelation.Image = Properties.Resources.icon_start_2;
             toolStripButtonRTCorrelation.ImageTransparentColor = Color.Magenta;
             toolStripButtonRTCorrelation.Name = "toolStripButtonRTCorrelation";

@@ -1,22 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace Common
 {
     public class CSVReader<T>
     {
         public string Path { get; private set; }
-        public List<List<T>> Data { get; private set; }
+        public List<List<string>> Data { get; private set; }
         public List<string> Title { get; private set; }
+        public List<List<T>> TData { get; private set; }
         public List<T> TTitle { get; private set; }
+        public bool Parsable { get; private set; }
+
+
         public List<T> this[int row]
         {
-            get => Data[row];
-            set => Data[row] = value;
+            get => TData[row];
+            set => TData[row] = value;
         }
         public List<T> this[string column]
         {
-            get => Data.Select(x => x[Title.IndexOf(column)]).ToList();
+            get => TData.Select(x => x[Title.IndexOf(column)]).ToList();
         }
 
         public CSVReader(string path, bool hasTitle = false)
@@ -26,22 +29,40 @@ namespace Common
 
             Path = path;
             List<string> lines = File.ReadAllLines(path).ToList();
-            string nds = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-            //if (nds.Equals(","))
-            //    nds = ";";
-            List<List<string>> content = lines.Select(x => x.Split(nds).ToList()).ToList();
+            Data = lines.Select(x => x.Split(new string[] { ",", ";" }, StringSplitOptions.None).ToList()).ToList();
+            Parsable = true;
 
             if (hasTitle)
             {
-                Title = content[0];
-                TTitle = Title.Select(x => (T)Convert.ChangeType(x, typeof(T))).ToList();
-                Data = content.GetRange(1, content.Count - 1).Select(x => x.Select(y => (T)Convert.ChangeType(y, typeof(T))).ToList()).ToList();
+                Title = Data[0];
+                Data = Data.GetRange(1, Data.Count - 1);
             }
             else
-            {
                 Title = new();
-                TTitle = new();
-                Data = content.Select(x => x.Select(y => (T)Convert.ChangeType(y, typeof(T))).ToList()).ToList();
+
+            TData = new();
+            string nds = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            try
+            {
+                if (typeof(T) == typeof(double))
+                    Data = Data.Select(x => x.Select(y => y.Replace(".", nds)).ToList()).ToList();
+                TData = Data.Select(x => x.Select(y => (T)Convert.ChangeType(y, typeof(T))).ToList()).ToList();
+            }
+            catch
+            {
+                Parsable = false;
+            }
+
+            TTitle = new();
+            try
+            {
+                if (typeof(T) == typeof(double))
+                    Title = Title.Select(x => x.Replace(".", nds)).ToList();
+                TTitle = Title.Select(x => (T)Convert.ChangeType(x, typeof(T))).ToList();
+            }
+            catch
+            {
+
             }
         }
     }

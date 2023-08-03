@@ -1,27 +1,25 @@
-﻿using System.Drawing;
+﻿using Common;
+using Newtonsoft.Json;
 
 namespace Gui
 {
     public class MainFormStatic
     {
-        public static List<List<string>> ReadCSV(string file)
+        public readonly struct AnalysisWork
         {
-            List<List<string>> ret = new();
-            string[] lines = File.ReadAllLines(file);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                List<string> values = lines[i].Split(new string[] { ",", ";" }, StringSplitOptions.None).ToList();
-                ret.Add(values);
-            }
+            public static readonly string Polyfit = "Polyfit";
+            public static readonly string FFT = "FFT";
+            public static readonly string FFTPeaks = "FFT peaks";
+            public static readonly string FFTPeaksMigration = "FFT peaks migration";
 
-            return ret;
         }
 
         private static readonly Dictionary<Color, bool> colors = new List<Color>() {
             Color.Blue, Color.Orange, Color.Red, Color.Purple, Color.Green,
-            Color.Salmon, Color.DeepSkyBlue, Color.Lime, Color.Brown, Color.Black,
+            Color.Salmon, Color.DeepSkyBlue, Color.DarkGoldenrod, Color.Brown, Color.Black,
             Color.Tomato, Color.LightGreen, Color.LemonChiffon, Color.GreenYellow, Color.LightGray
         }.ToDictionary(x => x, x => false);
+
         public static Color GiveAGoodColor()
         {
             List<Color> cls = colors.Where(x => !x.Value).Select(x => x.Key).ToList();

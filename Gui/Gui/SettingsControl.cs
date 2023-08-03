@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace Gui
 {
@@ -118,7 +117,7 @@ namespace Gui
 
         private void ButtonRestoreDefault_Click(object sender, EventArgs e)
         {
-            Default();
+            Settings = Default();
             LoadSettingsTable();
         }
 
