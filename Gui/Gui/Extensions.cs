@@ -64,5 +64,10 @@
             if (index > -1)
                 tabControlMain.Controls.RemoveAt(index);
         }
+
+        public static List<T> GetRange<T>(this List<T> list, int index)
+        {
+            return list.GetRange(index, list.Count - index);
+        }
     }
 }

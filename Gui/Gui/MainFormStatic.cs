@@ -1,16 +1,13 @@
-﻿using Common;
-using Newtonsoft.Json;
-
-namespace Gui
+﻿namespace Gui
 {
     public class MainFormStatic
     {
         public readonly struct AnalysisWork
         {
-            public static readonly string Polyfit = "Polyfit";
-            public static readonly string FFT = "FFT";
-            public static readonly string FFTPeaks = "FFT peaks";
-            public static readonly string FFTPeaksMigration = "FFT peaks migration";
+            public const string Polyfit = "Polyfit";
+            public const string FFT = "FFT";
+            public const string FFTPeaks = "FFT peaks";
+            public const string FFTPeaksMigration = "FFT peaks migration";
 
         }
 

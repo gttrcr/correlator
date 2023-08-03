@@ -24,7 +24,7 @@ namespace ArbitraryWaveformGenerator
             enabled.Value = true;
 
             DataGridViewTextBoxCell gain = (DataGridViewTextBoxCell)(lastRow.Cells[2]);
-            gain.Value = UInt16.MaxValue;
+            gain.Value = ushort.MaxValue;
 
             DataGridViewComboBoxCell types = (DataGridViewComboBoxCell)(lastRow.Cells[3]);
             types.Items.AddRange(Enum.GetValues<SignalGeneratorType>().Select(x => x.ToString()).ToArray());

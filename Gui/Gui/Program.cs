@@ -1,6 +1,7 @@
 using Common;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace Gui
 {
@@ -14,6 +15,7 @@ namespace Gui
             ApplicationConfiguration.Initialize();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
 
+            UpdateChecker.Get().RepoName = "correlator";
             UpdateChecker.Get().Assembly = Assembly.GetExecutingAssembly();
             UpdateChecker.Get().UpdateCheckCallback += (Version localVersion, Version remoteVersion, Uri downloadLink) =>
             {
@@ -22,6 +24,13 @@ namespace Gui
                 form.StartPosition = FormStartPosition.CenterScreen;
                 form.Text = "Update";
                 form.Controls.Clear();
+                
+                CheckBox hideCheckBox = new();
+                hideCheckBox.Text = "Hide";
+                hideCheckBox.CheckStateChanged += (object? sender, EventArgs e) => { UpdateChecker.Get().Hide = hideCheckBox.Checked; };
+                hideCheckBox.Dock = DockStyle.Bottom;
+                form.Controls.Add(hideCheckBox);
+                
                 Label labelUpdate = new Label();
                 labelUpdate.Text = "Update available!";
                 labelUpdate.Font = new(labelUpdate.Font.FontFamily, 15, FontStyle.Bold);
@@ -51,7 +60,6 @@ namespace Gui
                         };
                     else
                     {
-
                         LinkLabel label = new()
                         {
                             Text = x,
@@ -70,7 +78,6 @@ namespace Gui
 
                 form.ShowDialog();
             };
-            UpdateChecker.Get().Check("correlator");
 
             Application.Run(new MainForm());
         }

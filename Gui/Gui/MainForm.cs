@@ -1,10 +1,10 @@
 using Common;
+using MathNet.Numerics;
 using Newtonsoft.Json;
 using ScottPlot;
 using ScottPlot.Plottable;
-using System.Globalization;
-using System.IO;
 using static Gui.MainFormStatic;
+using Control = System.Windows.Forms.Control;
 using Orientation = System.Windows.Forms.Orientation;
 
 namespace Gui
@@ -15,7 +15,7 @@ namespace Gui
         private readonly List<DataGridView> ProgrammaticCreatedDataGridViewColumnClick = new();
         private readonly List<List<List<double>>> Dataset = new();
         private TabControl ProgrammaticCreatedTabControlDataset = new();
-        private Form? PlotForm = null;
+        private FormForPlot? PlotForm = null;
 
         public MainForm()
         {
@@ -130,17 +130,9 @@ namespace Gui
                 int selectedTab = ProgrammaticCreatedTabControlDataset.SelectedIndex;
                 if (PlotForm == null || PlotForm.Controls == null || PlotForm.Controls.Count == 0)
                 {
-                    FormsPlot plot = new() { Dock = DockStyle.Fill };
-                    plot.Plot.AddScatter(Dataset[selectedTab].Select(x => x[0]).ToArray(), Dataset[selectedTab].Select(x => x[columnIndex]).ToArray(), GiveAGoodColor());
-                    //plot.Plot.Title(titles[columnIndex]);
-                    button.Value = "Remove";
-                    plot.Refresh();
-
                     PlotForm = new();
-                    PlotForm.Controls.Add(plot);
-                    PlotForm.StartPosition = FormStartPosition.CenterScreen;
-                    PlotForm.Size = new Size(800, 500);
-                    PlotForm.Show();
+                    PlotForm.Plot.Plot.AddScatter(Dataset[selectedTab].Select(x => x[0]).ToArray(), Dataset[selectedTab].Select(x => x[columnIndex]).ToArray(), GiveAGoodColor());
+                    PlotForm.Refresh();
                     PlotForm.FormClosed += (object? s, FormClosedEventArgs ev) =>
                     {
                         List<SplitContainer> allDataGridViews = ProgrammaticCreatedTabControlDataset.TabPages.Cast<TabPage>().ToList()  //get all tab control dataset
@@ -151,6 +143,8 @@ namespace Gui
                         allPanel1DataGridView.ForEach(x => x.Rows[1].Cells.Cast<DataGridViewButtonCell>().Where(x => x.Value.Equals("Remove")).ToList().ForEach(x => x.Value = "Add"));
                         ReleaseAGoodColor();
                     };
+
+                    button.Value = "Remove";
                 }
                 else
                 {
@@ -331,85 +325,163 @@ namespace Gui
                 TabControl tabControl = new();
                 tabControlMain.AddTabPageAndTabControl(ref tabPageResults, work, ref ProgrammaticCreatedTabControlDataset);
 
-                for (int i = 0; i < files.Length; i++)
+                switch (work)
                 {
-                    //read csv file
-                    CSVReader<string> csv = new(files[i], true);
-                    //if (csv.Parsable)
-                    //    Dataset.Add(csv.TData);
-                    //else if (MessageBox.Show("The content of the dataset in " + files[i] + " is not parsable into double. Continue?",
-                    //            "Correlator", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
-                    //    continue;
-
-                    //SettingsControl.Get().InputFiles?.Add(files[i]);
-
-                    //create the tab page
-                    TabPage tabPage = new();
-                    ProgrammaticCreatedTabControlDataset.Controls.Add(tabPage);
-                    tabPage.Text = files[i].Last(20, true);
-
-                    //add a SplitContainer to the tab page
-                    //SplitContainer splitContainer = new();
-                    //ProgrammaticCreatedSplitContainers.Add(splitContainer);
-                    //tabPage.Controls.Add(splitContainer);
-                    //splitContainer.Orientation = Orientation.Horizontal;
-                    //splitContainer.Dock = DockStyle.Fill;
-                    //splitContainer.IsSplitterFixed = true;
-
-                    //in the lower panel (Panel2) of the SplitContainer add the datagridview with data
-                    DataGridView dataGridViewData = new();
-                    //splitContainer.Panel2.Controls.Add(dataGridViewData);
-                    tabPage.Controls.Add(dataGridViewData); //this is the alternative of the previous line (no splitContainer)
-                    dataGridViewData.Dock = DockStyle.Fill;
-                    dataGridViewData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                    dataGridViewData.AllowUserToAddRows = false;
-                    dataGridViewData.AllowUserToDeleteRows = false;
-                    dataGridViewData.AllowUserToOrderColumns = false;
-
-                    //add columns
-                    int maxColsNumber = csv.Data.Select(x => x.Count).Max();
-                    for (int column = 0; column < maxColsNumber; column++)
-                        dataGridViewData.Columns.Add(csv.Title[column], csv.Title[column]);
-
-                    //add rows
-                    int numberOfLinesToShowInDataset = Convert.ToInt32(SettingsControl.Get().NumberOfLinesToShowInDataset?.Item1);
-                    for (int row = 0; row < numberOfLinesToShowInDataset && row < csv.TData.Count; row++)
-                        dataGridViewData.AddRow<DataGridViewTextBoxCell>(csv.TData[row].Cast<object>().ToList(), true);
-
-                    ////in the upper panel (Panel1) of the SplitContainer add the datagridview with plottablesIndex manager
-                    //DataGridView dataGridViewColumnManager = new();
-                    //ProgrammaticCreatedDataGridViewColumnClick.Add(dataGridViewColumnManager);
-                    //splitContainer.Panel1.Controls.Add(dataGridViewColumnManager);
-                    //dataGridViewColumnManager.ColumnHeadersVisible = false;
-                    //dataGridViewColumnManager.Dock = DockStyle.Fill;
-                    //dataGridViewColumnManager.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                    //dataGridViewColumnManager.AllowUserToAddRows = false;
-                    //dataGridViewColumnManager.AllowUserToDeleteRows = false;
-                    //dataGridViewColumnManager.AllowUserToOrderColumns = false;
-                    //dataGridViewColumnManager.AllowUserToResizeColumns = false;
-                    //dataGridViewColumnManager.AllowUserToResizeRows = false;
-                    //dataGridViewColumnManager.RowsDefaultCellStyle.SelectionBackColor = Color.Transparent;
-
-                    ////add columns
-                    //for (int column = 0; column < maxColsNumber; column++)
-                    //    dataGridViewColumnManager.Columns.Add(new DataGridViewColumn());
-
-                    ////add row with checkboxes
-                    //List<object> listOfCheckboxes = Enumerable.Repeat(true, SettingsControl.Get().DomainSize).Cast<object>().ToList();
-                    //listOfCheckboxes.AddRange(Enumerable.Repeat(false, maxColsNumber - SettingsControl.Get().DomainSize).Cast<object>());
-                    //dataGridViewColumnManager.AddRow<DataGridViewCheckBoxCell>(listOfCheckboxes, false);
-
-                    ////add row with buttons
-                    //List<object> listOfButtonValues = Enumerable.Repeat(string.Empty, SettingsControl.Get().DomainSize).Cast<object>().ToList();
-                    //listOfButtonValues.AddRange(Enumerable.Repeat("Add", maxColsNumber - SettingsControl.Get().DomainSize).Cast<object>());
-                    //List<bool> listOfButtonReadonly = Enumerable.Repeat(true, SettingsControl.Get().DomainSize).ToList();
-                    //listOfButtonReadonly.AddRange(Enumerable.Repeat(false, maxColsNumber - SettingsControl.Get().DomainSize));
-                    //dataGridViewColumnManager.AddRow<DataGridViewButtonCell>(listOfButtonValues, listOfButtonReadonly);
-                    //if (csv.Parsable)
-                    //    dataGridViewColumnManager.CellContentClick += DataGridViewColumnManager_CellContentClick;
-
-                    //splitContainer.SplitterDistance = dataGridViewColumnManager.RowTemplate.Height * dataGridViewColumnManager.Rows.Count;
+                    case AnalysisWork.Polyfit:
+                        ShowPolyfit(files, AnalysisWork.Polyfit);
+                        break;
+                    case AnalysisWork.FFT:
+                        //ShowFFT(files);
+                        break;
+                    //case AnalysisWork.FFTPeaks:
+                    //    ShowFFTPeaks(files);
+                    //    break;
+                    //case AnalysisWork.FFTPeaksMigration:
+                    //    ShowFFTPeaksMigration(files);
+                    //    break;
+                    default:
+                        break;
                 }
+            }
+        }
+
+        private void ShowPolyfit(string[] files, string work)
+        {
+            for (int i = 0; i < files.Length; i++)
+            {
+                //read csv file
+                CSVReader<string> csv = new(files[i], true);
+
+                //create the tab page
+                TabPage tabPage = new();
+                ProgrammaticCreatedTabControlDataset.Controls.Add(tabPage);
+                tabPage.Text = files[i].Last(20, true);
+
+                DataGridView dataGridViewData = new();
+                tabPage.Controls.Add(dataGridViewData);
+                dataGridViewData.Dock = DockStyle.Fill;
+                dataGridViewData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridViewData.AllowUserToAddRows = false;
+                dataGridViewData.AllowUserToDeleteRows = false;
+                dataGridViewData.AllowUserToOrderColumns = false;
+
+                //add columns
+                int maxColsNumber = csv.Data.Select(x => x.Count).Max();
+                for (int column = 0; column < maxColsNumber; column++)
+                    dataGridViewData.Columns.Add(csv.Title[column], csv.Title[column]);
+
+                //the last column is a button to draw a plot
+                DataGridViewButtonColumn plotColumn = new()
+                {
+                    Name = "Plot",
+                    //Text = "comparison_plot",
+                };
+                dataGridViewData.CellClick += (object? sender, DataGridViewCellEventArgs e) =>
+                {
+                    if (e.ColumnIndex == dataGridViewData.Columns["Plot"].Index)
+                    {
+                        string sourceFile = dataGridViewData.Rows[e.RowIndex].Cells[2].Value.ToString();
+                        int columnIndex = int.Parse(sourceFile.Split('#')[1]);
+                        List<string> files = SettingsControl.Get().InputFiles.Where(x => x.Contains(sourceFile.Split('#')[0])).ToList();
+                        CSVReader<double> sourceData = new(files.First(), true);
+
+                        FormForPlot ffp = new();
+                        List<string> list = dataGridViewData.Rows[e.RowIndex].Cells.Cast<DataGridViewCell>().ToList().GetRange(3, csv.Columns - 4).Select(x => x.Value.ToString()).ToList();
+                        Polynomial poly = new(list.Select(x => double.Parse(x)).ToArray());
+                        ffp.Plot.Plot.AddSignalXY(sourceData.Column(0).ToArray(), sourceData.Column(columnIndex).ToArray());
+                        ffp.Plot.Plot.AddSignalXY(sourceData.Column(0).ToArray(), sourceData.Column(0).Select(x => poly.Evaluate(x)).ToArray());
+                        ffp.Refresh();
+                    }
+                };
+                dataGridViewData.Columns.Add(plotColumn);
+
+                //add rows
+                int numberOfLinesToShowInDataset = Convert.ToInt32(SettingsControl.Get().NumberOfLinesToShowInDataset?.Item1);
+                for (int row = 0; row < numberOfLinesToShowInDataset && row < csv.TData.Count; row++)
+                    dataGridViewData.AddRow<DataGridViewTextBoxCell>(csv.TData[row].Cast<object>().ToList(), true);
+            }
+        }
+
+        private void ShowFFT(string[] files)
+        {
+            for (int i = 0; i < files.Length; i++)
+            {
+                //read csv file
+                CSVReader<string> csv = new(files[i].Split('#')[0], true);
+                //if (csv.Parsable)
+                //    Dataset.Add(csv.TData);
+                //else if (MessageBox.Show("The content of the dataset in " + files[i] + " is not parsable into double. Continue?",
+                //            "Correlator", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                //    continue;
+
+                //SettingsControl.Get().InputFiles?.Add(files[i]);
+
+                //create the tab page
+                TabPage tabPage = new();
+                ProgrammaticCreatedTabControlDataset.Controls.Add(tabPage);
+                tabPage.Text = files[i].Last(20, true);
+
+                //add a SplitContainer to the tab page
+                SplitContainer splitContainer = new();
+                ProgrammaticCreatedSplitContainers.Add(splitContainer);
+                tabPage.Controls.Add(splitContainer);
+                splitContainer.Orientation = Orientation.Horizontal;
+                splitContainer.Dock = DockStyle.Fill;
+                splitContainer.IsSplitterFixed = true;
+
+                //in the lower panel (Panel2) of the SplitContainer add the datagridview with data
+                DataGridView dataGridViewData = new();
+                splitContainer.Panel2.Controls.Add(dataGridViewData);
+                //tabPage.Controls.Add(dataGridViewData); //this is the alternative of the previous line (no splitContainer)
+                dataGridViewData.Dock = DockStyle.Fill;
+                dataGridViewData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridViewData.AllowUserToAddRows = false;
+                dataGridViewData.AllowUserToDeleteRows = false;
+                dataGridViewData.AllowUserToOrderColumns = false;
+
+                //add columns
+                int maxColsNumber = csv.Data.Select(x => x.Count).Max();
+                for (int column = 0; column < maxColsNumber; column++)
+                    dataGridViewData.Columns.Add(csv.Title[column], csv.Title[column]);
+
+                //add rows
+                int numberOfLinesToShowInDataset = Convert.ToInt32(SettingsControl.Get().NumberOfLinesToShowInDataset?.Item1);
+                for (int row = 0; row < numberOfLinesToShowInDataset && row < csv.TData.Count; row++)
+                    dataGridViewData.AddRow<DataGridViewTextBoxCell>(csv.TData[row].Cast<object>().ToList(), true);
+
+                ////in the upper panel (Panel1) of the SplitContainer add the datagridview with plottablesIndex manager
+                //DataGridView dataGridViewColumnManager = new();
+                //ProgrammaticCreatedDataGridViewColumnClick.Add(dataGridViewColumnManager);
+                //splitContainer.Panel1.Controls.Add(dataGridViewColumnManager);
+                //dataGridViewColumnManager.ColumnHeadersVisible = false;
+                //dataGridViewColumnManager.Dock = DockStyle.Fill;
+                //dataGridViewColumnManager.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                //dataGridViewColumnManager.AllowUserToAddRows = false;
+                //dataGridViewColumnManager.AllowUserToDeleteRows = false;
+                //dataGridViewColumnManager.AllowUserToOrderColumns = false;
+                //dataGridViewColumnManager.AllowUserToResizeColumns = false;
+                //dataGridViewColumnManager.AllowUserToResizeRows = false;
+                //dataGridViewColumnManager.RowsDefaultCellStyle.SelectionBackColor = Color.Transparent;
+
+                ////add columns
+                //for (int column = 0; column < maxColsNumber; column++)
+                //    dataGridViewColumnManager.Columns.Add(new DataGridViewColumn());
+
+                ////add row with checkboxes
+                //List<object> listOfCheckboxes = Enumerable.Repeat(true, SettingsControl.Get().DomainSize).Cast<object>().ToList();
+                //listOfCheckboxes.AddRange(Enumerable.Repeat(false, maxColsNumber - SettingsControl.Get().DomainSize).Cast<object>());
+                //dataGridViewColumnManager.AddRow<DataGridViewCheckBoxCell>(listOfCheckboxes, false);
+
+                ////add row with buttons
+                //List<object> listOfButtonValues = Enumerable.Repeat(string.Empty, SettingsControl.Get().DomainSize).Cast<object>().ToList();
+                //listOfButtonValues.AddRange(Enumerable.Repeat("Add", maxColsNumber - SettingsControl.Get().DomainSize).Cast<object>());
+                //List<bool> listOfButtonReadonly = Enumerable.Repeat(true, SettingsControl.Get().DomainSize).ToList();
+                //listOfButtonReadonly.AddRange(Enumerable.Repeat(false, maxColsNumber - SettingsControl.Get().DomainSize));
+                //dataGridViewColumnManager.AddRow<DataGridViewButtonCell>(listOfButtonValues, listOfButtonReadonly);
+                //if (csv.Parsable)
+                //    dataGridViewColumnManager.CellContentClick += DataGridViewColumnManager_CellContentClick;
+
+                //splitContainer.SplitterDistance = dataGridViewColumnManager.RowTemplate.Height * dataGridViewColumnManager.Rows.Count;
             }
         }
 

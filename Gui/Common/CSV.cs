@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Data.Common;
+using System.Globalization;
 
 namespace Common
 {
@@ -10,6 +11,7 @@ namespace Common
         public List<List<T>> TData { get; private set; }
         public List<T> TTitle { get; private set; }
         public bool Parsable { get; private set; }
+        public int Columns { get => Title.Count; }
 
 
         public List<T> this[int row]
@@ -17,9 +19,15 @@ namespace Common
             get => TData[row];
             set => TData[row] = value;
         }
-        public List<T> this[string column]
+
+        public List<T> Column(string column)
         {
-            get => TData.Select(x => x[Title.IndexOf(column)]).ToList();
+            return TData.Select(x => x[Title.IndexOf(column)]).ToList();
+        }
+
+        public List<T> Column(int index)
+        {
+            return TData.Select(x => x[index]).ToList();
         }
 
         public CSVReader(string path, bool hasTitle = false)
@@ -63,6 +71,14 @@ namespace Common
             catch
             {
 
+            }
+
+            if (Data.TrueForAll(x => string.IsNullOrEmpty(x.Last())) && string.IsNullOrEmpty(Title.Last()))
+            {
+                Data = Data.Select(x => x.GetRange(0, x.Count - 1)).ToList();
+                TData = TData.Select(x => x.GetRange(0, x.Count - 1)).ToList();
+                Title = Title.GetRange(0, Title.Count - 1);
+                TTitle = TTitle.GetRange(0, TTitle.Count - 1);
             }
         }
     }

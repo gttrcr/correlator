@@ -7,12 +7,31 @@ namespace Common
     public class UpdateChecker
     {
         private static UpdateChecker? _instance;
+        public bool Hide { get; set; }
         public Assembly? Assembly { get; set; }
+        public string? RepoName { get; set; }
 
         public delegate void UpdateCheckerDelegate(Version localVersion, Version remoteVersion, Uri downloadLink);
         public UpdateCheckerDelegate? UpdateCheckCallback;
 
-        private UpdateChecker() { }
+        private UpdateChecker()
+        {
+            Hide = false;
+            new Thread(new ThreadStart(() =>
+            {
+                try
+                {
+                    while (true)
+                    {
+                        if (Assembly != null && RepoName != null && UpdateCheckCallback != null && !Hide)
+                            Check();
+                        Thread.Sleep(5 * 60 * 60); // 5 mins
+                    }
+                }
+                catch { }
+            }))
+            { IsBackground = true }.Start();
+        }
 
         public static UpdateChecker Get()
         {
@@ -21,11 +40,11 @@ namespace Common
             return _instance;
         }
 
-        public void Check(string name)
+        private void Check()
         {
             //Github
             GitHubClient client = new(new ProductHeaderValue("SomeName"));
-            IReadOnlyList<Release> releases = client.Repository.Release.GetAll("gttrcr", name).Result;
+            IReadOnlyList<Release> releases = client.Repository.Release.GetAll("gttrcr", RepoName).Result;
             Release latestRemove = releases.First();
             Version removeVersion = new(latestRemove.TagName);
 
