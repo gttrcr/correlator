@@ -4,7 +4,6 @@ typedef std::vector<std::pair<std::string, corr_function>> FUNCTIONS;
 #include "error.h"
 #include "arguments.h"
 #include "analysis/work.h"
-#include "analysis/result.h"
 #include "cli.h"
 
 #include <sstream>
@@ -12,7 +11,6 @@ typedef std::vector<std::pair<std::string, corr_function>> FUNCTIONS;
 #include <fstream>
 #include <string>
 #include <filesystem>
-#include <map>
 
 // return a function from content
 bool get_function(const std::vector<std::vector<std::string>> &s_content, std::vector<corr_function> &fs, const arguments &args)
