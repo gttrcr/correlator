@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace Common
 {

@@ -63,9 +63,9 @@ namespace Gui.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap add_file_icon_10 {
+        internal static System.Drawing.Bitmap cancel_FILL0_wght400_GRAD0_opsz24 {
             get {
-                object obj = ResourceManager.GetObject("add_file_icon_10", resourceCulture);
+                object obj = ResourceManager.GetObject("cancel_FILL0_wght400_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Gui.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap add_file_icon_6 {
+        internal static System.Drawing.Bitmap create_new_folder_FILL0_wght400_GRAD0_opsz24 {
             get {
-                object obj = ResourceManager.GetObject("add_file_icon_6", resourceCulture);
+                object obj = ResourceManager.GetObject("create_new_folder_FILL0_wght400_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace Gui.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap compare_xxl {
+        internal static System.Drawing.Bitmap deployed_code_FILL0_wght400_GRAD0_opsz24 {
             get {
-                object obj = ResourceManager.GetObject("compare_xxl", resourceCulture);
+                object obj = ResourceManager.GetObject("deployed_code_FILL0_wght400_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace Gui.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icon_start_2 {
+        internal static System.Drawing.Bitmap note_add_FILL0_wght400_GRAD0_opsz24 {
             get {
-                object obj = ResourceManager.GetObject("icon_start_2", resourceCulture);
+                object obj = ResourceManager.GetObject("note_add_FILL0_wght400_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace Gui.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap info_icon_svg_5 {
+        internal static System.Drawing.Bitmap output_FILL0_wght400_GRAD0_opsz24 {
             get {
-                object obj = ResourceManager.GetObject("info_icon_svg_5", resourceCulture);
+                object obj = ResourceManager.GetObject("output_FILL0_wght400_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,19 +113,9 @@ namespace Gui.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap stop_button_icon_19 {
+        internal static System.Drawing.Bitmap start_FILL0_wght400_GRAD0_opsz24 {
             get {
-                object obj = ResourceManager.GetObject("stop_button_icon_19", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap windows_settings_icon_20 {
-            get {
-                object obj = ResourceManager.GetObject("windows_settings_icon_20", resourceCulture);
+                object obj = ResourceManager.GetObject("start_FILL0_wght400_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
