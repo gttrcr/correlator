@@ -59,15 +59,15 @@ namespace analysis
         return peaks;
     }
 
-    // // compute the polynomial fit of migration of peaks
-    // void peaks_migration(const FUNCTIONS &peaks, const arguments &args)
-    // {
-    //     // std::cout << "\tPeaks migration..." << std::endl;
-    //     // polyfit pf(args);
-    //     // std::map<std::string, function> rotated_peaks = utils::rotate(peaks);
-    //     // for (const std::pair<std::string, function> &f : rotated_peaks)
-    //     //     pf.compute(f.second, f.second.size(), "peak_migr" + f.first);
-    // }
+    // compute the polynomial fit of migration of peaks
+    void peaks_migration(const FUNCTIONS &peaks, const arguments &args)
+    {
+        std::cout << "\tPeaks migration..." << std::endl;
+        polyfit pf(args);
+        // std::map<std::string, FUNCTIONS> rotated_peaks = utils::rotate(peaks);
+        // for (const std::pair<std::string, FUNCTIONS> &f : rotated_peaks)
+        //     pf.compute(f.second, f.second.size(), "peak_migr" + f.first);
+    }
 
     void work(const FUNCTIONS &fs, const arguments &args)
     {

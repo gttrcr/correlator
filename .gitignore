@@ -13,3 +13,4 @@ lib/.vscode/settings.json
 /Gui/Common/obj/*
 /Gui/*.zip
 /Gui/Release/lib/*
+lib/release/*

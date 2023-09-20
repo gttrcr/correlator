@@ -21,15 +21,21 @@ execute ()
     fi
 
     cp dev/libkissfft-float.so release/$PLATFORM/
-    
     if [[ "$PLATFORM" == *"win"* ]]; then
         mv release/$PLATFORM/libkissfft-float.so release/$PLATFORM/libkissfft-float.so.131.1.0
     fi
     
     if [ -z `ls release/$PLATFORM | grep correlator` ]; then
-        echo "Error on release for $PLATFORM"
+        echo "ERROR on release for $PLATFORM"
         exit
     else
+        if [ -d "../Gui/Release" ]; then
+            echo "Directory ../Gui/Release exists"
+            cp -a ../Gui/Release/. release/$PLATFORM
+        else
+            echo "ERROR Directory ../Gui/Release does not exists! This release will not contain the GUI"
+        fi
+        
         rm release/$PLATFORM/log
         cp -a ../test_csv/. release/$PLATFORM
         cd release
@@ -64,11 +70,12 @@ read -s -n 1 key
 if [[ $key = "" ]]; then 
     echo "Enter TAG name for the RELEASE (TAG and RELEASE will have the same name)"
     read tagname
+    rm -rf correlator
     git clone git@github.com:gttrcr/correlator.git
     cd correlator
     cp ../../README.md .
     git add .
-    git commit -m 'update README.md for release $tagname'
+    git commit -m 'update README.md for release "$tagname"'
     git push
     gh release create $tagname --generate-notes ../release/linux.zip ../release/win64.zip ../release/win32.zip
     cd ..

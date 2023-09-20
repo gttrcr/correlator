@@ -3,7 +3,9 @@
 ## Versions, tags and releases
 | Latest stable |   Policy    |  Tag  |    Win32    |       Win64        |       Linux        |                                   Link                                    |
 | :-----------: | :---------: | :---: | :---------: | :----------------: | :----------------: | :-----------------------------------------------------------------------: |
-|        *       |   Release   |  0.3  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/0.3](https://github.com/gttrcr/correlator/releases/tag/0.3)     |                                                                
+|        *       |   Release   |  23.09  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/23.09](https://github.com/gttrcr/correlator/releases/tag/23.09)|
+|               |   Release   |  23.08  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/23.08](https://github.com/gttrcr/correlator/releases/tag/23.08)|
+|               |   Release   |  0.3  | :x: |    :heavy_check_mark:     | :heavy_check_mark: |  [releases/tag/0.3](https://github.com/gttrcr/correlator/releases/tag/0.3)|                 
 |              |   Release   |  0.2  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2) |
 |               | Pre release |  0.1  |     :x:     | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1) |
 
@@ -30,15 +32,15 @@ The results are placed inside the ```out_correlator``` default folder (or the ou
 ├── libkissfft-float.so (libkissfft library)
 └── out_correlator (default output folder)
     ├── fft (subdirectory with all fft computations)
-    │   ├── a_6_28.csv  (computation of fft of the corresponding input file)
-    │   ├── b_9_42.csv  (computation of fft of the corresponding input file)
-    │   ├── c_14_13.csv (computation of fft of the corresponding input file)
-    │   └── d_21_20.csv (computation of fft of the corresponding input file)
+    │   ├── a_6_28.csv  (computation of fft of the corresponding input file)
+    │   ├── b_9_42.csv  (computation of fft of the corresponding input file)
+    │   ├── c_14_13.csv (computation of fft of the corresponding input file)
+    │   └── d_21_20.csv (computation of fft of the corresponding input file)
     ├── peaks (subdirectory with peaks coming from fft computation)
-    │   ├── a_6_28.csv  (computation of peaks of fft of the corresponding input file)
-    │   ├── b_9_42.csv  (computation of peaks of fft of the corresponding input file)
-    │   ├── c_14_13.csv (computation of peaks of fft of the corresponding input file)
-    │   └── d_21_20.csv (computation of peaks of fft of the corresponding input file)
+    │   ├── a_6_28.csv  (computation of peaks of fft of the corresponding input file)
+    │   ├── b_9_42.csv  (computation of peaks of fft of the corresponding input file)
+    │   ├── c_14_13.csv (computation of peaks of fft of the corresponding input file)
+    │   └── d_21_20.csv (computation of peaks of fft of the corresponding input file)
     └── polyfit (subdirectory of all polynomials fit)
         ├── cross.csv
         └── single.csv
