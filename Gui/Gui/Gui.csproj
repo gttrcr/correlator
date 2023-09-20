@@ -39,8 +39,6 @@
 	<ItemGroup>
 		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="ScottPlot" Version="4.1.65" />
-		<PackageReference Include="ScottPlot.WinForms" Version="4.1.65" />
 	</ItemGroup>
 
 	<ItemGroup>
