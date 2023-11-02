@@ -24,28 +24,15 @@ namespace analysis
             FDST r2;
             SOURCE source1;
             std::optional<SOURCE> source2;
-            CODOMAIN coeff;
+            codomain coeff;
         };
 
         arguments _args;
         std::vector<data> _data;
 
-        // // std::vector<FDST> a = {0, 2, 0, 3, 5};
-        // // std::vector<FDST> b = {7, 11, 0};
-        // // std::vector<FDST> p = compute::poly_product(a, b);
-        // static std::vector<FDST> _poly_product(const std::vector<FDST> &a, const std::vector<FDST> &b)
-        // {
-        //     std::vector<FDST> coeff(std::max(a.size(), b.size()) + 1);
-        //     for (unsigned int i = 0; i < a.size(); i++)
-        //         for (unsigned int j = 0; j < b.size(); j++)
-        //             coeff[i + j] += a[i] * b[j];
-
-        //     return coeff;
-        // }
-
-        void _polyfit(const DOMAIN &x, const CODOMAIN &y, CODOMAIN &coeff, const unsigned int &degree)
+        void _polyfit(const domain &x, const codomain &y, codomain &coeff, const unsigned int &degree)
         {
-            std::vector<double> y_double = utils::to_double(y);
+            std::vector<double> y_double = y; //.to_double();
             Eigen::MatrixXd T(x.size(), degree + 1);
             Eigen::VectorXd V = Eigen::VectorXd::Map(&y_double.front(), y_double.size());
             Eigen::VectorXd result;
@@ -55,7 +42,7 @@ namespace analysis
 
             for (size_t i = 0; i < x.size(); ++i)
                 for (size_t j = 0; j < degree + 1; ++j)
-                    T(i, j) = pow(x.at(i), j);
+                    T(i, j) = pow(x[i], j);
 
             result = T.householderQr().solve(V);
             coeff.resize(degree + 1);
@@ -73,9 +60,9 @@ namespace analysis
         {
             for (unsigned int deg = 0; deg <= degree; deg++)
             {
-                DOMAIN x = f.get_domain();
-                CODOMAIN y = f.get_codomain();
-                CODOMAIN c;
+                domain x = f.get_domain();
+                codomain y = f.get_codomain();
+                codomain c;
                 _polyfit(x, y, c, deg);
                 FDST r2 = statistics::get_r2(x, y, c);
                 _data.push_back({deg, r2, source1, source2, c});

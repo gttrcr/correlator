@@ -22,38 +22,45 @@ namespace analysis
         // compute correlation of every function
         std::cout << "\t\tSingle function..." << std::endl;
         for (unsigned int i = 0; i < fs.size(); i++)
-            pf.compute(fs.at(i).second, args.polyfit_max_degree, fs.at(i).first);
+            pf.compute(fs[i].second, args.polyfit_max_degree, fs[i].first);
         pf.save("Polyfit", "single.csv");
         analysis::result::get()->set_analysis("Polyfit", "single.csv");
 
-        // compute cross correlation between every pair
-        std::cout << "\t\tCross correlation..." << std::endl;
+        // compute cross correlation of difference between every pair
+        std::cout << "\t\tCross correlation (difference)..." << std::endl;
         for (unsigned int i = 0; i < fs.size(); i++)
             for (unsigned int j = i + 1; j < fs.size(); j++)
-                pf.compute(fs.at(i).second - fs.at(j).second, args.polyfit_max_degree, fs.at(i).first, fs.at(j).first);
+                pf.compute(fs[i].second - fs[j].second, args.polyfit_max_degree, fs[i].first, fs[j].first);
+        pf.save("Polyfit", "cross_diff.csv");
+        analysis::result::get()->set_analysis("Polyfit", "cross_diff.csv");
 
-        pf.save("Polyfit", "cross.csv");
-        analysis::result::get()->set_analysis("Polyfit", "cross.csv");
+        // compute cross correlation of ratio between every pair
+        std::cout << "\t\tCross correlation (ratio)..." << std::endl;
+        for (unsigned int i = 0; i < fs.size(); i++)
+            for (unsigned int j = i + 1; j < fs.size(); j++)
+                pf.compute(fs[i].second / fs[j].second, args.polyfit_max_degree, fs[i].first, fs[j].first);
+        pf.save("Polyfit", "cross_ratio.csv");
+        analysis::result::get()->set_analysis("Polyfit", "cross_ratio.csv");
     }
 
     // compute fft of every dataset and peaks of every fft
     FUNCTIONS fft_work(const FUNCTIONS &fs, const arguments &args)
     {
+        std::cout << "\tFFT..." << std::endl;
+        
         // map of peaks of every function in fs
         FUNCTIONS peaks;
-
-        std::cout << "\tFFT..." << std::endl;
         fft fft(args);
         for (unsigned int i = 0; i < fs.size(); i++)
         {
             std::cout << "\t\tSpectrum..." << std::endl;
-            fft.compute(fs.at(i).second, fs.at(i).first);
+            fft.compute(fs[i].second, fs[i].first);
             fft.save("FFT", "fft.csv");
             std::cout << "\t\tPeaks..." << std::endl;
             fft_peaks fft_peaks(fft.get_spectrum(), args);
-            fft_peaks.compute(fs.at(i).first);
+            fft_peaks.compute(fs[i].first);
             fft_peaks.save("FFT", "peaks.csv");
-            peaks.push_back({fs.at(i).first, fft_peaks.get_peaks()});
+            peaks.push_back({fs[i].first, fft_peaks.get_peaks()});
         }
 
         return peaks;
@@ -71,9 +78,11 @@ namespace analysis
 
     void pattern_matching_work(const FUNCTIONS &fs, const arguments &args)
     {
+        std::cout << "\tpattern matching..." << std::endl;
+        
         pattern_matching pm(args);
         for (unsigned int i = 0; i < fs.size(); i++)
-            pm.compute(fs.at(i).second);
+            pm.compute(fs[i].second, fs[i].first);
     }
 
     void work(const FUNCTIONS &fs, const arguments &args)
@@ -81,8 +90,8 @@ namespace analysis
         if (!std::filesystem::exists(args.output) && !std::filesystem::create_directory(args.output))
             throw correlator_exception(error::cannot_create_output_directory);
 
-        // polyfit_work(fs, args);               // tested
-        // FUNCTIONS peaks = fft_work(fs, args); // tested
+        polyfit_work(fs, args);               // tested
+        FUNCTIONS peaks = fft_work(fs, args); // tested
         // peaks_migration(peaks, args);         // must be tested
         pattern_matching_work(fs, args);
     }

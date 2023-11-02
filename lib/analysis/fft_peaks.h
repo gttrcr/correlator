@@ -32,8 +32,8 @@ namespace analysis
         void compute(const SOURCE &source)
         {
             // order descending (greather first)
-            DOMAIN spectrum_domain = _spectrum.get_domain();
-            CODOMAIN spectrum_codomain = _spectrum.get_codomain();
+            domain spectrum_domain = _spectrum.get_domain();
+            codomain spectrum_codomain = _spectrum.get_codomain();
             std::vector<PAIR> f_cp;
             for (unsigned int i = 0; i < spectrum_domain.size(); i++)
                 f_cp.push_back(std::make_pair(spectrum_domain[i], spectrum_codomain[i]));
@@ -52,8 +52,8 @@ namespace analysis
             std::ofstream of(_args.output + "/" + output_folder + "/" + _data.source.first + "_" + output_file);
             analysis::result::get()->set_analysis(output_folder, _data.source.first + "_" + output_file);
             of << "index,freq,power" << std::endl;
-            DOMAIN d = _data.peaks.get_domain();     // frequency
-            CODOMAIN c = _data.peaks.get_codomain(); // power
+            domain d = _data.peaks.get_domain();     // frequency
+            codomain c = _data.peaks.get_codomain(); // power
             for (unsigned int j = 0; j < d.size(); j++)
                 of << j << "," << d[j] << "," << c[j] << std::endl;
             of.close();

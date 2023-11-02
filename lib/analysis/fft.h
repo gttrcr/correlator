@@ -34,8 +34,8 @@ namespace analysis
         {
             kiss_fft_cpx *in = new kiss_fft_cpx[f.size()];
             kiss_fft_cpx *out = new kiss_fft_cpx[f.size()];
-            DOMAIN x = f.get_domain();
-            CODOMAIN y = f.get_codomain();
+            // domain x = f.get_domain();
+            codomain y = f.get_codomain();
             FDST sample_size;
             bool sampling = f.get_sampling(sample_size);
             for (unsigned int i = 0; i < f.size(); i++)
@@ -72,8 +72,8 @@ namespace analysis
             std::ofstream of(_args.output + "/" + output_folder + "/" + _data.source.first + "_" + output_file);
             analysis::result::get()->set_analysis(output_folder, _data.source.first + "_" + output_file);
             of << "freq,power" << std::endl;
-            DOMAIN d = _data.spectrum.get_domain();     // frequency
-            CODOMAIN c = _data.spectrum.get_codomain(); // power
+            domain d = _data.spectrum.get_domain();     // frequency
+            codomain c = _data.spectrum.get_codomain(); // power
             for (unsigned int j = 0; j < d.size(); j++)
                 of << d[j] << "," << c[j] << std::endl;
             of.close();

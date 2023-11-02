@@ -16,7 +16,8 @@
                 "-Wpedantic",
                 //"-Werror",
                 "-L${workspaceFolder}/dev",
-                "-l:libkissfft-float.so"
+                "-l:libkissfft-float.so",
+                "-ltbb"
             ],
             "options": {
                 "cwd": "${fileDirname}"

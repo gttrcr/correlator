@@ -1,4 +1,4 @@
-options="-static-libgcc -static-libstdc++ -std=c++17 -Wall -Wpedantic -Ldev -O3 -l:libkissfft-float.so"
+options="-static-libgcc -static-libstdc++ -std=c++17 -Wall -Wpedantic -Ldev -O3 -ltbb -l:libkissfft-float.so"
 
 mkdir -p release #create if not exists
 rm -r release #remove in any case

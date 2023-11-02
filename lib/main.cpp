@@ -19,8 +19,8 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, std::v
     if (s_content.size() == 0)
         return false;
 
-    DOMAIN domain;
-    std::vector<CODOMAIN> codomains(s_content[0].size() - args.domain_size);
+    domain domain;
+    std::vector<codomain> codomains(s_content[0].size() - args.domain_size);
     for (unsigned int i = 0; i < s_content.size(); i++)
     {
         if (s_content[i].size() < 1)
@@ -126,7 +126,7 @@ FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const a
             throw correlator_exception(error::error_on_get_function);
 
         for (unsigned int i = 0; i < f.size(); i++)
-            fs.push_back(std::pair(std::pair(std::filesystem::path(file).stem().string(), i), f[i]));
+            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), i), f[i]));
     }
 
     return fs;
