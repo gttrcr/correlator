@@ -53,8 +53,8 @@ public:
 
     corr_function(const DOMAIN &domain, const CODOMAIN &codomain)
     {
-        // assert(domain.size() == codomain.size());
-        
+        assert(domain.size() == codomain.size());
+
         unsigned int min = std::min(domain.size(), codomain.size());
         _domain = DOMAIN(domain.begin(), domain.begin() + min);
         _codomain = CODOMAIN(codomain.begin(), codomain.begin() + min);
@@ -105,6 +105,47 @@ public:
                 return false;
 
         return true;
+    }
+
+    corr_function range(const unsigned int &begin, const unsigned int &end) const
+    {
+        corr_function f;
+        for (unsigned int i = begin; i < end; i++)
+            f.push_back(_domain[i], _codomain[i]);
+
+        return f;
+    }
+
+    corr_function operator+(const corr_function &f) const
+    {
+        corr_function ret_f;
+        for (unsigned int i = 0; i < f.size(); i++)
+            ret_f.push_back(_domain[i], f._codomain[i] + _codomain[i]);
+        return ret_f;
+    }
+
+    corr_function operator-(const corr_function &f) const
+    {
+        corr_function ret_f;
+        for (unsigned int i = 0; i < f.size(); i++)
+            ret_f.push_back(_domain[i], f._codomain[i] - _codomain[i]);
+        return ret_f;
+    }
+
+    corr_function operator*(const corr_function &f) const
+    {
+        corr_function ret_f;
+        for (unsigned int i = 0; i < f.size(); i++)
+            ret_f.push_back(_domain[i], f._codomain[i] * _codomain[i]);
+        return ret_f;
+    }
+
+    corr_function operator/(const corr_function &f) const
+    {
+        corr_function ret_f;
+        for (unsigned int i = 0; i < f.size(); i++)
+            ret_f.push_back(_domain[i], f._codomain[i] / _codomain[i]);
+        return ret_f;
     }
 };
 

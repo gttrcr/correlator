@@ -1,5 +1,6 @@
 #include "function.h"
-typedef std::vector<std::pair<std::string, corr_function>> FUNCTIONS;
+typedef std::pair<std::string, unsigned int> SOURCE; // property of the dataset (file name and column index)
+typedef std::vector<std::pair<SOURCE, corr_function>> FUNCTIONS;
 
 #include "error.h"
 #include "arguments.h"
@@ -125,7 +126,7 @@ FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const a
             throw correlator_exception(error::error_on_get_function);
 
         for (unsigned int i = 0; i < f.size(); i++)
-            fs.push_back(std::pair(std::filesystem::path(file).stem().string() + "#" + std::to_string(i), f[i]));
+            fs.push_back(std::pair(std::pair(std::filesystem::path(file).stem().string(), i), f[i]));
     }
 
     return fs;

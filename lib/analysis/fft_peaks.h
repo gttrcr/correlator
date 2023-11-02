@@ -14,7 +14,7 @@ namespace analysis
         struct data
         {
         public:
-            std::string name;
+            SOURCE source;
             corr_function peaks;
         };
 
@@ -29,7 +29,7 @@ namespace analysis
             _args = args;
         }
 
-        void compute(const std::string &name)
+        void compute(const SOURCE &source)
         {
             // order descending (greather first)
             DOMAIN spectrum_domain = _spectrum.get_domain();
@@ -42,15 +42,15 @@ namespace analysis
 
             unsigned int n_peaks = std::min(_args.number_of_fft_peaks_to_compute, (unsigned int)f_cp.size());
             f_cp = std::vector<PAIR>(f_cp.begin(), f_cp.begin() + n_peaks);
-            _data = {name, corr_function(f_cp)};
+            _data = {source, corr_function(f_cp)};
         }
 
         // save all computed peaks and clear all _data
         void save(const std::string &output_folder, const std::string &output_file) const
         {
             std::filesystem::create_directory(_args.output + "/" + output_folder);
-            std::ofstream of(_args.output + "/" + output_folder + "/" + _data.name + "_" + output_file);
-            analysis::result::get()->set_analysis(output_folder, _data.name + "_" + output_file);
+            std::ofstream of(_args.output + "/" + output_folder + "/" + _data.source.first + "_" + output_file);
+            analysis::result::get()->set_analysis(output_folder, _data.source.first + "_" + output_file);
             of << "index,freq,power" << std::endl;
             DOMAIN d = _data.peaks.get_domain();     // frequency
             CODOMAIN c = _data.peaks.get_codomain(); // power
