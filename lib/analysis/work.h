@@ -9,8 +9,6 @@
 #include "../utils.h"
 #include "../error.h"
 
-// #include <filesystem>
-
 namespace analysis
 {
     // compute best polynomial fit
@@ -26,28 +24,23 @@ namespace analysis
         pf.save("Polyfit", "single.csv");
         analysis::result::get()->set_analysis("Polyfit", "single.csv");
 
-        // compute cross correlation of difference between every pair
-        std::cout << "\t\tCross correlation (difference)..." << std::endl;
+        // compute cross correlation of every pair
+        std::cout << "\t\tCross correlation..." << std::endl;
         for (unsigned int i = 0; i < fs.size(); i++)
             for (unsigned int j = i + 1; j < fs.size(); j++)
-                pf.compute(fs[i].second - fs[j].second, args.polyfit_max_degree, fs[i].first, fs[j].first);
-        pf.save("Polyfit", "cross_diff.csv");
-        analysis::result::get()->set_analysis("Polyfit", "cross_diff.csv");
-
-        // compute cross correlation of ratio between every pair
-        std::cout << "\t\tCross correlation (ratio)..." << std::endl;
-        for (unsigned int i = 0; i < fs.size(); i++)
-            for (unsigned int j = i + 1; j < fs.size(); j++)
-                pf.compute(fs[i].second / fs[j].second, args.polyfit_max_degree, fs[i].first, fs[j].first);
-        pf.save("Polyfit", "cross_ratio.csv");
-        analysis::result::get()->set_analysis("Polyfit", "cross_ratio.csv");
+            {
+                corr_function f(fs[i].second.get_codomain(), fs[j].second.get_codomain());
+                pf.compute(f, args.polyfit_max_degree, fs[i].first, fs[j].first);
+            }
+        pf.save("Polyfit", "cross.csv");
+        analysis::result::get()->set_analysis("Polyfit", "cross.csv");
     }
 
     // compute fft of every dataset and peaks of every fft
     FUNCTIONS fft_work(const FUNCTIONS &fs, const arguments &args)
     {
         std::cout << "\tFFT..." << std::endl;
-        
+
         // map of peaks of every function in fs
         FUNCTIONS peaks;
         fft fft(args);
@@ -66,20 +59,11 @@ namespace analysis
         return peaks;
     }
 
-    // // compute the polynomial fit of migration of peaks
-    // void peaks_migration(const FUNCTIONS &peaks, const arguments &args)
-    // {
-    //     std::cout << "\tPeaks migration..." << std::endl;
-    //     polyfit pf(args);
-    //     // std::map<std::string, FUNCTIONS> rotated_peaks = utils::rotate(peaks);
-    //     // for (const std::pair<std::string, FUNCTIONS> &f : rotated_peaks)
-    //     //     pf.compute(f.second, f.second.size(), "peak_migr" + f.first);
-    // }
-
+    // scan every datafile and return common pattern
     void pattern_matching_work(const FUNCTIONS &fs, const arguments &args)
     {
-        std::cout << "\tpattern matching..." << std::endl;
-        
+        std::cout << "\tPattern matching..." << std::endl;
+
         pattern_matching pm(args);
         for (unsigned int i = 0; i < fs.size(); i++)
             pm.compute(fs[i].second, fs[i].first);
@@ -92,7 +76,6 @@ namespace analysis
 
         polyfit_work(fs, args);               // tested
         FUNCTIONS peaks = fft_work(fs, args); // tested
-        // peaks_migration(peaks, args);         // must be tested
-        pattern_matching_work(fs, args);
+        pattern_matching_work(fs, args);      // in progress...
     }
 }

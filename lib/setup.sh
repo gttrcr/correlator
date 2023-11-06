@@ -10,6 +10,7 @@ sudo apt install mingw-w64 -y
 sudo apt install cmake -y
 sudo apt install pkg-config -y
 sudo apt install zip -y
+sudo apt install libtbb-dev -y
 
 cd kissfft
 mkdir -p build #create if not exists

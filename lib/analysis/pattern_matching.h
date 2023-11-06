@@ -61,7 +61,7 @@ namespace analysis
 
             std::cout << "\t\t" << 100.0 * (double)(perc++) / (double)parallelizzable_tasks << std::endl;
         }
-        
+
         std::mutex _mtx;
         void _ranges(const corr_function &small, const corr_function &big, const unsigned int &small_from, const unsigned int &small_to, const unsigned int &big_from, const unsigned int &big_to, const SOURCE &source1)
         {
