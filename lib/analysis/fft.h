@@ -69,8 +69,8 @@ namespace analysis
         void save(const std::string &output_folder, const std::string &output_file) const
         {
             std::filesystem::create_directory(_args.output + "/" + output_folder);
-            std::ofstream of(_args.output + "/" + output_folder + "/" + _data.source.first + "_" + output_file);
-            analysis::result::get()->set_analysis(output_folder, _data.source.first + "_" + output_file);
+            std::ofstream of(_args.output + "/" + output_folder + "/" + output_file);
+            analysis::result::get()->set_analysis(output_folder, output_file);
             of << "freq,power" << std::endl;
             domain d = _data.spectrum.get_domain();     // frequency
             codomain c = _data.spectrum.get_codomain(); // power
