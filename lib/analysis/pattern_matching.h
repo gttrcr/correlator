@@ -25,14 +25,14 @@ namespace analysis
         };
 
         arguments _args;
+        std::mutex _mtx;
         unsigned int _perc;
         std::vector<data> _data;
 
         static void _polyfit(const domain &x, const codomain &y, codomain &coeff, const unsigned int &degree)
         {
-            std::vector<double> y_double = y; //.to_double();
             Eigen::MatrixXd T(x.size(), degree + 1);
-            Eigen::VectorXd V = Eigen::VectorXd::Map(&y_double.front(), y_double.size());
+            Eigen::VectorXd V = Eigen::VectorXd::Map(&y.front(), y.size());
             Eigen::VectorXd result;
 
             assert(x.size() == y.size());
@@ -48,7 +48,7 @@ namespace analysis
                 coeff[k] = result[k];
         }
 
-        void _execution(const unsigned int &w, const unsigned int &max_window, const unsigned int &min_window, const unsigned int &big_size, const corr_function &small, const corr_function &big, const unsigned int &parallelizzable_tasks, unsigned int &perc, const SOURCE &source1)
+        void _execution(const unsigned int &w, const unsigned int &max_window, const unsigned int &min_window, const unsigned int &big_size, const corr_function &small, const corr_function &big, const unsigned int &parallelizzable_tasks, const SOURCE &source1)
         {
             const unsigned int big_step = 38;
             for (unsigned int ws = w; ws < max_window; ws += big_step)
@@ -59,10 +59,9 @@ namespace analysis
                         _ranges(small, big, ws, i, j, j + width - 1, source1);
                 }
 
-            std::cout << "\t\t" << 100.0 * (double)(perc++) / (double)parallelizzable_tasks << std::endl;
+            std::cout << "\t\t" << 100.0 * (double)(_perc++) / (double)parallelizzable_tasks << std::endl;
         }
 
-        std::mutex _mtx;
         void _ranges(const corr_function &small, const corr_function &big, const unsigned int &small_from, const unsigned int &small_to, const unsigned int &big_from, const unsigned int &big_to, const SOURCE &source1)
         {
             corr_function s = small.range(small_from, small_to);
@@ -95,7 +94,7 @@ namespace analysis
 
             _perc = 0;
             std::for_each(std::execution::par_unseq, parallelizable_w.begin(), parallelizable_w.end(), [&](unsigned int w)
-                          { _execution(w, max_window, min_window, big_size, small, big, parallelizable_w.size(), _perc, source1); });
+                          { _execution(w, max_window, min_window, big_size, small, big, parallelizable_w.size(), source1); });
         }
 
     public:

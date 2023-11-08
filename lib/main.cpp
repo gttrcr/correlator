@@ -1,5 +1,5 @@
 #include "function.h"
-typedef std::pair<std::string, unsigned int> SOURCE; // property of the dataset (file name and column index)
+typedef std::pair<std::string, std::string> SOURCE; // property of the dataset (file name and column index)
 typedef std::vector<std::pair<SOURCE, corr_function>> FUNCTIONS;
 
 #include "error.h"
@@ -48,7 +48,7 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, std::v
 }
 
 // read a csv file returning content and the list of axis
-bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s_content, std::vector<std::string> &axis)
+bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &s_content, std::vector<std::string> &axis)
 {
     s_content.clear();
     axis.clear();
@@ -63,7 +63,12 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
         // cycle on every line
         while (std::getline(file, line))
         {
+            utils::ltrim(line);
+
             if (line.empty())
+                continue;
+
+            if (line[0] == '#')
                 continue;
 
             char delimiter = 0;
@@ -71,6 +76,10 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
                 delimiter = ',';
             else if (line.find(';') < line.size())
                 delimiter = ';';
+            else if (line.find(' ') < line.size())
+                delimiter = ' ';
+            else if (line.find('\t') < line.size())
+                delimiter = '\t';
             else
                 throw correlator_exception(error::cannot_find_a_valid_delimiter);
 
@@ -94,8 +103,7 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
             if (!first)
                 s_content.push_back(row);
 
-            if (first)
-                first = false;
+            first = false;
         }
 
         return true;
@@ -105,19 +113,19 @@ bool read_csv(const std::string &fname, std::vector<std::vector<std::string>> &s
 }
 
 // return all functions from csv filename
-FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const arguments &args)
+FUNCTIONS get_functions(const std::vector<std::string> &files, const arguments &args)
 {
-    std::vector<std::string> csv_files(const_csv_files);
-    std::sort(csv_files.begin(), csv_files.end());
+    std::cout << "Get functions..." << std::endl;
+
     FUNCTIONS fs;
-    for (std::string file : csv_files)
+    for (std::string file : files)
     {
-        std::cout << "File: " << file << std::endl;
-        std::cout << "\tReading..." << std::endl;
+        std::cout << "\tFile: " << file << std::endl;
+        std::cout << "\t\tReading..." << std::endl;
 
         std::vector<std::string> axis;
         std::vector<std::vector<std::string>> s_content;
-        if (!read_csv(file, s_content, axis))
+        if (!read_file(file, s_content, axis))
             throw correlator_exception(error::error_on_reading_csv);
 
         std::cout << "\tParsing..." << std::endl;
@@ -126,36 +134,14 @@ FUNCTIONS get_functions(const std::vector<std::string> &const_csv_files, const a
             throw correlator_exception(error::error_on_get_function);
 
         for (unsigned int i = 0; i < f.size(); i++)
-            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), i), f[i]));
+            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), axis[i]), f[i]));
     }
 
     return fs;
 }
 
-void correlate_from_files(const std::vector<std::string> &csv_files, const arguments &args)
-{
-    try
-    {
-        std::cout << "Get functions..." << std::endl;
-        FUNCTIONS fs = get_functions(csv_files, args);
-
-        std::cout << "Working..." << std::endl;
-        analysis::work(fs, args);
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << '\n';
-        analysis::result::get()->set_error(e.what());
-    }
-    catch (...)
-    {
-        std::cerr << "Generic error" << std::endl;
-        analysis::result::get()->set_error("generic error");
-    }
-}
-
 // get the list of all csv files inside the folder
-void get_csv_files(const std::vector<std::string> &path_str_vector, std::vector<std::string> &csv_files)
+void get_files(const std::vector<std::string> &path_str_vector, std::vector<std::string> &csv_files)
 {
     for (unsigned int i = 0; i < path_str_vector.size(); i++)
     {
@@ -164,16 +150,17 @@ void get_csv_files(const std::vector<std::string> &path_str_vector, std::vector<
         std::error_code ec;
         if (std::filesystem::is_directory(path, ec))
             for (const auto &entry : std::filesystem::directory_iterator(path))
-                get_csv_files({entry.path().string()}, csv_files);
+                get_files({entry.path().string()}, csv_files);
 
         if (ec)
             std::cerr << "Error in is_directory: " << ec.message();
 
-        if (std::filesystem::is_regular_file(path, ec) && path.extension() == ".csv")
+        if (std::filesystem::is_regular_file(path, ec) &&
+            (path.extension() == ".csv" || path.extension() == ".txt"))
         {
             std::string filename = path.string();
             csv_files.push_back(filename);
-            std::cout << "Found " << filename << std::endl;
+            std::cout << csv_files.size() << ". Found " << filename << std::endl;
         }
 
         if (ec)
@@ -187,13 +174,24 @@ int main(int argc, char *argv[])
     {
         arguments args = arguments::get_arguments(argc, argv);
         analysis::result::get()->set_arguments(args);
-        std::vector<std::string> csv_files;
-        get_csv_files(args.input, csv_files);
-        analysis::result::get()->set_csv_files(csv_files);
-        if (csv_files.size() > 0)
+
+        std::vector<std::string> files;
+        get_files(args.input, files);
+        analysis::result::get()->set_files(files);
+
+        try
         {
-            std::cout << "Correlate from files..." << std::endl;
-            correlate_from_files(csv_files, args);
+            analysis::work(get_functions(files, args), args);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            analysis::result::get()->set_error(e.what());
+        }
+        catch (...)
+        {
+            std::cerr << "Generic error" << std::endl;
+            analysis::result::get()->set_error("generic error");
         }
 
         analysis::result::get()->save(args);

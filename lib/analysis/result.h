@@ -36,7 +36,7 @@ namespace analysis
             _result["args"]["polyfit_max_degree"] = args.polyfit_max_degree;
         }
 
-        void set_csv_files(const std::vector<std::string> &csv_files)
+        void set_files(const std::vector<std::string> &csv_files)
         {
             for (unsigned int i = 0; i < csv_files.size(); i++)
                 _result["csv_files"].push_back(csv_files[i]);

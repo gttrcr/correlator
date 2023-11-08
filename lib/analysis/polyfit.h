@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <optional>
+#include <mutex>
 
 namespace analysis
 {
@@ -28,13 +29,13 @@ namespace analysis
         };
 
         arguments _args;
+        std::mutex _mtx;
         std::vector<data> _data;
 
         void _polyfit(const domain &x, const codomain &y, codomain &coeff, const unsigned int &degree)
         {
-            std::vector<double> y_double = y; //.to_double();
             Eigen::MatrixXd T(x.size(), degree + 1);
-            Eigen::VectorXd V = Eigen::VectorXd::Map(&y_double.front(), y_double.size());
+            Eigen::VectorXd V = Eigen::VectorXd::Map(&y.front(), y.size());
             Eigen::VectorXd result;
 
             assert(x.size() == y.size());
@@ -65,7 +66,9 @@ namespace analysis
                 codomain c;
                 _polyfit(x, y, c, deg);
                 FDST r2 = statistics::get_r2(x, y, c);
+                _mtx.lock();
                 _data.push_back({deg, r2, source1, source2, c});
+                _mtx.unlock();
             }
         }
 
@@ -83,7 +86,7 @@ namespace analysis
 
             std::filesystem::create_directory(_args.output + "/" + output_folder);
             std::ofstream of(_args.output + "/" + output_folder + "/" + output_file);
-            of << "degree,r^2,file,";
+            of << "degree,r^2,file,column";
 
             // get the heighest degree in da
             unsigned int degree = std::max_element(_data.begin(), _data.end(), [](const data &d1, const data &d2)
@@ -95,7 +98,7 @@ namespace analysis
 
             for (unsigned int i = 0; i < _data.size(); i++)
             {
-                of << _data[i].degree << "," << _data[i].r2 << "," << _data[i].source1.first << "(" << _data[i].source1.second << "),";
+                of << _data[i].degree << "," << _data[i].r2 << "," << _data[i].source1.first << "," << _data[i].source1.second << ",";
                 for (unsigned int j = 0; j < _data[i].coeff.size(); j++)
                     of << _data[i].coeff[j] << ",";
                 of << std::endl;

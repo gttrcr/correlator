@@ -8,6 +8,7 @@
             "program": "${workspaceFolder}/dev/correlator",
             "args": [
                 "-i",
+                "/mnt/c/Users/iki/Desktop/1258443058_2023-11-08/data/pub/data/paleo/reconstructions/deboer2014",
                 // "-i ../../lib/release/win32/1_to_5/c_14_13_1_to_5.csv",
                 // "../../lib/release/win32/1_to_5/d_21_20_1_to_5.csv",
                 // "../../lib/release/win32/1_to_5/b_9_42_1_to_5.csv",
@@ -18,8 +19,8 @@
                 // "../../lib/release/win32/1_to_1/c_14_13_1_to_1.csv",
                 // "../../lib/release/win32/semicolon/semicolon2.csv",
                 // "../../lib/release/win32/semicolon/semicolon1.csv",
-                "../../test_csv/1_to_5/c_14_13_1_to_5.csv",
-                "../../test_csv/1_to_5/d_21_20_1_to_5.csv",
+                // "../../test_csv/1_to_5/c_14_13_1_to_5.csv",
+                // "../../test_csv/1_to_5/d_21_20_1_to_5.csv",
                 // "../../test_csv/1_to_5/b_9_42_1_to_5.csv",
                 // "../../test_csv/1_to_5/a_6_28_1_to_5.csv",
                 // "../../test_csv/1_to_1/b_9_42_1_to_1.csv",
