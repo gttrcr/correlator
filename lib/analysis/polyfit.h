@@ -77,16 +77,13 @@ namespace analysis
         {
             // order by r2 descending and then by degree ascending
             std::sort(_data.begin(), _data.end(), [](const data &d1, const data &d2)
-                      {
-                          return std::tie(d2.r2, d1.degree) < std::tie(d1.r2, d2.degree);
-                          // if(d1.r2 != d2.r2)
-                          //    return d1.r2 > d2.r2;
-                          // return d1.degree < d2.degree;
-                      });
+                      { return std::tie(d2.r2, d1.degree) < std::tie(d1.r2, d2.degree); });
 
             std::filesystem::create_directory(_args.output + "/" + output_folder);
             std::ofstream of(_args.output + "/" + output_folder + "/" + output_file);
-            of << "degree,r^2,file,column";
+            of << "degree,r^2,file1,column1,";
+            if (_data.size() > 0 && _data[0].source2.has_value())
+                of << "file2,column2,";
 
             // get the heighest degree in da
             unsigned int degree = std::max_element(_data.begin(), _data.end(), [](const data &d1, const data &d2)
@@ -99,6 +96,9 @@ namespace analysis
             for (unsigned int i = 0; i < _data.size(); i++)
             {
                 of << _data[i].degree << "," << _data[i].r2 << "," << _data[i].source1.first << "," << _data[i].source1.second << ",";
+                if (_data[i].source2.has_value())
+                    of << _data[i].source2.value().first << "," << _data[i].source2.value().second << ",";
+
                 for (unsigned int j = 0; j < _data[i].coeff.size(); j++)
                     of << _data[i].coeff[j] << ",";
                 of << std::endl;
