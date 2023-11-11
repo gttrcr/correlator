@@ -40,7 +40,7 @@ namespace analysis
             std::sort(f_cp.begin(), f_cp.end(), [=](PAIR &a, PAIR &b)
                       { return a.second > b.second; });
 
-            unsigned int n_peaks = std::min(_args.number_of_fft_peaks_to_compute, (unsigned int)f_cp.size());
+            unsigned int n_peaks = std::min(_args.fft_peaks_to_compute, (unsigned int)f_cp.size());
             f_cp = std::vector<PAIR>(f_cp.begin(), f_cp.begin() + n_peaks);
             _data = {source, corr_function(f_cp)};
         }

@@ -44,11 +44,11 @@ execute ()
     fi
 }
 
-PLATFORM="win32"
-execute
+# PLATFORM="win32"
+# execute
 
-PLATFORM="win64"
-execute
+# PLATFORM="win64"
+# execute
 
 PLATFORM="linux"
 execute

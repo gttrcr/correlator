@@ -196,10 +196,17 @@ int main(int argc, char *argv[])
 
         analysis::result::get()->save(args);
         std::cout << "All done" << std::endl;
+
+        return error::OK;
     }
     catch (correlator_exception &ce)
     {
+        if (ce.err() == error::OK)
+            return error::OK;
+
         std::cerr << ce.what() << std::endl;
         analysis::result::get()->set_error(ce.what());
+
+        return ce.err();
     }
 }

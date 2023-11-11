@@ -31,7 +31,7 @@ namespace analysis
         {
             _result["args"]["input"] = args.input;
             _result["args"]["output"] = args.output;
-            _result["args"]["number_of_fft_peaks_to_compute"] = args.number_of_fft_peaks_to_compute;
+            _result["args"]["fft_peaks_to_compute"] = args.fft_peaks_to_compute;
             _result["args"]["domain_size"] = args.domain_size;
             _result["args"]["polyfit_max_degree"] = args.polyfit_max_degree;
         }

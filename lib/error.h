@@ -21,6 +21,11 @@ private:
 public:
     correlator_exception(error err) : _err(err) {}
 
+    error err() const
+    {
+        return _err;
+    }
+
     const char *what() const noexcept override
     {
         return std::to_string(_err).c_str();

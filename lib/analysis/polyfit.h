@@ -85,10 +85,10 @@ namespace analysis
             if (_data.size() > 0 && _data[0].source2.has_value())
                 of << "file2,column2,";
 
-            // get the heighest degree in da
-            unsigned int degree = std::max_element(_data.begin(), _data.end(), [](const data &d1, const data &d2)
-                                                   { return d1.degree < d2.degree; })
-                                      ->degree;
+            // get the heighest degree in data
+            std::vector<data>::iterator it = std::max_element(_data.begin(), _data.end(), [](const data &d1, const data &d2)
+                                                              { return d1.degree < d2.degree; });
+            unsigned int degree = (it != _data.end()) ? it->degree : 0;
             for (unsigned int i = 0; i <= degree; i++)
                 of << "d" << i << ",";
             of << std::endl;

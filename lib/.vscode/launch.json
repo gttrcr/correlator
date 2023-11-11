@@ -30,7 +30,7 @@
                 // "../../test_csv/semicolon/semicolon2.csv",
                 // "../../test_csv/semicolon/semicolon1.csv",
                 "-o blablabla",
-                "--fft",
+                // "--fft",
                 //"-p 1012",
                 //"-s socket_folder",
                 // "-w ciao",

@@ -80,8 +80,11 @@ namespace analysis
         if (!std::filesystem::exists(args.output) && !std::filesystem::create_directory(args.output))
             throw correlator_exception(error::cannot_create_output_directory);
 
-        polyfit_work(fs, args); // tested
-        fft_work(fs, args);     // tested
+        if (args.compute_polyfit)
+            polyfit_work(fs, args); // tested
+
+        if (args.compute_fft)
+            fft_work(fs, args); // tested
         // pattern_matching_work(fs, args); // in progress...
     }
 }
