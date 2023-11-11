@@ -15,6 +15,7 @@ private:
     static bool _default_compute_fft() { return true; }
 
     static unsigned int _default_polyfit_max_degree() { return 5; }
+    static double _default_fft_delta_t() { return 0.0; }
     static unsigned int _default_fft_peaks_to_compute() { return 5; }
 
     void _compute_all()
@@ -33,6 +34,7 @@ private:
         std::cout << "\t--pf: compute polynomial fit. type: boolean. default: " << _default_compute_polyfit() << std::endl;
         std::cout << "\t--fft: compute fast Fourier transform. type: boolean. default: " << _default_compute_fft() << std::endl;
         std::cout << "\t--pfdeg: number of max degree for polyfit. type: unsigned int. default: " << _default_polyfit_max_degree() << std::endl;
+        std::cout << "\t--fftt: Δt between two entries. type: double. default: computed when possible" << std::endl;
         std::cout << "\t--fftp: number of peaks to compute for every fft. type: unsigned int. default: " << _default_fft_peaks_to_compute() << std::endl;
         std::cout << "\t--help: print this help. type: none. default: none" << std::endl;
         throw correlator_exception(error::OK);
@@ -48,6 +50,7 @@ public:
 
     // specific arguments
     unsigned int polyfit_max_degree = _default_polyfit_max_degree();     // --pfdeg number of max degree for polyfit
+    double fft_delta_t = _default_fft_delta_t();                         //--fftt Δt between two entries
     unsigned int fft_peaks_to_compute = _default_fft_peaks_to_compute(); // --fftp number of peaks to compute in fft_peaks
 
     // from argc and argv, create arguments struct
@@ -83,6 +86,9 @@ public:
 
             if (pair.first == "--pfdeg" && pair.second.size() == 1 && utils::is_integer(pair.second[0]))
                 args.polyfit_max_degree = std::stoi(pair.second[0]);
+
+            if (pair.first == "--fftt" && pair.second.size() == 1 && utils::is_number(pair.second[0]))
+                args.fft_delta_t = std::stod(pair.second[0]);
 
             if (pair.first == "--fftp" && pair.second.size() == 1 && utils::is_integer(pair.second[0]))
                 args.fft_peaks_to_compute = std::stoi(pair.second[0]);

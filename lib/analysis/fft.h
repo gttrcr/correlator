@@ -48,7 +48,7 @@ namespace analysis
                 free(cfg);
                 const bool full = false;
                 if (!sampling)
-                    std::cerr << "Warning! Domain is not linear or discretization is not regular" << std::endl;
+                    std::cerr << "Warning! Domain is not linear or discretization is not regular" << std::endl; // TODO add discretization here
 
                 corr_function spectrum;
                 for (unsigned int j = 0; j < (full ? f.size() : (f.size() / 2 + 1)); j++)
