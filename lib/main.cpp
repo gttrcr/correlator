@@ -1,3 +1,5 @@
+#define THREAD_SUPPORT
+
 #include "function.h"
 typedef std::pair<std::string, std::string> SOURCE; // property of the dataset (file name and column index)
 typedef std::vector<std::pair<SOURCE, corr_function>> FUNCTIONS;
@@ -27,18 +29,16 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, std::v
             continue;
 
         for (unsigned int j = 0; j < s_content[i].size(); j++)
-            try
-            {
-                FDST fdst = std::stod(s_content[i][j]);
-                if (j < args.domain_size)
-                    domain.push_back(fdst);
-                else
-                    codomains[j - args.domain_size].push_back(fdst);
-            }
-            catch (...)
-            {
-                return false;
-            }
+        {
+            FDST fdst = std::numeric_limits<double>::quiet_NaN();
+            if (utils::is_number(s_content[i][j]))
+                fdst = std::stod(s_content[i][j]);
+
+            if (j < args.domain_size)
+                domain.push_back(fdst);
+            else
+                codomains[j - args.domain_size].push_back(fdst);
+        }
     }
 
     for (unsigned int i = 0; i < codomains.size(); i++)
@@ -63,7 +63,7 @@ bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &
         // cycle on every line
         while (std::getline(file, line))
         {
-            utils::ltrim(line);
+            utils::trim(line);
 
             if (line.empty())
                 continue;
@@ -134,7 +134,7 @@ FUNCTIONS get_functions(const std::vector<std::string> &files, const arguments &
             throw correlator_exception(error::error_on_get_function);
 
         for (unsigned int i = 0; i < f.size(); i++)
-            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), axis[i]), f[i]));
+            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), axis[i + 1]), f[i]));
     }
 
     return fs;
@@ -173,11 +173,11 @@ int main(int argc, char *argv[])
     try
     {
         arguments args = arguments::get_arguments(argc, argv);
-        analysis::result::get()->set_arguments(args);
+        analysis::metadata::get()->set_arguments(args);
 
         std::vector<std::string> files;
         get_files(args.input, files);
-        analysis::result::get()->set_files(files);
+        analysis::metadata::get()->set_files(files);
 
         try
         {
@@ -186,15 +186,15 @@ int main(int argc, char *argv[])
         catch (const std::exception &e)
         {
             std::cerr << e.what() << '\n';
-            analysis::result::get()->set_error(e.what());
+            analysis::metadata::get()->set_error(e.what());
         }
         catch (...)
         {
             std::cerr << "Generic error" << std::endl;
-            analysis::result::get()->set_error("generic error");
+            analysis::metadata::get()->set_error("generic error");
         }
 
-        analysis::result::get()->save(args);
+        analysis::metadata::get()->save(args);
         std::cout << "All done" << std::endl;
 
         return error::OK;
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
             return error::OK;
 
         std::cerr << ce.what() << std::endl;
-        analysis::result::get()->set_error(ce.what());
+        analysis::metadata::get()->set_error(ce.what());
 
         return ce.err();
     }

@@ -1,4 +1,4 @@
-options="-static-libgcc -static-libstdc++ -std=c++17 -Wall -Wpedantic -Ldev -O3 -ltbb -l:libkissfft-float.so"
+options="-static-libgcc -static-libstdc++ -std=c++17 -Wall -Wpedantic -Ldev -O3 -l:libkissfft-float.so"
 
 mkdir -p release #create if not exists
 rm -r release #remove in any case
@@ -14,7 +14,7 @@ execute ()
     elif [ "$PLATFORM" == "win64" ]; then
         x86_64-w64-mingw32-g++ main.cpp -m64 -DBITS=64 -o release/$PLATFORM/correlator.exe -static $options >> release/$PLATFORM/log 2>&1
     elif [ "$PLATFORM" == "linux" ]; then
-        g++ main.cpp -o release/$PLATFORM/correlator $options >> release/$PLATFORM/log 2>&1
+        g++ main.cpp -o release/$PLATFORM/correlator -DTHREAD_SUPPORT -ltbb $options >> release/$PLATFORM/log 2>&1
     else
         echo "Unknown platform $PLATFORM"
         exit
@@ -44,11 +44,11 @@ execute ()
     fi
 }
 
-# PLATFORM="win32"
-# execute
+PLATFORM="win32"
+execute
 
-# PLATFORM="win64"
-# execute
+PLATFORM="win64"
+execute
 
 PLATFORM="linux"
 execute

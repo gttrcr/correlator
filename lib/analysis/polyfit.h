@@ -11,7 +11,9 @@
 #include <filesystem>
 #include <algorithm>
 #include <optional>
+#ifdef THREAD_SUPPORT
 #include <mutex>
+#endif
 
 namespace analysis
 {
@@ -29,8 +31,10 @@ namespace analysis
         };
 
         arguments _args;
-        std::mutex _mtx;
         std::vector<data> _data;
+#ifdef THREAD_SUPPORT
+        std::mutex _mtx;
+#endif
 
         void _polyfit(const domain &x, const codomain &y, codomain &coeff, const unsigned int &degree)
         {
@@ -59,6 +63,7 @@ namespace analysis
 
         void compute(const corr_function &f, const unsigned int &degree, const SOURCE &source1, const std::optional<SOURCE> &source2 = std::nullopt)
         {
+            std::vector<data> tmp_data;
             for (unsigned int deg = 0; deg <= degree; deg++)
             {
                 domain x = f.get_domain();
@@ -66,19 +71,30 @@ namespace analysis
                 codomain c;
                 _polyfit(x, y, c, deg);
                 FDST r2 = statistics::get_r2(x, y, c);
-                _mtx.lock();
-                _data.push_back({deg, r2, source1, source2, c});
-                _mtx.unlock();
+                tmp_data.push_back({deg, r2, source1, source2, c});
             }
+
+            std::sort(tmp_data.begin(), tmp_data.end(), [](const data &d1, const data &d2)
+                      { return d1.r2 > d2.r2; });
+
+#ifdef THREAD_SUPPORT
+            _mtx.lock();
+#endif
+            _data.insert(_data.end(), tmp_data.begin(), tmp_data.end());
+#ifdef THREAD_SUPPORT
+            _mtx.unlock();
+#endif
         }
 
         // save all computed correlation and clear all _data
         void save(const std::string &output_folder, const std::string &output_file)
         {
-            // order by r2 descending and then by degree ascending
-            std::sort(_data.begin(), _data.end(), [](const data &d1, const data &d2)
-                      { return std::tie(d2.r2, d1.degree) < std::tie(d1.r2, d2.degree); });
+            // remove nan or inf elements
+            _data.erase(std::remove_if(_data.begin(), _data.end(), [](const data &d)
+                                       { return std::isnan(d.r2) || std::isinf(d.r2); }),
+                        _data.end());
 
+            // create the output csv
             std::filesystem::create_directory(_args.output + "/" + output_folder);
             std::ofstream of(_args.output + "/" + output_folder + "/" + output_file);
             of << "degree,r^2,file1,column1,";

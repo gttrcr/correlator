@@ -50,7 +50,7 @@ namespace analysis
         {
             std::filesystem::create_directory(_args.output + "/" + output_folder);
             std::ofstream of(_args.output + "/" + output_folder + "/" + _data.source.first + "_" + output_file);
-            analysis::result::get()->set_analysis(output_folder, _data.source.first + "_" + output_file);
+            analysis::metadata::get()->set_analysis(output_folder, _data.source.first + "_" + output_file);
             of << "index,freq,power" << std::endl;
             domain d = _data.peaks.get_domain();     // frequency
             codomain c = _data.peaks.get_codomain(); // power

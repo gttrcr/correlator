@@ -8,23 +8,23 @@ using json = nlohmann::json;
 
 namespace analysis
 {
-    class result
+    class metadata
     {
     private:
         json _result;
-        static result *_instance;
-        result()
+        static metadata *_instance;
+        metadata()
         {
             _result.clear();
         }
 
     public:
-        static result *get()
+        static metadata *get()
         {
-            if (result::_instance == nullptr)
-                result::_instance = new result();
+            if (metadata::_instance == nullptr)
+                metadata::_instance = new metadata();
 
-            return result::_instance;
+            return metadata::_instance;
         }
 
         void set_arguments(const arguments &args)
@@ -76,11 +76,11 @@ namespace analysis
 
         void save(const arguments &args)
         {
-            std::ofstream o(args.output + "/result.json");
+            std::ofstream o(args.output + "/metadata.json");
             o << _result << std::endl;
             o.close();
         }
     };
 }
 
-analysis::result *analysis::result::_instance = 0;
+analysis::metadata *analysis::metadata::_instance = 0;

@@ -8,7 +8,8 @@
             "program": "${workspaceFolder}/dev/correlator",
             "args": [
                 "-i",
-                "/mnt/c/Users/iki/Desktop/1258443058_2023-11-08/data/pub/data/paleo/reconstructions/deboer2014",
+                "rae2021alkenone-co2anchored-no-site.txt",
+                // "/mnt/c/Users/iki/Desktop/1258443058_2023-11-08/data/pub/data/paleo/reconstructions/deboer2014",
                 // "-i ../../lib/release/win32/1_to_5/c_14_13_1_to_5.csv",
                 // "../../lib/release/win32/1_to_5/d_21_20_1_to_5.csv",
                 // "../../lib/release/win32/1_to_5/b_9_42_1_to_5.csv",
@@ -29,7 +30,7 @@
                 // "../../test_csv/1_to_1/c_14_13_1_to_1.csv",
                 // "../../test_csv/semicolon/semicolon2.csv",
                 // "../../test_csv/semicolon/semicolon1.csv",
-                "-o blablabla",
+                // "-o blablabla",
                 // "--fft",
                 //"-p 1012",
                 //"-s socket_folder",

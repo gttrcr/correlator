@@ -17,7 +17,8 @@
                 //"-Werror",
                 "-L${workspaceFolder}/dev",
                 "-l:libkissfft-float.so",
-                "-ltbb"
+                "-ltbb",
+                "-DTHREAD_SUPPORT"
             ],
             "options": {
                 "cwd": "${fileDirname}"

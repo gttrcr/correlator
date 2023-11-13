@@ -22,13 +22,7 @@ namespace analysis
         for (unsigned int i = 0; i < fs.size(); i++)
             pf.compute(fs[i].second, args.polyfit_max_degree, fs[i].first);
         pf.save("Polyfit", "single.csv");
-        analysis::result::get()->set_analysis("Polyfit", "single.csv");
-
-        // compute cross correlation of every pair
-        // std::cout << "\t\tCross correlation..." << std::endl;
-        // for (unsigned int i = 0; i < fs.size(); i++)
-        //     for (unsigned int j = i + 1; j < fs.size(); j++)
-        //         pf.compute(corr_function(fs[i].second.get_codomain(), fs[j].second.get_codomain()), args.polyfit_max_degree, fs[i].first, fs[j].first);
+        analysis::metadata::get()->set_analysis("Polyfit", "single.csv");
 
         // compute multithread cross correlation of every pair
         std::cout << "\t\tCross correlation..." << std::endl;
@@ -36,11 +30,19 @@ namespace analysis
         for (unsigned int i = 0; i < fs.size(); i++)
             for (unsigned int j = i + 1; j < fs.size(); j++)
                 parallelizable.push_back(std::make_tuple(corr_function(fs[i].second.get_codomain(), fs[j].second.get_codomain()), args.polyfit_max_degree, fs[i].first, fs[j].first));
+#ifdef THREAD_SUPPORT
         std::for_each(std::execution::par_unseq, parallelizable.begin(), parallelizable.end(), [&](std::tuple<corr_function, unsigned int, SOURCE, SOURCE> p)
-                      { pf.compute(std::get<0>(p), std::get<1>(p), std::get<2>(p), std::get<3>(p)); });
+                      {
+#else
+        for (std::tuple<corr_function, unsigned int, SOURCE, SOURCE> p : parallelizable)
+#endif
+                          pf.compute(std::get<0>(p), std::get<1>(p), std::get<2>(p), std::get<3>(p));
+#ifdef THREAD_SUPPORT
+                      });
+#endif
 
         pf.save("Polyfit", "cross.csv");
-        analysis::result::get()->set_analysis("Polyfit", "cross.csv");
+        analysis::metadata::get()->set_analysis("Polyfit", "cross.csv");
     }
 
     // compute fft of every dataset and peaks of every fft
@@ -85,6 +87,7 @@ namespace analysis
 
         if (args.compute_fft)
             fft_work(fs, args); // tested
+
         // pattern_matching_work(fs, args); // in progress...
     }
 }

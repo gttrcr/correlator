@@ -8,7 +8,9 @@
 #include <algorithm>
 #include <execution>
 #include <algorithm>
+#ifdef THREAD_SUPPORT
 #include <mutex>
+#endif
 
 namespace analysis
 {
@@ -25,9 +27,11 @@ namespace analysis
         };
 
         arguments _args;
-        std::mutex _mtx;
         unsigned int _perc;
         std::vector<data> _data;
+#ifdef THREAD_SUPPORT
+        std::mutex _mtx;
+#endif
 
         static void _polyfit(const domain &x, const codomain &y, codomain &coeff, const unsigned int &degree)
         {
@@ -50,19 +54,27 @@ namespace analysis
 
         void _execution(const unsigned int &w, const unsigned int &max_window, const unsigned int &min_window, const unsigned int &big_size, const corr_function &small, const corr_function &big, const unsigned int &parallelizzable_tasks, const SOURCE &source1)
         {
+            std::vector<data> tmp_data;
             const unsigned int big_step = 38;
             for (unsigned int ws = w; ws < max_window; ws += big_step)
                 for (int i = max_window - 1; i >= (int)(ws + min_window - 1); i -= big_step)
                 {
                     const unsigned int width = i - ws + 1;
                     for (unsigned int j = 0; j <= big_size - width; j++)
-                        _ranges(small, big, ws, i, j, j + width - 1, source1);
+                        tmp_data.push_back(_ranges(small, big, ws, i, j, j + width - 1, source1));
                 }
 
+#ifdef THREAD_SUPPORT
+            _mtx.lock();
+#endif
+            _data.insert(_data.end(), tmp_data.begin(), tmp_data.end());
             std::cout << "\t\t" << 100.0 * (double)(_perc++) / (double)parallelizzable_tasks << std::endl;
+#ifdef THREAD_SUPPORT
+            _mtx.unlock();
+#endif
         }
 
-        void _ranges(const corr_function &small, const corr_function &big, const unsigned int &small_from, const unsigned int &small_to, const unsigned int &big_from, const unsigned int &big_to, const SOURCE &source1)
+        data _ranges(const corr_function &small, const corr_function &big, const unsigned int &small_from, const unsigned int &small_to, const unsigned int &big_from, const unsigned int &big_to, const SOURCE &source1)
         {
             corr_function s = small.range(small_from, small_to);
             corr_function b = big.range(big_from, big_to);
@@ -72,9 +84,7 @@ namespace analysis
             codomain c;
             _polyfit(x, y, c, 2);
             FDST r2 = statistics::get_r2(x, y, c);
-            _mtx.lock();
-            _data.push_back({2, r2, source1, c});
-            _mtx.unlock();
+            return {2, r2, source1, c};
 
             //  std::cout << "small [" << small_from << "," << small_to << "] big [" << big_from << "," << big_to << "]" << std::endl;
         }
@@ -93,8 +103,16 @@ namespace analysis
                 parallelizable_w.push_back(i);
 
             _perc = 0;
+#ifdef THREAD_SUPPORT
             std::for_each(std::execution::par_unseq, parallelizable_w.begin(), parallelizable_w.end(), [&](unsigned int w)
-                          { _execution(w, max_window, min_window, big_size, small, big, parallelizable_w.size(), source1); });
+                          {
+#else
+            for (unsigned int w : parallelizable_w)
+#endif
+                              _execution(w, max_window, min_window, big_size, small, big, parallelizable_w.size(), source1);
+#ifdef THREAD_SUPPORT
+                          });
+#endif
         }
 
     public:
@@ -103,7 +121,7 @@ namespace analysis
             _args = args;
         }
 
-        void compute(const corr_function &f, const SOURCE &source1, const std::optional<SOURCE> &source2 = std::nullopt) // TODO use two corr_function and two SOURCE
+        void compute(const corr_function &f, const SOURCE &source1)
         {
             _pattern_matching(f, f, source1);
         }
