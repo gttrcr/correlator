@@ -1,4 +1,4 @@
-options="-static-libgcc -static-libstdc++ -std=c++17 -Wall -Wpedantic -Ldev -O3 -l:libkissfft-float.so"
+options="-static-libgcc -static-libstdc++ -std=c++17 -Wall -Wpedantic -Ldev -O3 -DRELEASE_ENV -l:libkissfft-float.so"
 
 mkdir -p release #create if not exists
 rm -r release #remove in any case
@@ -58,8 +58,8 @@ echo "Relese completed for every supported platform"
 echo "Press ENTER to push lib release in dev_correlator repo"
 read -s -n 1 key
 if [[ $key = "" ]]; then 
-    git add release/
-    git commit -m'update lib release'
+    git add ../
+    git commit -m 'update lib release'
     git push
 else
     echo "You pressed '$key'. Skip!"
@@ -75,7 +75,7 @@ if [[ $key = "" ]]; then
     cd correlator
     cp ../../README.md .
     git add .
-    git commit -m 'update README.md for release "$tagname"'
+    git commit -m "update README.md for release '$tagname'"
     git push
     gh release create $tagname --generate-notes ../release/linux.zip ../release/win64.zip ../release/win32.zip
     cd ..

@@ -1,4 +1,6 @@
+#ifndef RELEASE_ENV
 #define THREAD_SUPPORT
+#endif
 
 #include "function.h"
 typedef std::pair<std::string, std::string> SOURCE; // property of the dataset (file name and column index)
