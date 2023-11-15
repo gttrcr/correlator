@@ -7,7 +7,6 @@
 #include "result.h"
 
 #include "../utils.h"
-#include "../error.h"
 
 namespace analysis
 {
@@ -77,16 +76,16 @@ namespace analysis
 
     void work(const FUNCTIONS &fs, const arguments &args)
     {
-        std::cout << "Working..." << std::endl;
+        std::cout << "Working on " << fs.size() << " files..." << std::endl;
 
         if (!std::filesystem::exists(args.output) && !std::filesystem::create_directory(args.output))
-            throw correlator_exception(error::cannot_create_output_directory);
+            std::cerr << "Cannot create output directory " << args.output << std::endl;
 
         if (args.compute_polyfit)
-            polyfit_work(fs, args); // tested
+            polyfit_work(fs, args); // OK
 
         if (args.compute_fft)
-            fft_work(fs, args); // tested
+            fft_work(fs, args); // OK
 
         // pattern_matching_work(fs, args); // in progress...
     }

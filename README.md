@@ -1,14 +1,15 @@
 # correlator
 
 ## Versions, tags and releases
-| Latest stable |   Policy    |  Tag  |       Win32        |       Win64        |       Linux        |                                     Link                                      |
-| :-----------: | :---------: | :---: | :----------------: | :----------------: | :----------------: | :---------------------------------------------------------------------------: |
-|       *       |   Release   | 23.11 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11](https://github.com/gttrcr/correlator/releases/tag/23.11) |
-|               |   Release   | 23.09 |        :x:         | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.09](https://github.com/gttrcr/correlator/releases/tag/23.09) |
-|               |   Release   | 23.08 |        :x:         | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.08](https://github.com/gttrcr/correlator/releases/tag/23.08) |
-|               |   Release   |  0.3  |        :x:         | :heavy_check_mark: | :heavy_check_mark: |   [releases/tag/0.3](https://github.com/gttrcr/correlator/releases/tag/0.3)   |
-|               |   Release   |  0.2  |        :x:         | :heavy_check_mark: | :heavy_check_mark: |   [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2)   |
-|               | Pre release |  0.1  |        :x:         | :heavy_check_mark: | :heavy_check_mark: |   [releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)   |
+| Latest stable |   Policy    |   Tag    |       Win32        |       Win64        |       Linux        |                                        Link                                         |
+| :-----------: | :---------: | :------: | :----------------: | :----------------: | :----------------: | :---------------------------------------------------------------------------------: |
+|       *       |   Release   | 23.11.15 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.15](https://github.com/gttrcr/correlator/releases/tag/23.11.15) |
+|               |   Release   |  23.11   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.11](https://github.com/gttrcr/correlator/releases/tag/23.11)    |
+|               |   Release   |  23.09   |        :x:         | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.09](https://github.com/gttrcr/correlator/releases/tag/23.09)    |
+|               |   Release   |  23.08   |        :x:         | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.08](https://github.com/gttrcr/correlator/releases/tag/23.08)    |
+|               |   Release   |   0.3    |        :x:         | :heavy_check_mark: | :heavy_check_mark: |      [releases/tag/0.3](https://github.com/gttrcr/correlator/releases/tag/0.3)      |
+|               |   Release   |   0.2    |        :x:         | :heavy_check_mark: | :heavy_check_mark: |      [releases/tag/0.2](https://github.com/gttrcr/correlator/releases/tag/0.2)      |
+|               | Pre release |   0.1    |        :x:         | :heavy_check_mark: | :heavy_check_mark: |      [releases/tag/0.1](https://github.com/gttrcr/correlator/releases/tag/0.1)      |
 
 Each release folder also contains some example datasets so you can immediately test the correct functioning of the program on real data: in case of errors, any [issue](https://github.com/gttrcr/correlator/issues) is welcome :wink:.
 

@@ -6,7 +6,6 @@
 typedef std::pair<std::string, std::string> SOURCE; // property of the dataset (file name and column index)
 typedef std::vector<std::pair<SOURCE, corr_function>> FUNCTIONS;
 
-#include "error.h"
 #include "arguments.h"
 #include "analysis/work.h"
 #include "cli.h"
@@ -83,7 +82,10 @@ bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &
             else if (line.find('\t') < line.size())
                 delimiter = '\t';
             else
-                throw correlator_exception(error::cannot_find_a_valid_delimiter);
+            {
+                std::cerr << "Cannot find a valid delimiter" << std::endl;
+                return false;
+            }
 
             row.clear();
             std::stringstream str(line);
@@ -128,12 +130,18 @@ FUNCTIONS get_functions(const std::vector<std::string> &files, const arguments &
         std::vector<std::string> axis;
         std::vector<std::vector<std::string>> s_content;
         if (!read_file(file, s_content, axis))
-            throw correlator_exception(error::error_on_reading_csv);
+        {
+            std::cerr << "Error on reading file " << file << std::endl;
+            continue;
+        }
 
         std::cout << "\tParsing..." << std::endl;
         std::vector<corr_function> f;
         if (!get_function(s_content, f, args))
-            throw correlator_exception(error::error_on_get_function);
+        {
+            std::cerr << "Error on getting function for file " << file << std::endl;
+            continue;
+        }
 
         for (unsigned int i = 0; i < f.size(); i++)
             fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), axis[i + 1]), f[i]));
@@ -155,7 +163,7 @@ void get_files(const std::vector<std::string> &path_str_vector, std::vector<std:
                 get_files({entry.path().string()}, csv_files);
 
         if (ec)
-            std::cerr << "Error in is_directory: " << ec.message();
+            std::cerr << "Error in is_directory: " << ec.message() << std::endl;
 
         if (std::filesystem::is_regular_file(path, ec) &&
             (path.extension() == ".csv" || path.extension() == ".txt"))
@@ -166,7 +174,7 @@ void get_files(const std::vector<std::string> &path_str_vector, std::vector<std:
         }
 
         if (ec)
-            std::cerr << "Error in is_regular_file: " << ec.message();
+            std::cerr << "Error in is_regular_file: " << ec.message() << std::endl;
     }
 }
 
@@ -187,28 +195,31 @@ int main(int argc, char *argv[])
         }
         catch (const std::exception &e)
         {
-            std::cerr << e.what() << '\n';
-            analysis::metadata::get()->set_error(e.what());
+            std::cerr << "Exception during work " << e.what() << std::endl;
+            analysis::metadata::get()->set_error("Exception during work " + std::string(e.what()));
+            return -1;
         }
         catch (...)
         {
-            std::cerr << "Generic error" << std::endl;
-            analysis::metadata::get()->set_error("generic error");
+            std::cerr << "Generic error during work" << std::endl;
+            analysis::metadata::get()->set_error("Generic error during work");
+            return -1;
         }
 
         analysis::metadata::get()->save(args);
         std::cout << "All done" << std::endl;
-
-        return error::OK;
+        return 0;
     }
-    catch (correlator_exception &ce)
+    catch (const std::exception &e)
     {
-        if (ce.err() == error::OK)
-            return error::OK;
-
-        std::cerr << ce.what() << std::endl;
-        analysis::metadata::get()->set_error(ce.what());
-
-        return ce.err();
+        std::cerr << "Exception " << e.what() << std::endl;
+        analysis::metadata::get()->set_error("Exception " + std::string(e.what()));
+        return -1;
+    }
+    catch (...)
+    {
+        std::cerr << "Generic error" << std::endl;
+        analysis::metadata::get()->set_error("generic error");
+        return -1;
     }
 }

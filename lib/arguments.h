@@ -1,7 +1,6 @@
 #pragma once
 
 #include "cli.h"
-#include "error.h"
 
 #include <iostream>
 
@@ -37,7 +36,6 @@ private:
         std::cout << "\t--fftt: Δt between two entries. type: double. default: computed when possible" << std::endl;
         std::cout << "\t--fftp: number of peaks to compute for every fft. type: unsigned int. default: " << _default_fft_peaks_to_compute() << std::endl;
         std::cout << "\t--help: print this help. type: none. default: none" << std::endl;
-        throw correlator_exception(error::OK);
     }
 
 public:
