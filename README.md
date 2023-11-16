@@ -3,7 +3,8 @@
 ## Versions, tags and releases
 | Latest stable |   Policy    |   Tag    |       Win32        |       Win64        |       Linux        |                                        Link                                         |
 | :-----------: | :---------: | :------: | :----------------: | :----------------: | :----------------: | :---------------------------------------------------------------------------------: |
-|       *       |   Release   | 23.11.15 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.15](https://github.com/gttrcr/correlator/releases/tag/23.11.15) |
+|       *       |   Release   | 23.11.16 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.16](https://github.com/gttrcr/correlator/releases/tag/23.11.16) |
+|               |   Release   | 23.11.15 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.15](https://github.com/gttrcr/correlator/releases/tag/23.11.15) |
 |               |   Release   |  23.11   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.11](https://github.com/gttrcr/correlator/releases/tag/23.11)    |
 |               |   Release   |  23.09   |        :x:         | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.09](https://github.com/gttrcr/correlator/releases/tag/23.09)    |
 |               |   Release   |  23.08   |        :x:         | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.08](https://github.com/gttrcr/correlator/releases/tag/23.08)    |
@@ -31,6 +32,7 @@ Consider the following table where :heavy_check_mark: means _done_, :hourglass: 
 | :-----------------------------------------: | :----------------: |
 |              Support csv files              | :heavy_check_mark: |
 |              Support txt files              | :heavy_check_mark: |
+|      Support for dynamic domain column      | :heavy_check_mark: |
 |             Support # comments              | :heavy_check_mark: |
 | Support csv files separated by \t ; , space | :heavy_check_mark: |
 |       Support multi columns csv files       | :heavy_check_mark: |
@@ -48,7 +50,7 @@ Conside the following table for the cli.
 | :--------------------------------------: | :------------: | :--------------: | :------------------------: | :----------------: |
 |           Input file or folder           |       -i       |        .         | string interpreted as path | :heavy_check_mark: |
 |     Output folder for -i input files     |       -o       | ./out_correlator | string interpreted as path | :heavy_check_mark: |
-|               Domain size                |       -d       |        1         |        unsigned int        | :heavy_check_mark: |
+|           Domain column index            |       -d       |        1         |   vector of unsigned int   | :heavy_check_mark: |
 |                   Help                   |       -h       |       none       |            none            | :heavy_check_mark: |
 |          Compute polynomial fit          |      --pf      |       true       |            bool            | :heavy_check_mark: |
 |               Compute FFT                |     --fft      |       true       |            bool            | :heavy_check_mark: |
