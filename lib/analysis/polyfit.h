@@ -94,6 +94,8 @@ namespace analysis
                                        { return std::isnan(d.r2) || std::isinf(d.r2); }),
                         _data.end());
 
+            // TODO add std::sort here based on sigma between r^2 at different degree
+
             // create the output csv
             std::filesystem::create_directory(_args.output + "/" + output_folder);
             std::ofstream of(_args.output + "/" + output_folder + "/" + output_file);

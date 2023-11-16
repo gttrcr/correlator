@@ -22,28 +22,30 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, std::v
     if (s_content.size() == 0)
         return false;
 
-    domain domain;
-    std::vector<codomain> codomains(s_content[0].size() - args.domain_size);
+    std::vector<domain> domains(args.domain_indexes.size());
+    std::vector<codomain> codomains(s_content[0].size() - args.domain_indexes.size());
     for (unsigned int i = 0; i < s_content.size(); i++)
     {
         if (s_content[i].size() < 1)
             continue;
 
+        unsigned int domain_current_index = 0;
         for (unsigned int j = 0; j < s_content[i].size(); j++)
         {
             FDST fdst = std::numeric_limits<double>::quiet_NaN();
             if (utils::is_number(s_content[i][j]))
                 fdst = std::stod(s_content[i][j]);
 
-            if (j < args.domain_size)
-                domain.push_back(fdst);
+            if (std::find(args.domain_indexes.begin(), args.domain_indexes.end(), j) != args.domain_indexes.end())
+                domains[domain_current_index++].push_back(fdst);
             else
-                codomains[j - args.domain_size].push_back(fdst);
+                codomains[j - domain_current_index].push_back(fdst);
         }
     }
 
     for (unsigned int i = 0; i < codomains.size(); i++)
-        fs.push_back(corr_function(domain, codomains[i]));
+        for (unsigned int j = 0; j < domains.size(); j++)
+            fs.push_back(corr_function(domains[j], codomains[i]));
 
     return true;
 }
@@ -60,6 +62,7 @@ bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &
     {
         bool first = true;
         std::string line;
+        char delimiter = 0;
 
         // cycle on every line
         while (std::getline(file, line))
@@ -72,19 +75,21 @@ bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &
             if (line[0] == '#')
                 continue;
 
-            char delimiter = 0;
-            if (line.find(',') < line.size())
-                delimiter = ',';
-            else if (line.find(';') < line.size())
-                delimiter = ';';
-            else if (line.find(' ') < line.size())
-                delimiter = ' ';
-            else if (line.find('\t') < line.size())
-                delimiter = '\t';
-            else
+            if (first)
             {
-                std::cerr << "Cannot find a valid delimiter" << std::endl;
-                return false;
+                if (line.find(',') < line.size())
+                    delimiter = ',';
+                else if (line.find(';') < line.size())
+                    delimiter = ';';
+                else if (line.find(' ') < line.size())
+                    delimiter = ' ';
+                else if (line.find('\t') < line.size())
+                    delimiter = '\t';
+                else
+                {
+                    std::cerr << "Cannot find a valid delimiter" << std::endl;
+                    return false;
+                }
             }
 
             row.clear();
@@ -143,8 +148,13 @@ FUNCTIONS get_functions(const std::vector<std::string> &files, const arguments &
             continue;
         }
 
+        unsigned int skip = 0;
         for (unsigned int i = 0; i < f.size(); i++)
-            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), axis[i + 1]), f[i]));
+        {
+            if (std::find(args.domain_indexes.begin(), args.domain_indexes.end(), i) != args.domain_indexes.end())
+                skip++;
+            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), axis[i + skip]), f[i]));
+        }
     }
 
     return fs;
@@ -191,7 +201,8 @@ int main(int argc, char *argv[])
 
         try
         {
-            analysis::work(get_functions(files, args), args);
+            FUNCTIONS fs = get_functions(files, args);
+            analysis::work(fs, args);
         }
         catch (const std::exception &e)
         {

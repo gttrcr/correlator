@@ -9,7 +9,7 @@ struct arguments
 private:
     static std::vector<std::string> _default_input() { return {"."}; };
     static std::string _default_output() { return "out_correlator"; }
-    static unsigned int _default_domain_size() { return 1; }
+    static std::vector<unsigned int> _default_domain_indexes() { return {0}; }
     static bool _default_compute_polyfit() { return true; }
     static bool _default_compute_fft() { return true; }
 
@@ -17,18 +17,18 @@ private:
     static double _default_fft_delta_t() { return 0.0; }
     static unsigned int _default_fft_peaks_to_compute() { return 5; }
 
-    void _compute_all()
-    {
-        compute_polyfit = true;
-        compute_fft = true;
-    }
+    // void _compute_all()
+    // {
+    //     compute_polyfit = true;
+    //     compute_fft = true;
+    // }
 
     static void _help()
     {
         std::cout << "Correlator helper" << std::endl;
         std::cout << "\t-i: input file or folder. type: string. default: " << _default_input()[0] << std::endl;
         std::cout << "\t-o: output folder. type: string. default: " << _default_output() << std::endl;
-        std::cout << "\t-d: domain size of the dataset (in columns). type: unsigned int. default: " << _default_domain_size() << std::endl;
+        std::cout << "\t-d: domain columns index of the dataset. type: vector of unsigned int. default: " << _default_domain_indexes()[0] << std::endl;
         std::cout << "\t-h: print this help. type: none. default: none" << std::endl;
         std::cout << "\t--pf: compute polynomial fit. type: boolean. default: " << _default_compute_polyfit() << std::endl;
         std::cout << "\t--fft: compute fast Fourier transform. type: boolean. default: " << _default_compute_fft() << std::endl;
@@ -40,11 +40,11 @@ private:
 
 public:
     // generic arguments
-    std::vector<std::string> input = _default_input(); // -i input file or folder
-    std::string output = _default_output();            // -o output folder for -i input
-    unsigned int domain_size = _default_domain_size(); // -d domain size in column
-    bool compute_polyfit = _default_compute_polyfit(); // --pf compute polyfit (pf is the alias for polyfit)
-    bool compute_fft = _default_compute_fft();         // --fft compute fft
+    std::vector<std::string> input = _default_input();                    // -i input file or folder
+    std::string output = _default_output();                               // -o output folder for -i input
+    std::vector<unsigned int> domain_indexes = _default_domain_indexes(); // -d domain columns index
+    bool compute_polyfit = _default_compute_polyfit();                    // --pf compute polyfit (pf is the alias for polyfit)
+    bool compute_fft = _default_compute_fft();                            // --fft compute fft
 
     // specific arguments
     unsigned int polyfit_max_degree = _default_polyfit_max_degree();     // --pfdeg number of max degree for polyfit
@@ -61,39 +61,88 @@ public:
 
         for (const auto &pair : complete_args)
         {
-            if (pair.first == "-i" && pair.second.size() > 0 && !pair.second[0].empty())
+            //-i command && more then 0 argument && ??
+            if (pair.first == "-i")
             {
-                args.input.clear();
-                args.input.insert(args.input.end(), pair.second.begin(), pair.second.end());
+                if (pair.second.size() > 0 && !pair.second[0].empty()) // TODO: the last condition?
+                {
+                    args.input.clear();
+                    args.input.insert(args.input.end(), pair.second.begin(), pair.second.end());
+                }
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
             }
 
-            if (pair.first == "-o" && pair.second.size() == 1 && !pair.second[0].empty())
-                args.output = pair.second[0];
+            //-o command && exactly one argument && not empty argument
+            if (pair.first == "-o")
+            {
+                if (pair.second.size() == 1 && !pair.second[0].empty())
+                    args.output = pair.second[0];
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
+            }
 
-            if (pair.first == "-d" && pair.second.size() == 1 && utils::is_integer(pair.second[0]))
-                args.domain_size = std::stoi(pair.second[0]);
+            //-d command && more than 0 argument && all arguments are integers
+            if (pair.first == "-d")
+            {
+                if (pair.second.size() == 1 && std::all_of(pair.second.begin(), pair.second.end(), [](std::string i) // TODO add support for multiple column domain
+                                                           { return utils::is_positive_integer(i); }))
+                {
+                    args.domain_indexes.clear();
+                    std::vector<unsigned int> domain_parsed;
+                    for (unsigned int i = 0; i < pair.second.size(); i++)
+                        domain_parsed.push_back(std::stoi(pair.second[i]));
+                    args.domain_indexes.insert(args.domain_indexes.end(), domain_parsed.begin(), domain_parsed.end());
+                }
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
+            }
 
-            if (pair.first == "--pf" && pair.second.size() == 0)
-                args.compute_polyfit = true;
+            //--pf command && no arguments
+            if (pair.first == "--pf")
+            {
+                if (pair.second.size() == 0)
+                    args.compute_polyfit = true;
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
+            }
 
-            if (pair.first == "--fft" && pair.second.size() == 0)
-                args.compute_fft = true;
+            //--fft command && no arguments
+            if (pair.first == "--fft")
+            {
+                if (pair.second.size() == 0)
+                    args.compute_fft = true;
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
+            }
 
-            if (pair.first == "--all" && pair.second.size() == 0)
-                args._compute_all();
+            //--pfdeg command && exactly one argument && argument is integer
+            if (pair.first == "--pfdeg")
+            {
+                if (pair.second.size() == 1 && utils::is_positive_integer(pair.second[0]))
+                    args.polyfit_max_degree = std::stoi(pair.second[0]);
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
+            }
 
-            if (pair.first == "--pfdeg" && pair.second.size() == 1 && utils::is_integer(pair.second[0]))
-                args.polyfit_max_degree = std::stoi(pair.second[0]);
+            //--fftt command && exactly one argument && argument is integer
+            if (pair.first == "--fftt")
+            {
+                if (pair.second.size() == 1 && utils::is_number(pair.second[0]))
+                    args.fft_delta_t = std::stod(pair.second[0]);
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
+            }
 
-            if (pair.first == "--fftt" && pair.second.size() == 1 && utils::is_number(pair.second[0]))
-                args.fft_delta_t = std::stod(pair.second[0]);
-
-            if (pair.first == "--fftp" && pair.second.size() == 1 && utils::is_integer(pair.second[0]))
-                args.fft_peaks_to_compute = std::stoi(pair.second[0]);
+            //--fftp command && exactly one argument && argument is integer
+            if (pair.first == "--fftp")
+            {
+                if (pair.second.size() == 1 && utils::is_positive_integer(pair.second[0]))
+                    args.fft_peaks_to_compute = std::stoi(pair.second[0]);
+                else
+                    std::cerr << "Something wrong with command " << pair.first << std::endl;
+            }
         }
-
-        if (!args.compute_polyfit && !args.compute_fft)
-            args._compute_all();
 
         return args;
     }

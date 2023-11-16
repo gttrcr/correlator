@@ -20,7 +20,7 @@ namespace utils
         return tokens;
     }
 
-    inline bool is_integer(const std::string &str)
+    inline bool is_positive_integer(const std::string &str)
     {
         return !str.empty() && std::find_if(str.begin(), str.end(), [](unsigned char c)
                                             { return !std::isdigit(c); }) == str.end();
