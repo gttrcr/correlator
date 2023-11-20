@@ -192,33 +192,36 @@ int main(int argc, char *argv[])
 {
     try
     {
-        arguments args = arguments::get_arguments(argc, argv);
-        analysis::metadata::get()->set_arguments(args);
-
-        std::vector<std::string> files;
-        get_files(args.input, files);
-        analysis::metadata::get()->set_files(files);
-
-        try
+        arguments args;
+        if (arguments::get_arguments(argc, argv, args))
         {
-            FUNCTIONS fs = get_functions(files, args);
-            analysis::work(fs, args);
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "Exception during work " << e.what() << std::endl;
-            analysis::metadata::get()->set_error("Exception during work " + std::string(e.what()));
-            return -1;
-        }
-        catch (...)
-        {
-            std::cerr << "Generic error during work" << std::endl;
-            analysis::metadata::get()->set_error("Generic error during work");
-            return -1;
+            analysis::metadata::get()->set_arguments(args);
+
+            std::vector<std::string> files;
+            get_files(args.input, files);
+            analysis::metadata::get()->set_files(files);
+
+            try
+            {
+                FUNCTIONS fs = get_functions(files, args);
+                analysis::work(fs, args);
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << "Exception during work " << e.what() << std::endl;
+                analysis::metadata::get()->set_error("Exception during work " + std::string(e.what()));
+                return -1;
+            }
+            catch (...)
+            {
+                std::cerr << "Generic error during work" << std::endl;
+                analysis::metadata::get()->set_error("Generic error during work");
+                return -1;
+            }
+
+            analysis::metadata::get()->save(args);
         }
 
-        analysis::metadata::get()->save(args);
-        std::cout << "All done" << std::endl;
         return 0;
     }
     catch (const std::exception &e)

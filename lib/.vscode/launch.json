@@ -7,9 +7,10 @@
             "request": "launch",
             "program": "${workspaceFolder}/dev/correlator",
             "args": [
-                "-d 2",
-                "-i",
-                "/mnt/c/Users/iki/Desktop/1000YearEnsembleReconstructionsofTemperatureandCO2/data/pub/data/paleo/climate_forcing/trace_gases/rae2021/rae2021d11b-ph-co2.txt"
+                "-j",
+                // "-d 2",
+                // "-i",
+                // "/mnt/c/Users/iki/Desktop/1000YearEnsembleReconstructionsofTemperatureandCO2/data/pub/data/paleo/climate_forcing/trace_gases/rae2021/rae2021d11b-by-study.txt"
                 // "rae2021alkenone-co2anchored-no-site.txt",
                 // "/mnt/c/Users/iki/Desktop/rae2021co2-d11b-ph.txt"
                 // "/mnt/c/Users/iki/Desktop/1258443058_2023-11-08/data/pub/data/paleo/reconstructions/deboer2014",
