@@ -113,9 +113,9 @@ namespace analysis
 
             for (unsigned int i = 0; i < _data.size(); i++)
             {
-                of << _data[i].degree << "," << _data[i].r2 << "," << _data[i].source1.first << "," << _data[i].source1.second << ",";
+                of << _data[i].degree << "," << _data[i].r2 << "," << _data[i].source1.filename << "," << _data[i].source1.codomain_axis << ",";
                 if (_data[i].source2.has_value())
-                    of << _data[i].source2.value().first << "," << _data[i].source2.value().second << ",";
+                    of << _data[i].source2.value().filename << "," << _data[i].source2.value().codomain_axis << ",";
 
                 for (unsigned int j = 0; j < _data[i].coeff.size(); j++)
                     of << _data[i].coeff[j] << ",";

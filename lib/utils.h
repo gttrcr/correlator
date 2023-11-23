@@ -9,9 +9,10 @@
 #include <cctype>
 #include <locale>
 
-namespace utils
+class utils
 {
-    inline std::vector<std::string> split(const std::string &s, const std::string &str_of_delimiters)
+public:
+    static inline std::vector<std::string> split(const std::string &s, const std::string &str_of_delimiters)
     {
         std::regex re(str_of_delimiters);
         std::sregex_token_iterator first{s.begin(), s.end(), re, -1}, last;
@@ -20,13 +21,13 @@ namespace utils
         return tokens;
     }
 
-    inline bool is_positive_integer(const std::string &str)
+    static inline bool is_positive_integer(const std::string &str)
     {
         return !str.empty() && std::find_if(str.begin(), str.end(), [](unsigned char c)
                                             { return !std::isdigit(c); }) == str.end();
     }
 
-    inline bool is_number(const std::string &str)
+    static inline bool is_number(const std::string &str)
     {
         char *end = nullptr;
         double val = strtod(str.c_str(), &end);
@@ -49,10 +50,9 @@ namespace utils
                 s.end());
     }
 
-    // trim from both ends (in place)
     static inline void trim(std::string &s)
     {
         rtrim(s);
         ltrim(s);
     }
-}
+};

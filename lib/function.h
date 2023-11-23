@@ -21,16 +21,6 @@ using PAIR = std::pair<DT, CT>;   // PAIR is a pair of DT and CT
 using domain = std::vector<DT>;   // domain is the set of starting values of function
 using codomain = std::vector<CT>; // codomain is the image set of domain
 
-unsigned int get_decimal_places(const FDST &s)
-{
-    std::string s_str = std::to_string(s);
-    unsigned int index = s_str.find('.');
-    if (index < s_str.length())
-        return s_str.length() - index - 1;
-    else
-        return 0;
-}
-
 /*
 Example of a function
 function =
@@ -48,6 +38,16 @@ class corr_function
 private:
     domain _domain;
     codomain _codomain;
+
+    inline unsigned int _get_decimal_places(const FDST &s) const
+    {
+        std::string s_str = std::to_string(s);
+        unsigned int index = s_str.find('.');
+        if (index < s_str.length())
+            return s_str.length() - index - 1;
+        else
+            return 0;
+    }
 
 public:
     corr_function() = default;
@@ -101,7 +101,7 @@ public:
     // compute the sample size
     bool get_sampling(FDST &sample_size) const
     {
-        unsigned int decimal_places = get_decimal_places(_domain[0]);
+        unsigned int decimal_places = _get_decimal_places(_domain[0]);
         sample_size = _domain[1] - _domain[0];
         for (unsigned int i = 0; i < size(); i++)
             if (sample_size != 0 && i > 0 && std::fabs(sample_size - (_domain[i] - _domain[i - 1]) > pow(10, -decimal_places)))

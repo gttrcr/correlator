@@ -3,9 +3,25 @@
 #endif
 
 #include "function.h"
-typedef std::pair<std::string, std::string> SOURCE; // property of the dataset (file name and column index)
-typedef std::vector<std::pair<SOURCE, corr_function>> FUNCTIONS;
 
+struct source
+{
+public:
+    std::string filename;
+    std::string domain_axis;
+    std::string codomain_axis;
+};
+typedef struct source SOURCE;
+
+struct FUNCTION
+{
+public:
+    SOURCE source;
+    corr_function function;
+};
+typedef std::vector<FUNCTION> FUNCTIONS;
+
+#include "error.h"
 #include "arguments.h"
 #include "analysis/work.h"
 #include "cli.h"
@@ -17,10 +33,19 @@ typedef std::vector<std::pair<SOURCE, corr_function>> FUNCTIONS;
 #include <filesystem>
 
 // return a function from content
-bool get_function(const std::vector<std::vector<std::string>> &s_content, std::vector<corr_function> &fs, const arguments &args)
+error get_function(const std::vector<std::vector<std::string>> &s_content, std::vector<corr_function> &fs, const arguments &args)
 {
     if (s_content.size() == 0)
-        return false;
+        return error::empty_file;
+
+    const unsigned int line_size = s_content[0].size();
+    if (!std::all_of(s_content.begin(), s_content.end(), [line_size](const std::vector<std::string> content)
+                     { return content.size() == line_size; }))
+        return error::different_number_of_columns;
+
+    const unsigned int max_domain_indices = *std::max_element(args.domain_indexes.begin(), args.domain_indexes.end());
+    if (line_size <= max_domain_indices)
+        return error::domain_exceded_number_of_columns;
 
     std::vector<domain> domains(args.domain_indexes.size());
     std::vector<codomain> codomains(s_content[0].size() - args.domain_indexes.size());
@@ -35,6 +60,13 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, std::v
             FDST fdst = std::numeric_limits<double>::quiet_NaN();
             if (utils::is_number(s_content[i][j]))
                 fdst = std::stod(s_content[i][j]);
+            else
+            {
+                std::string trimmed_s_content(s_content[i][j]);
+                utils::trim(trimmed_s_content);
+                if (utils::is_number(trimmed_s_content))
+                    fdst = std::stod(trimmed_s_content);
+            }
 
             if (std::find(args.domain_indexes.begin(), args.domain_indexes.end(), j) != args.domain_indexes.end())
                 domains[domain_current_index++].push_back(fdst);
@@ -47,16 +79,16 @@ bool get_function(const std::vector<std::vector<std::string>> &s_content, std::v
         for (unsigned int j = 0; j < domains.size(); j++)
             fs.push_back(corr_function(domains[j], codomains[i]));
 
-    return true;
+    return error::OK;
 }
 
 // read a csv file returning content and the list of axis
-bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &s_content, std::vector<std::string> &axis)
+const std::string delimiters = ",\t; \r\n";
+error read_file(const std::string &fname, std::vector<std::vector<std::string>> &s_content, std::vector<std::string> &axis)
 {
     s_content.clear();
     axis.clear();
 
-    std::vector<std::string> row;
     std::fstream file(fname, std::ios::in);
     if (file.is_open())
     {
@@ -67,41 +99,32 @@ bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &
         // cycle on every line
         while (std::getline(file, line))
         {
-            utils::trim(line);
-
             if (line.empty())
                 continue;
 
-            if (line[0] == '#')
+            std::string trimmed_line(line);
+            utils::trim(trimmed_line);
+            if (trimmed_line.empty() || trimmed_line[0] == '#')
                 continue;
 
             if (first)
             {
-                if (line.find(',') < line.size())
-                    delimiter = ',';
-                else if (line.find(';') < line.size())
-                    delimiter = ';';
-                else if (line.find(' ') < line.size())
-                    delimiter = ' ';
-                else if (line.find('\t') < line.size())
-                    delimiter = '\t';
-                else
-                {
-                    std::cerr << "Cannot find a valid delimiter" << std::endl;
-                    return false;
-                }
+                bool found = false;
+                for (unsigned int i = 0; i < delimiters.size() && !found; i++)
+                    if ((found = (line.find(delimiters[i]) < line.size())))
+                        delimiter = delimiters[i];
+
+                if (!found)
+                    return error::cannot_find_a_valid_delimiter;
             }
 
-            row.clear();
-            std::stringstream str(line);
             std::string word;
-
+            std::stringstream str(line);
+            std::vector<std::string> row;
             // cycle on every word of every line
             while (std::getline(str, word, delimiter))
             {
                 word.erase(std::remove(word.begin(), word.end(), '\r'), word.end());
-                word.erase(std::remove(word.begin(), word.end(), '\n'), word.end());
-                word.erase(std::remove(word.begin(), word.end(), '\t'), word.end());
 
                 if (first)
                     axis.push_back(word);
@@ -110,15 +133,19 @@ bool read_file(const std::string &fname, std::vector<std::vector<std::string>> &
             }
 
             if (!first)
+            {
+                for (unsigned int i = row.size(); i <= axis.size(); i++)
+                    row.push_back("");
                 s_content.push_back(row);
+            }
 
             first = false;
         }
 
-        return true;
+        return error::OK;
     }
 
-    return false;
+    return error::unable_to_open_file;
 }
 
 // return all functions from csv filename
@@ -134,28 +161,48 @@ FUNCTIONS get_functions(const std::vector<std::string> &files, const arguments &
 
         std::vector<std::string> axis;
         std::vector<std::vector<std::string>> s_content;
-        if (!read_file(file, s_content, axis))
+        error err = read_file(file, s_content, axis);
+        if (err != error::OK)
         {
-            std::cerr << "Error on reading file " << file << std::endl;
+            std::cerr << "Error on reading file " << error_desc[err] << std::endl;
             continue;
         }
 
-        std::cout << "\tParsing..." << std::endl;
+        std::cout << "\t\tParsing..." << std::endl;
         std::vector<corr_function> f;
-        if (!get_function(s_content, f, args))
+        err = get_function(s_content, f, args);
+        if (err != error::OK)
         {
-            std::cerr << "Error on getting function for file " << file << std::endl;
+            std::cerr << "\t\tError on getting function: " << error_desc[err] << std::endl;
             continue;
         }
 
-        unsigned int skip = 0;
-        for (unsigned int i = 0; i < f.size(); i++)
+        std::vector<std::string> domain_axis;
+        std::vector<std::string> codomain_axis;
+        for (unsigned int i = 0; i < axis.size(); i++)
         {
             if (std::find(args.domain_indexes.begin(), args.domain_indexes.end(), i) != args.domain_indexes.end())
-                skip++;
-            fs.push_back(std::pair<SOURCE, corr_function>(SOURCE(std::filesystem::path(file).stem().string(), axis[i + skip]), f[i]));
+                domain_axis.push_back(axis[i]);
+            else
+                codomain_axis.push_back(axis[i]);
+        }
+
+        for (unsigned int i = 0; i < codomain_axis.size(); i++)
+        {
+            std::string codomain_axis_name = codomain_axis[i];
+            for (unsigned int j = 0; j < domain_axis.size(); j++)
+            {
+                std::string domain_axis_name = domain_axis[j];
+                fs.push_back((FUNCTION){(SOURCE){std::filesystem::path(file).stem().string(), domain_axis_name, codomain_axis_name}, f[i * domain_axis.size() + j]});
+            }
         }
     }
+
+    // if (args.merge)
+    //     for (unsigned int i = 0; i < fs.size(); i++)
+    //     {
+    //         std::cout << "a" << std::endl;
+    //     }
 
     return fs;
 }

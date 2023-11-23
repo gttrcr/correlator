@@ -6,7 +6,7 @@
 class statistics
 {
 private:
-    static FDST _poly_val(const codomain &c, const FDST &x)
+    static inline FDST _poly_val(const codomain &c, const FDST &x)
     {
         FDST y = 0;
         for (unsigned int i = 0; i < c.size(); i++)
@@ -14,7 +14,7 @@ private:
         return y;
     }
 
-    static FDST _avg(const domain &v)
+    static inline FDST _avg(const domain &v)
     {
         FDST avg = 0;
         for (unsigned int i = 0; i < v.size(); i++)
@@ -24,7 +24,7 @@ private:
     }
 
 public:
-    static FDST get_r2(const domain &x, const  domain &y, const codomain &c)
+    static inline FDST get_r2(const domain &x, const domain &y, const codomain &c)
     {
         FDST sSRes = 0;
         FDST sSTot = 0;
@@ -38,7 +38,7 @@ public:
         return 1.0 - sSRes / sSTot;
     }
 
-    static FDST max(const codomain &y)
+    static inline FDST max(const codomain &y)
     {
         FDST m = std::numeric_limits<FDST>::min();
         for (unsigned int i = 0; i < y.size(); i++)

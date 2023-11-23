@@ -19,7 +19,7 @@ namespace analysis
         // compute correlation of every function
         std::cout << "\t\tSingle function..." << std::endl;
         for (unsigned int i = 0; i < fs.size(); i++)
-            pf.compute(fs[i].second, args.polyfit_max_degree, fs[i].first);
+            pf.compute(fs[i].function, args.polyfit_max_degree, fs[i].source);
         pf.save("Polyfit", "single.csv");
         analysis::metadata::get()->set_analysis("Polyfit", "single.csv");
 
@@ -28,7 +28,7 @@ namespace analysis
         std::vector<std::tuple<corr_function, unsigned int, SOURCE, SOURCE>> parallelizable;
         for (unsigned int i = 0; i < fs.size(); i++)
             for (unsigned int j = i + 1; j < fs.size(); j++)
-                parallelizable.push_back(std::make_tuple(corr_function(fs[i].second.get_codomain(), fs[j].second.get_codomain()), args.polyfit_max_degree, fs[i].first, fs[j].first));
+                parallelizable.push_back(std::make_tuple(corr_function(fs[i].function.get_codomain(), fs[j].function.get_codomain()), args.polyfit_max_degree, fs[i].source, fs[j].source));
 #ifdef THREAD_SUPPORT
         std::for_each(std::execution::par_unseq, parallelizable.begin(), parallelizable.end(), [&](std::tuple<corr_function, unsigned int, SOURCE, SOURCE> p)
                       {
@@ -54,13 +54,13 @@ namespace analysis
         for (unsigned int i = 0; i < fs.size(); i++)
         {
             std::cout << "\t\tSpectrum..." << std::endl;
-            fft.compute(fs[i].second, fs[i].first);
-            fft.save("FFT", "fft_" + fs[i].first.first + "_" + fs[i].first.second + ".csv");
+            fft.compute(fs[i].function, fs[i].source);
+            fft.save("FFT", "fft_" + fs[i].source.filename + "_" + fs[i].source.codomain_axis + ".csv");
 
             std::cout << "\t\tPeaks..." << std::endl;
             fft_peaks fft_peaks(fft.get_spectrum(), args);
-            fft_peaks.compute(fs[i].first);
-            fft_peaks.save("FFT", "peaks" + fs[i].first.first + "_" + fs[i].first.second + ".csv");
+            fft_peaks.compute(fs[i].source);
+            fft_peaks.save("FFT", "peaks" + fs[i].source.filename + "_" + fs[i].source.codomain_axis + ".csv");
         }
     }
 
@@ -71,7 +71,7 @@ namespace analysis
 
         pattern_matching pm(args);
         for (unsigned int i = 0; i < fs.size(); i++)
-            pm.compute(fs[i].second, fs[i].first);
+            pm.compute(fs[i].function, fs[i].source);
     }
 
     void work(const FUNCTIONS &fs, const arguments &args)
