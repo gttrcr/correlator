@@ -267,9 +267,12 @@ int main(int argc, char *argv[])
             }
 
             analysis::metadata::get()->save(args);
+            std::cout << "All done" << std::endl;
+
+            return 0;
         }
 
-        return 0;
+        return -1;
     }
     catch (const std::exception &e)
     {

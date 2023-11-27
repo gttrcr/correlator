@@ -6,6 +6,8 @@
 #include "pattern_matching.h"
 #include "result.h"
 
+#include <execution>
+
 #include "../utils.h"
 
 namespace analysis
@@ -65,18 +67,18 @@ namespace analysis
     }
 
     // scan every datafile and return common pattern
-    void pattern_matching_work(const FUNCTIONS &fs, const arguments &args)
-    {
-        std::cout << "\tPattern matching..." << std::endl;
+    // void pattern_matching_work(const FUNCTIONS &fs, const arguments &args)
+    // {
+    //     std::cout << "\tPattern matching..." << std::endl;
 
-        pattern_matching pm(args);
-        for (unsigned int i = 0; i < fs.size(); i++)
-            pm.compute(fs[i].function, fs[i].source);
-    }
+    //     pattern_matching pm(args);
+    //     for (unsigned int i = 0; i < fs.size(); i++)
+    //         pm.compute(fs[i].function, fs[i].source);
+    // }
 
     void work(const FUNCTIONS &fs, const arguments &args)
     {
-        std::cout << "Working on " << fs.size() << " files..." << std::endl;
+        std::cout << "Working on " << fs.size() << " domains..." << std::endl;
 
         if (!std::filesystem::exists(args.output) && !std::filesystem::create_directory(args.output))
             std::cerr << "Cannot create output directory " << args.output << std::endl;

@@ -54,9 +54,10 @@ public:
 
     corr_function(const domain &d, const codomain &c)
     {
-        assert(d.size() == c.size());
+        // assert(d.size() == c.size());
+        unsigned int min_size = std::min(d.size(), c.size());
 
-        for (unsigned int i = 0; i < d.size(); i++)
+        for (unsigned int i = 0; i < min_size; i++)
         {
             _domain.push_back(d[i]);
             _codomain.push_back(c[i]);
