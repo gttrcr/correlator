@@ -3,7 +3,8 @@
 ## Versions, tags and releases
 | Latest stable |   Policy    |   Tag    |       Win32        |       Win64        |       Linux        |                                        Link                                         |
 | :-----------: | :---------: | :------: | :----------------: | :----------------: | :----------------: | :---------------------------------------------------------------------------------: |
-|       *       |   Release   | 23.11.16 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.16](https://github.com/gttrcr/correlator/releases/tag/23.11.16) |
+|       *       |   Release   | 23.11.27 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.27](https://github.com/gttrcr/correlator/releases/tag/23.11.27) |
+|               |   Release   | 23.11.16 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.16](https://github.com/gttrcr/correlator/releases/tag/23.11.16) |
 |               |   Release   | 23.11.15 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | [releases/tag/23.11.15](https://github.com/gttrcr/correlator/releases/tag/23.11.15) |
 |               |   Release   |  23.11   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.11](https://github.com/gttrcr/correlator/releases/tag/23.11)    |
 |               |   Release   |  23.09   |        :x:         | :heavy_check_mark: | :heavy_check_mark: |    [releases/tag/23.09](https://github.com/gttrcr/correlator/releases/tag/23.09)    |
@@ -50,7 +51,8 @@ Conside the following table for the cli.
 | :--------------------------------------: | :------------: | :--------------: | :------------------------: | :----------------: |
 |           Input file or folder           |       -i       |        .         | string interpreted as path | :heavy_check_mark: |
 |     Output folder for -i input files     |       -o       | ./out_correlator | string interpreted as path | :heavy_check_mark: |
-|           Domain column index            |       -d       |        1         |   vector of unsigned int   | :heavy_check_mark: |
+|          Domain column indexes           |       -d       |        0         |   vector of unsigned int   | :heavy_check_mark: |
+|                  Merge                   |       -m       |       none       |            none            |    :hourglass:     |
 |                   Help                   |       -h       |       none       |            none            | :heavy_check_mark: |
 |          Compute polynomial fit          |      --pf      |       true       |            bool            | :heavy_check_mark: |
 |               Compute FFT                |     --fft      |       true       |            bool            | :heavy_check_mark: |
@@ -68,15 +70,3 @@ There are two ```.sh``` scripts.
   * ```win64``` for windows 64 bits
   * ```linux```for linux
 * ```./release.sh``` releases every supported platform and produces the zip files that will be distributed.
-
-### main.cpp steps
-```
-main
-    get_arguments
-       get_csv_files
-           correlate_from_files
-               get_functions
-                   read_csv
-                       get_function
-                           all_methods
-```
