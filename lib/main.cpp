@@ -193,7 +193,7 @@ FUNCTIONS get_functions(const std::vector<std::string> &files, const arguments &
             for (unsigned int j = 0; j < domain_axis.size(); j++)
             {
                 std::string domain_axis_name = domain_axis[j];
-                fs.push_back((FUNCTION){(SOURCE){std::filesystem::path(file).stem().string(), domain_axis_name, codomain_axis_name}, f[i * domain_axis.size() + j]});
+                fs.push_back((FUNCTION){(SOURCE){std::filesystem::path(file).string(), domain_axis_name, codomain_axis_name}, f[i * domain_axis.size() + j]});
             }
         }
     }
