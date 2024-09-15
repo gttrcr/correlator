@@ -9,21 +9,27 @@ from func2 import *
 from func3 import *
 
 filename = "organizations-1000.csv"
+filename = "test.csv"
 print(f"Loading {filename}...")
-df = pd.read_csv(filename, delimiter=",")
+df = pd.read_csv(filename, delimiter=";", low_memory=False)
 print(f"{len(df.columns)} columns found [{', '.join(df.columns)}]")
 print(f"{len(df.values)} rows found")
-print(f"Replacing non numeric data types...", end="[")
+
+print(f"Replacing non numeric data types...")
 replacement = []
+something_to_change = False
 for name, type in df.dtypes.items():
     if not is_numeric_dtype(type):
-        print(name, end=", ")
+        something_to_change = True
+        print(f"\t{name} from {type} to numeric")
         rep_dict = dict(map(lambda x: (x[1], x[0]), enumerate(set(df[name]))))
         df = df.replace(rep_dict)
         replacement.append({name: rep_dict})
 
-print("]")
-df.to_csv(f"used_{os.path.splitext(filename)[0]}.csv", index=False)
+if something_to_change:
+    df.to_csv(f"used_{os.path.splitext(filename)[0]}.csv", index=False)
+else:
+    print(f"Wow, every data types is numeric!")
 
 for rep in range(1, 3 + 1):  # 3 is the limit (the size of the space R^3->R)
     nuples = list(itertools.permutations(df.columns, rep + 1))
